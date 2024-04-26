@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Header />
     <Nuxt />
     <Footer></Footer>
     <SiteLoader v-if="loading" />
@@ -8,11 +9,13 @@
 </template>
 
 <script>
+import Header from './Header'
 import Footer from './Footer'
 import BackToTop from './BackToTop'
 import SiteLoader from './SiteLoder'
 export default {
   components: {
+    Header,
     Footer,
     BackToTop,
     SiteLoader,
