@@ -1,7 +1,7 @@
 <template>
   <div>
-    <TopHeader />
-    <Menubar />
+    <!-- <TopHeader /> -->
+    <!-- <Menubar /> -->
     <Banner></Banner>
     <Offer></Offer>
     <LatestProducts></LatestProducts>
