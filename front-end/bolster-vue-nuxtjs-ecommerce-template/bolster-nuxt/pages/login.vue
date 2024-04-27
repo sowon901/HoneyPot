@@ -1,7 +1,5 @@
 <template>
     <div>
-        <TopHeader/>
-        <Menubar/>
         <div class="page-title-area">
             <div class="container">
                 <ul>
