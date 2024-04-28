@@ -24,6 +24,8 @@
                                     <div>
                                         {{ cart.name }}
                                         <br>
+                                        {{ cart.sellerId }}
+                                        <br>
                                         {{ cart.details }}
                                         <br>
                                         {{ cart.price }}
@@ -61,7 +63,7 @@ export default {
             // 테스트용 데이터로 초기화된 cart 배열
             cart: [
                 {
-                    id: 1,
+                    sellerId: 'army',
                     name: 'BTS JIN PHOTOCARD',
                     details: 'PERMISSION TO DANCE ON STAGE  미니포카',
                     price: '27,000',
@@ -72,7 +74,7 @@ export default {
                     deliveryStatus: '배송준비중',
                     purchaseDate: '2024.04.28'
                 }, {
-                    id: 2,
+                    sellerId: 'army',
                     name: 'Product 2',
                     details: 'COTTON 100%',
                     price: 20,
