@@ -10,7 +10,7 @@
                             <th style="width: 15%;">거래방식</th>
                             <th style="width: 15%;">진행상태</th>
                             <th style="width: 15%;">배송상태</th>
-                            <th style="width: 15%;">구매일자</th>
+                            <th style="width: 15%;">판매일자</th>
                         </tr>
                     </thead>
 
@@ -44,7 +44,7 @@
                             </td>
 
                             <td class="purchase-date">
-                                {{ cart.purchaseDate }}
+                                {{ cart.saleDate }}
                             </td>
                         </tr>
                     </tbody>
@@ -70,7 +70,7 @@ export default {
                     tradeType: '일반경매',
                     progressStatus: '결제완료',
                     deliveryStatus: '배송준비중',
-                    purchaseDate: '2024.04.28'
+                    saleDate: '2024.04.28'
                 }, {
                     id: 2,
                     name: 'Product 2',
@@ -82,7 +82,7 @@ export default {
                     tradeType: '일반경매',
                     progressStatus: '결제완료',
                     deliveryStatus: '배송준비중',
-                    purchaseDate: '2024.04.28'
+                    saleDate: '2024.04.28'
                 }
             ]
         }
