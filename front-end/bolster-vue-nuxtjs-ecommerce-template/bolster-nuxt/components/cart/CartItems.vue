@@ -1,91 +1,150 @@
 <template>
+  <div class="cart-area ptb-60">
     <div class="container">
-        <h4>구매 목록</h4>
-        <form style="margin-top: 16px;">
+      <div class="row">
+        <div class="col-lg-12 col-md-12">
+          <form>
             <div class="cart-table table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr style="text-align: center;">
-                            <th style="width: 40%;">상품정보</th>
-                            <th style="width: 15%;">거래방식</th>
-                            <th style="width: 15%;">진행상태</th>
-                            <th style="width: 15%;">배송상태</th>
-                            <th style="width: 15%;">구매일자</th>
-                        </tr>
-                    </thead>
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Unit Price</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                  </tr>
+                </thead>
 
-                    <tbody v-if="cart.length > 0">
-                        <tr v-for="(cart, i) in cart" :key="i" style="text-align: center;">
-                            <td class="product-infomation" style="text-align: left;">
-                                <div style="display: flex;">
-                                    <div>
-                                        <img :src="cart.image" />
-                                    </div>
-                                    <div>
-                                        {{ cart.name }}
-                                        <br>
-                                        {{ cart.details }}
-                                        <br>
-                                        {{ cart.price }}
-                                    </div>
-                                </div>
-                            </td>
+                <tbody v-if="cart.length > 0">
+                  <tr v-for="(cart, i) in cart" :key="i">
+                    <td class="product-thumbnail">
+                      <a href="#">
+                        <img :src="cart.image" :alt="cart.name" />
+                      </a>
+                    </td>
 
-                            <td class="trade-type">
-                                {{ cart.tradeType }}
-                            </td>
+                    <td class="product-name">
+                      <nuxt-link :to="`/products-details/${cart.id}`">
+                        {{ cart.name }}
+                      </nuxt-link>
+                      <ul>
+                        <li>Color: <strong>Light Blue</strong></li>
+                        <li>Size: <strong>XL</strong></li>
+                        <li>Material: <strong>Cotton</strong></li>
+                      </ul>
+                    </td>
 
-                            <td class="progress-status">
-                                {{ cart.progressStatus }}
-                            </td>
+                    <td class="product-price">
+                      <span class="unit-amount">${{ cart.price }}</span>
+                    </td>
 
-                            <td class="delivery-status">
-                                {{ cart.deliveryStatus }}
-                            </td>
+                    <td class="product-quantity">
+                      <div class="input-counter">
+                        <span
+                          @click="onDecrement(cart.id, cart.quantity)"
+                          class="minus-btn"
+                          ><i class="fas fa-minus"></i
+                        ></span>
+                        {{ cart.quantity }}
+                        <span @click="onIncrement(cart.id)" class="plus-btn"
+                          ><i class="fas fa-plus"></i
+                        ></span>
+                      </div>
+                    </td>
 
-                            <td class="purchase-date">
-                                {{ cart.purchaseDate }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <td class="product-subtotal">
+                      <span class="subtotal-amount"
+                        >${{ cart.price * cart.quantity }}</span
+                      >
+
+                      <a
+                        href="javascript:void(0)"
+                        @click="removeItemFromCart(cart.id)"
+                        class="remove"
+                        ><i class="far fa-trash-alt"></i
+                      ></a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-        </form>
+
+            <div class="cart-buttons">
+              <div class="row">
+                <div class="col-lg-7 col-md-7">
+                  <div class="continue-shopping-box">
+                    <nuxt-link to="/products" class="btn btn-light"
+                      >Continue Shopping</nuxt-link
+                    >
+                  </div>
+                </div>
+
+                <div class="col-lg-5 col-md-5 text-right">
+                  <div class="cart-totals">
+                    <h3>Cart Totals</h3>
+
+                    <ul>
+                      <li>
+                        Subtotal <span>${{ cartTotal }}</span>
+                      </li>
+                      <li>Shipping <span>$10.00</span></li>
+                      <li>
+                        Total
+                        <span
+                          ><b
+                            >${{ parseFloat(cartTotal + 10).toFixed(2) }}</b
+                          ></span
+                        >
+                      </li>
+                    </ul>
+                    <nuxt-link to="/checkout" class="btn btn-light"
+                      >Proceed to Checkout</nuxt-link
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-    data() {
-        return {
-            // 테스트용 데이터로 초기화된 cart 배열
-            cart: [
-                {
-                    id: 1,
-                    name: 'BTS JIN PHOTOCARD',
-                    details: 'PERMISSION TO DANCE ON STAGE  미니포카',
-                    price: '27,000',
-                    quantity: 2,
-                    image: '../../assets/img/bts-jin-photocard.jpg',
-                    tradeType: '일반경매',
-                    progressStatus: '결제완료',
-                    deliveryStatus: '배송준비중',
-                    purchaseDate: '2024.04.28'
-                }, {
-                    id: 2,
-                    name: 'Product 2',
-                    details: 'COTTON 100%',
-                    price: 20,
-                    quantity: 1,
-                    image: 'product2.jpg',
-                    image: '../../assets/img/bts-jin-photocard.jpg',
-                    tradeType: '일반경매',
-                    progressStatus: '결제완료',
-                    deliveryStatus: '배송준비중',
-                    purchaseDate: '2024.04.28'
-                }
-            ]
-        }
-    }
+  computed: {
+    cart() {
+      return this.$store.getters.cart
+    },
+    cartTotal() {
+      return this.$store.getters.totalAmount
+    },
+  },
+  methods: {
+    removeItemFromCart(id) {
+      this.$store.dispatch('deleteCart', id)
+    },
+    onIncrement(id) {
+      this.$store.dispatch('updateCart', {
+        id,
+        unit: 1,
+        cart: this.cart,
+      })
+    },
+    onDecrement(id, quantity) {
+      if (quantity > 1) {
+        this.$store.dispatch('updateCart', {
+          id,
+          unit: -1,
+          cart: this.cart,
+        })
+      } else {
+        this.removeItemFromCart(id)
+        this.$toast.warning('Item deleted!')
+      }
+    },
+  },
 }
 </script>
