@@ -5,65 +5,46 @@
             <div class="cart-table table-responsive">
                 <table class="table table-bordered">
                     <thead>
-                        <tr>
-                            <th scope="col-8">상품정보</th>
-                            <th scope="col-1">거래방식</th>
-                            <th scope="col-1">진행상태</th>
-                            <th scope="col-1">배송상태</th>
-                            <th scope="col-1">구매일자</th>
+                        <tr style="text-align: center;">
+                            <th style="width: 40%;">상품정보</th>
+                            <th style="width: 15%;">거래방식</th>
+                            <th style="width: 15%;">진행상태</th>
+                            <th style="width: 15%;">배송상태</th>
+                            <th style="width: 15%;">구매일자</th>
                         </tr>
                     </thead>
 
                     <tbody v-if="cart.length > 0">
-                        <tr v-for="(cart, i) in cart" :key="i">
-                            <td class="product-thumbnail">
-                                <a href="#">
-                                    <img :src="cart.image" :alt="cart.name"/>
-                                </a>
-                            </td>
-
-                            <td class="product-name">
-                                <nuxt-link :to="`/products-details/${cart.id}`">
-                                    {{ cart.name }}
-                                </nuxt-link>
-                                <ul>
-                                    <li>Color:
-                                        <strong>Light Blue</strong>
-                                    </li>
-                                    <li>Size:
-                                        <strong>XL</strong>
-                                    </li>
-                                    <li>Material:
-                                        <strong>Cotton</strong>
-                                    </li>
-                                </ul>
-                            </td>
-
-                            <td class="product-price">
-                                <span class="unit-amount">${{ cart.price }}</span>
-                            </td>
-
-                            <td class="product-quantity">
-                                <div class="input-counter">
-                                    <span @click="onDecrement(cart.id, cart.quantity)" class="minus-btn">
-                                        <i class="fas fa-minus"></i >
-                                    </span>
-                                    {{ cart.quantity }}
-                                    <span @click="onIncrement(cart.id)" class="plus-btn">
-                                        <i class="fas fa-plus"></i >
-                                    </span>
+                        <tr v-for="(cart, i) in cart" :key="i" style="text-align: center;">
+                            <td class="product-infomation" style="text-align: left;">
+                                <div style="display: flex;">
+                                    <div>
+                                        <img :src="cart.image" />
+                                    </div>
+                                    <div>
+                                        {{ cart.name }}
+                                        <br>
+                                        {{ cart.details }}
+                                        <br>
+                                        {{ cart.price }}
+                                    </div>
                                 </div>
                             </td>
 
-                            <td class="product-subtotal">
-                                <span class="subtotal-amount">${{ cart.price * cart.quantity }}</span >
+                            <td class="trade-type">
+                                {{ cart.tradeType }}
+                            </td>
 
-                                <a
-                                    href="javascript:void(0)"
-                                    @click="removeItemFromCart(cart.id)"
-                                    class="remove">
-                                    <i class="far fa-trash-alt"></i >
-                                </a>
+                            <td class="progress-status">
+                                {{ cart.progressStatus }}
+                            </td>
+
+                            <td class="delivery-status">
+                                {{ cart.deliveryStatus }}
+                            </td>
+
+                            <td class="purchase-date">
+                                {{ cart.purchaseDate }}
                             </td>
                         </tr>
                     </tbody>
@@ -74,46 +55,37 @@
 </template>
 
 <script>
-    export default {
-        computed: {
-            cart() {
-                return this.$store.getters.cart
-            },
-            cartTotal() {
-                return this.$store.getters.totalAmount
-            }
-        },
-        methods: {
-            removeItemFromCart(id) {
-                this
-                    .$store
-                    .dispatch('deleteCart', id)
-            },
-            onIncrement(id) {
-                this
-                    .$store
-                    .dispatch('updateCart', {
-                        id,
-                        unit: 1,
-                        cart: this.cart
-                    })
-            },
-            onDecrement(id, quantity) {
-                if (quantity > 1) {
-                    this
-                        .$store
-                        .dispatch('updateCart', {
-                            id,
-                            unit: -1,
-                            cart: this.cart
-                        })
-                } else {
-                    this.removeItemFromCart(id)
-                    this
-                        .$toast
-                        .warning('Item deleted!')
+export default {
+    data() {
+        return {
+            // 테스트용 데이터로 초기화된 cart 배열
+            cart: [
+                {
+                    id: 1,
+                    name: 'BTS JIN PHOTOCARD',
+                    details: 'PERMISSION TO DANCE ON STAGE  미니포카',
+                    price: '27,000',
+                    quantity: 2,
+                    image: '../../assets/img/bts-jin-photocard.jpg',
+                    tradeType: '일반경매',
+                    progressStatus: '결제완료',
+                    deliveryStatus: '배송준비중',
+                    purchaseDate: '2024.04.28'
+                }, {
+                    id: 2,
+                    name: 'Product 2',
+                    details: 'COTTON 100%',
+                    price: 20,
+                    quantity: 1,
+                    image: 'product2.jpg',
+                    image: '../../assets/img/bts-jin-photocard.jpg',
+                    tradeType: '일반경매',
+                    progressStatus: '결제완료',
+                    deliveryStatus: '배송준비중',
+                    purchaseDate: '2024.04.28'
                 }
-            }
+            ]
         }
     }
+}
 </script>
