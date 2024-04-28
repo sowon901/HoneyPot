@@ -20,7 +20,7 @@
                         <nuxt-link to="/purchase-history">구매 목록</nuxt-link>
                     </li>
                     <li>
-                        <a href="#">판매 목록</a>
+                        <nuxt-link to="/sales-history">판매 목록</nuxt-link>
                     </li>
                     <li>
                         <a href="#">입찰 목록</a>
