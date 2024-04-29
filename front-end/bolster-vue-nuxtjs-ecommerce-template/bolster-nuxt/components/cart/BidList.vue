@@ -7,7 +7,7 @@
                     <thead>
                         <tr style="text-align: center;">
                             <th style="width: 40%;">상품정보</th>
-                            <th style="width: 20%;">남은시간</th>
+                            <th style="width: 20%;">종료시간</th>
                             <th style="width: 20%;">입찰가격</th>
                             <th style="width: 20%;">현재가격</th>
                         </tr>
@@ -16,24 +16,24 @@
                     <tbody v-if="cart.length > 0">
                         <tr v-for="(cart, i) in cart" :key="i" style="text-align: center;">
                             <td class="product-infomation" style="text-align: left;">
-                                <div style="display: flex;">
-                                    <div style="margin-right: 10px;">
-                                        <img :src="cart.image" width="60px" />
+                                <nuxt-link :to="'/product-detail/' + cart.id" class="product-detail">
+                                    <div style="display: flex;">
+                                        <div style="margin-right: 10px;">
+                                            <img :src="cart.image" width="60px" />
+                                        </div>
+                                        <div>
+                                            <h6>
+                                                {{ cart.name }}
+                                            </h6>
+                                            {{ cart.sellerId }}
+                                            <br>
+                                            {{ cart.details }}
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h6>
-                                            {{ cart.name }}
-                                        </h6>
-                                        {{ cart.sellerId }}
-                                        <br>
-                                        {{ cart.details }}
-                                        <br>
-                                        {{ cart.remaingAuctionTime }}
-                                    </div>
-                                </div>
+                                </nuxt-link>
                             </td>
                             <td>
-                                {{ cart.remainingTime }}
+                                {{ cart.endTime }}
                             </td>
                             <td>
                                 {{ cart.bidPrice }}
@@ -61,7 +61,7 @@ export default {
                     details: 'PERMISSION TO DANCE ON STAGE  미니포카',
                     bidPrice: '27,000',
                     image: require('../../assets/img/jin.jpg'),
-                    remainingTime: '08:22:39',
+                    endTime: '2024.04.29 23:00:00',
                     currentPrice: '27,000'
                 }, {
                     sellerId: 'army13',
@@ -69,7 +69,7 @@ export default {
                     details: 'PERMISSION TO DANCE ON STAGE  미니포카',
                     bidPrice: '33,000',
                     image: require('../../assets/img/jin.jpg'),
-                    remainingTime: '12:48:22',
+                    endTime: '2024.04.28 17:00:00',
                     currentPrice: '35,000'
                 }
             ]
@@ -77,3 +77,18 @@ export default {
     }
 }
 </script>
+<style scoped="scoped">
+.table td,
+.table th {
+    color: black;
+}
+
+.product-detail {
+    color: black;
+    cursor: default;
+}
+
+.product-detail:hover {
+    cursor: pointer;
+}
+</style>
