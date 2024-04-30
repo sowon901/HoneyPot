@@ -7,35 +7,32 @@
                     <thead>
                         <tr style="text-align: center;">
                             <th style="width: 40%;">상품정보</th>
-                            <th style="width: 15%;">거래방식</th>
-                            <th style="width: 15%;">진행상태</th>
-                            <th style="width: 15%;">배송상태</th>
-                            <th style="width: 15%;">구매일자</th>
+                            <th style="width: 20%;">진행상태</th>
+                            <th style="width: 20%;">배송상태</th>
+                            <th style="width: 20%;">구매일자</th>
                         </tr>
                     </thead>
 
                     <tbody v-if="cart.length > 0">
                         <tr v-for="(cart, i) in cart" :key="i" style="text-align: center;">
-                            <td class="product-infomation" style="text-align: left;">
-                                <div style="display: flex;">
-                                    <div style="margin-right: 10px;">
-                                        <img :src="cart.image" width="60px" />
+                            <td class="product-information" style="text-align: left;">
+                                <nuxt-link :to="'/product-detail/' + cart.id" class="product-detail">
+                                    <div style="display: flex;">
+                                        <div style="margin-right: 10px;">
+                                            <img :src="cart.image" width="60px" />
+                                        </div>
+                                        <div>
+                                            <h6>
+                                                {{ cart.name }}
+                                            </h6>
+                                            {{ cart.sellerId }}
+                                            <br>
+                                            {{ cart.details }}
+                                            <br>
+                                            {{ cart.price }}
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h6>
-                                            {{ cart.name }}
-                                        </h6>
-                                        {{ cart.sellerId }}
-                                        <br>
-                                        {{ cart.details }}
-                                        <br>
-                                        {{ cart.price }}
-                                    </div>
-                                </div>
-                            </td>
-
-                            <td class="trade-type">
-                                {{ cart.tradeType }}
+                                </nuxt-link>
                             </td>
 
                             <td class="progress-status">
@@ -70,7 +67,6 @@ export default {
                     price: '27,000',
                     quantity: 2,
                     image: require('../../assets/img/jin.jpg'),
-                    tradeType: '일반경매',
                     progressStatus: '결제완료',
                     deliveryStatus: '배송준비중',
                     purchaseDate: '2024.04.28'
@@ -81,7 +77,6 @@ export default {
                     price: 20,
                     quantity: 1,
                     image: require('../../assets/img/jin.jpg'),
-                    tradeType: '일반경매',
                     progressStatus: '결제완료',
                     deliveryStatus: '배송준비중',
                     purchaseDate: '2024.04.28'
@@ -91,3 +86,18 @@ export default {
     }
 }
 </script>
+<style scoped="scoped">
+.table td,
+.table th {
+    color: black;
+}
+
+.product-detail {
+    color: black;
+    cursor: default;
+}
+
+.product-detail:hover {
+    cursor: pointer;
+}
+</style>
