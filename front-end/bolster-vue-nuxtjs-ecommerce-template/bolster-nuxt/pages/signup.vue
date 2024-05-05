@@ -31,9 +31,11 @@
         <div class="signup-area ptb-60">
             <div class="container">
                 <div class="signup-content">
+<!--
                     <div class="section-title" style="background-color: white;">
-<!--                        <h2>회원가입</h2>-->
+                        <h2>회원가입</h2>
                     </div>
+-->
                     <!-- 아이디 필터링하기 -->
                     <label style="color: darkgray; display: inline-block; text-align: right; width: 100%;"><h4 style="color: orangered; display: inline;">*</h4>표시는 필수 입력 항목입니다.</label>
                     <form class="signup-form">
