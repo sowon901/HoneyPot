@@ -209,7 +209,7 @@
                             </div>
                         </div>
                         <br><br>
-                        <button type="submit" class="btn btn-primary">인증 요청</button>
+                        <button type="submit" class="btn btn-primary">회원 정보 입력</button>
                         <br>
 <!--                        <nuxt-link to="/" class="return-store"
                         >메인으로 돌아가기</nuxt-link
