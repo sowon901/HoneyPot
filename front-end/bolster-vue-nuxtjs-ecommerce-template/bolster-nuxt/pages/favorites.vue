@@ -4,8 +4,8 @@
             <div class="container">
                 <ul>
                     <li><nuxt-link to="/">Home</nuxt-link></li>
-                    <li>Signup</li>
-                    <li>Favorites</li>
+                    <li>회원가입</li>
+                    <li>아티스트 선택</li>
                 </ul>
             </div>
         </div>
@@ -14,12 +14,12 @@
             <div class="step-indicator">
                 <div class="step active">
                     <div class="step-number">1</div>
-                    <div class="step-text">약관동의</div>
+                    <div class="step-text">약관 동의</div>
                 </div>
                 <div class="step-line"></div>
                 <div class="step">
                     <div class="step-number">2</div>
-                    <div class="step-text">정보입력</div>
+                    <div class="step-text">정보 입력</div>
                 </div>
                 <div class="step-line"></div>
                 <div class="step current">
