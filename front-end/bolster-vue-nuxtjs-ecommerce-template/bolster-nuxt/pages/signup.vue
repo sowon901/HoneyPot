@@ -38,7 +38,7 @@
                     <label style="color: darkgray; display: inline-block; text-align: right; width: 100%;"><h4 style="color: orangered; display: inline;">*</h4>표시는 필수 입력 항목입니다.</label>
                     <form class="signup-form">
                         <div class="form-group">
-                            <label>회원 사진<h4 style="color: orangered; display: inline;">*</h4></label>
+                            <label>회원 사진</label>
                             <label style="color: lightgray">프로필 사진은 200x200 픽셀 이하, 10MB 이하의 JPEG, PNG 형식의 파일만 올리실 수 있습니다.</label>
                             <input
                                 type="file"
