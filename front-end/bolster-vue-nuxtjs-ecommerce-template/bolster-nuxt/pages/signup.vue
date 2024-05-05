@@ -31,11 +31,6 @@
         <div class="signup-area ptb-60">
             <div class="container">
                 <div class="signup-content">
-<!--
-                    <div class="section-title" style="background-color: white;">
-                        <h2>회원가입</h2>
-                    </div>
--->
                     <!-- 아이디 필터링하기 -->
                     <label style="color: darkgray; display: inline-block; text-align: right; width: 100%;"><h4 style="color: orangered; display: inline;">*</h4>표시는 필수 입력 항목입니다.</label>
                     <form class="signup-form">
@@ -44,8 +39,8 @@
                             <label style="color: lightgray">프로필 사진은 200x200 픽셀 이하, 10MB 이하의 JPEG, PNG 형식의 파일만 올리실 수 있습니다.</label>
                             <input
                                 type="file"
-                                id="profilePicture"
-                                name="profilePicture"
+                                id="profileImage"
+                                name="profileImage"
                                 @change="handleFileUpload"
                             />
                             <p v-if="sizeExceeded" style="color: red;">파일 크기가 너무 큽니다. (최대 5MB까지 허용됩니다.)</p>
@@ -69,11 +64,12 @@
                         <div class="form-group">
                             <label>비밀번호<h4 style="color: orangered; display: inline;">*</h4></label>
                             <input
-                                type="text"
+                                type="password"
                                 class="form-control"
                                 placeholder="8자 이상 16자 이하의 숫자 하나, 특수문자 하나 이상을 포함한 영문자)"
                                 id="password"
                                 name="password"
+                                v-model="password"
                             />
                         </div>
 
@@ -85,6 +81,7 @@
                                 placeholder=""
                                 id="name"
                                 name="name"
+                                v-model="name"
                             />
                         </div>
 
@@ -99,6 +96,7 @@
                                 id="nickname"
                                 name="nickname"
                                 @input="checkInputValidity"
+                                v-model="nickname"
                             />
                         </div>
 
@@ -120,9 +118,10 @@
                                     type="text"
                                     class="form-control"
                                     placeholder="-을 제외한 숫자만 입력해주세요"
-                                    id="cellphone"
-                                    name="cellphone"
+                                    id="mobileNumber"
+                                    name="mobileNumber"
                                     @keydown.prevent="preventNonNumeric"
+                                    v-model="mobileNumber"
                                 />
                             </div>
                         </div>
@@ -136,6 +135,7 @@
                                 placeholder="아이디@도메인주소.com"
                                 id="email"
                                 name="email"
+                                v-model="email"
                             />
                         </div>
 
@@ -334,17 +334,24 @@ export default {
     },
     data() {
         return {
-            selectedGender: '',
+            profileImage: null,
+            id: '',
+            password: '',
+            name: '',
+            nickname: '',
+            mobileNumber: '',
+            email: '',
             postcode: '',
             address: '',
             detailAddress: '',
             birthDate: '',
-            showSpecialCharacterWarning: false,
-            showLengthWarning: false,
+            selectedGender: '',
+
             imageUrl: null, // 업로드된 이미지의 URL을 저장할 변수
             sizeExceeded: false, // 파일 크기가 제한을 초과했는지 여부를 저장할 변수
             formatInvalid: false, // 파일 형식이 유효한지 여부를 저장할 변수
-            profilePicture: null,
+            showSpecialCharacterWarning: false,
+            showLengthWarning: false,
         };
     },
     methods: {
@@ -442,7 +449,7 @@ export default {
                 this.imageUrl = e.target.result; // 이미지 URL을 변수에 저장하여 미리보기에 표시
             };
             reader.readAsDataURL(file);
-            this.profilePicture = file;
+            this.profileImage = file;
         },
     },
 };
