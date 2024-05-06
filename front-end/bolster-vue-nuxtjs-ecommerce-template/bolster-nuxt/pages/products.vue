@@ -68,7 +68,10 @@ export default {
     return {
       currentPage: 1,
       itemsPerPage: 40,
-      selectedSorting: '1'
+      selectedSorting: '1',
+      tags: [  "(여자)아이들(G-IDLE)",  "아이브(IVE)",  "아이유(IU)",  "아이즈원(IZ*ONE)",  "에이티즈(ATEEZ)",  "엔하이픈(ENHYPEN)",  "엔시티(NCT)",  "엔믹스(NMIXX)",  "오마이걸(OH MY GIRL)",  "오렌지카라멜(Orange Caramel)",  "뉴진스(NewJeans)",  "레드벨벳(Red Velvet)",  "르세라핌(LE SSERAFIM)", "방탄소년단(BTS)" ,"보이넥스트도어(BOYNEXTDOOR)",  "블랙핑크(BLACKPINK)",  "비비지(VIVIZ)",  "샤이니(SHINee)",  "소녀시대",  "스트레이 키즈(Stray Kids)",  "씨아이엑스(CIX)",  "케플러(Kep1er)",  "트레저(TREASURE)",  "트와이스(TWICE)",  "더보이즈(THE BOYZ)",  "몬스타엑스(MONSTA X)",  "있지(ITZY)",  "우주소녀(WJSN)",  "제로베이스원(ZEROBASEONE)"]
+,
+      selectedTags: [],
     };
   },
   methods: {
