@@ -89,33 +89,20 @@
   
   
   <style scoped>
-  .container {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-  }
+  
 
-  .wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-  }
+  .wrapper .content {
+  display: flex;
+  width: 100%;
+}
 
-  .content {
-    display: flex;
-    width: 100%;
-  }
-
-  .sidebar {
-    flex: 0 0 200px;
-    padding: 20px;
-  }
+.sidebar {
+  flex: 1;
+}
 
   .user-info {
-    flex-grow: 1;
-    margin-left: 20px;
-    background-color: #fff;
-    padding: 20px;
+    flex: 3;
+  padding: 5px;
   }
 
   .header {
@@ -132,6 +119,10 @@
     border: none;
     cursor: pointer;
     font-weight: bold;
+    display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
   }
 
   .nickname-input {
@@ -211,9 +202,7 @@
   }
 
   .section-divider {
-    border: none;
-    height: 1px;
-    background-color: #333;
-    margin: 20px 0;
-  }
+  margin-top: 2px;
+  border: 1px solid #ccc;
+}
 </style>
