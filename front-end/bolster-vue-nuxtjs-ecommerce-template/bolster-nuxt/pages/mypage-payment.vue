@@ -134,9 +134,9 @@
   }
   
   .section-divider {
-    margin-top: 10px;
-    border: 1px solid #ccc;
-  }
+  margin-top: 17px;
+  border: 0.3px #ccc;
+}
 
   .add-payment-button {
     background-color: #ffb400;

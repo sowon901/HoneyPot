@@ -236,7 +236,7 @@ export default {
 }
 
 .section-divider {
-  margin-top: 10px;
+  margin-top: 17px;
   border: 1px solid #ccc;
 }
 .add-address-button {
