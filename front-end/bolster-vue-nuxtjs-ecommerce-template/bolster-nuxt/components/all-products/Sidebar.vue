@@ -1,15 +1,27 @@
 <template>
+    <div class="container">
     <div>
+        <div class="content">
         <h4>마이페이지</h4>
+    </div>
         <hr>
         <div>
             <h5>계정 관리</h5>
             <ul style="list-style-type: none;">
                 <li>
-                    <a href="#">회원 정보 관리</a>
+                    <a href="/mypage-profile">프로필 관리</a>
                 </li>
                 <li>
-                    <a href="#">결제 수단 관리</a>
+                    <a href="/mypage-payment">결제수단 관리</a>
+                </li>
+                <li>
+                    <a href="/mypage-password">비밀번호 변경</a>
+                </li>
+                <li>
+                    <a href="/mypage-address">배송지 관리</a>
+                </li>
+                <li>
+                    <a href="/mypage-stock">입고 요청</a>
                 </li>
             </ul>
         </div>
@@ -28,6 +40,7 @@
             </ul>
         </div>
     </div>
+</div>
 </template>
 <script>
 export default {
@@ -37,6 +50,10 @@ export default {
 }
 </script>
 <style scoped="scoped">
+.content {
+    flex: 3;
+  padding: 3px;
+}
 li {
     margin: 15px 0;
     font-size: 18px;
