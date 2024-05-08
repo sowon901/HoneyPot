@@ -6,9 +6,11 @@
             <div class="product-layout">
                 
                         <div class="product-main-image">
+                            <img class="main-image" :src="product.image" alt="Product Image">
                         </div>
                     <div class="product-detail-image-list">
                         <div v-for="(index) in 4" :key="index" class="product-detail-image">
+                            <!-- <img :src="product.image"> -->
                         </div>
                     </div>
             </div>      
@@ -23,7 +25,7 @@
                
              <div class="description">
                     <div class ="product-name">
-                            <b>장원영 포토카드</b>
+                            <b>{{product.name}}</b>
                     </div>
                     <hr>
 
@@ -35,12 +37,12 @@
 
                         <tr>
                             <td><b>판매자</b></td>
-                            <td style="padding-left: 300px;">최소원</td>
+                            <td style="padding-left: 300px;">{{product.sellerId}}</td>
                             <!-- {{seller_id}} -->
                         </tr>
                         <tr>
                         <td><b>시작가</b></td>
-                        <td style="padding-left: 300px;">25000원</td>
+                        <td style="padding-left: 300px;">{{product.price}}</td>
                     <!-- {{start_price}}원 -->
                     
                         </tr>
@@ -102,7 +104,7 @@
             <b><h2>제품설명</h2></b>
             <div class="detail-desciprtion-text">
                 <!-- 상품 상세 설명 추가 -->
-                원영이 팬싸인회에서 추첨받은 포토카드입니다. 
+                {{product.details}}
             </div>
         </div>
 
@@ -121,14 +123,20 @@
 <script>
 
 export default {
-
     data(){
         return {
             getExistPId: false,
             quantity: 1,
-            agree:false //체크박스 상태 저장
+            agree:false, //체크박스 상태 저장
+            product: null
         }
     },
+    created() {
+        // 동적 라우트 매개변수인 상품 ID를 가져옵니다.
+        const productId = this.$route.params.id;
+        // Vuex 스토어에서 해당 상품을 조회합니다.
+        this.product = this.$store.state.products.all.find(product => product.id === parseInt(productId));
+    }, 
     props: ['product_id', 'product_name', 'price', 'image1', 'image2', 'image3','image4' ],
     computed: {
         
@@ -201,6 +209,14 @@ export default {
 
     background-color:lightgrey;
     margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-image {
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .product-detail-image-list{

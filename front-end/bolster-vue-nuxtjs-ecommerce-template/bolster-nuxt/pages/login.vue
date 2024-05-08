@@ -51,8 +51,14 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Login</button>
-
-                                <div class="links-container">
+                                <br>
+                                <button type="submit" class="kakao-login">
+                                <img src="../assets/img/kakao_button.png"
+                                     alt="카카오 로그인"
+                                     style="width: auto; height: auto;"/>
+                                </button>
+                                <br><br>
+                                <div class="links-container" >
                                     <nuxt-link to="/findid" class="forgot-id">
                                         아이디 찾기
                                     </nuxt-link>
@@ -94,6 +100,12 @@
     }
 }
 
+.kakao-login {
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: none;
+}
 
 </style>
 
