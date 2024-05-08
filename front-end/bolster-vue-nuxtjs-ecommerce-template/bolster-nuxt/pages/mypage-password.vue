@@ -79,9 +79,10 @@
   }
   
   .section-divider {
-    margin-top: 10px;
-    border: 1px solid #ccc;
-  }
+  margin-top: 17px;
+  border: 0.3px #ccc;
+}
+
   
   .form-group {
     margin-bottom: 10px;

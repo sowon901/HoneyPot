@@ -202,7 +202,8 @@
   }
 
   .section-divider {
-  margin-top: 2px;
-  border: 1px solid #ccc;
+  margin-top: 10px;
+  border: 1px #ccc;
+
 }
 </style>
