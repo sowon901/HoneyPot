@@ -16,6 +16,7 @@
                     <tbody v-if="product.length > 0">
                         <tr v-for="(product, i) in product" :key="i" style="text-align: center;">
                             <td class="product-infomation" style="text-align: left;">
+
                                 <nuxt-link :to="'/bid-details/' + product.id" class="product-detail">
                                     <div style="display: flex;">
                                         <div style="margin-right: 10px;">
@@ -28,12 +29,15 @@
                                             {{ product.sellerId }}
                                             <br>
                                             {{ product.details }}
+
                                         </div>
                                     </div>
                                 </nuxt-link>
                             </td>
                             <td>
+
                                 {{ product.endTime }}
+
                             </td>
                             <td>
                                 {{ product.bidPrice }}
