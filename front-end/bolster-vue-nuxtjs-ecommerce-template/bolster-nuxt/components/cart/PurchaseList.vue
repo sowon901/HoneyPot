@@ -37,7 +37,20 @@
                             </td>
 
                             <td class="progress-status">
-                                {{ product.progressStatus }}
+                                <span v-if="product.progressStatus !== '결제대기'" class="status-text">
+                                    {{ product.progressStatus }}
+                                </span>
+                                <span v-else class="checkout-link" @click="redirectToCheckout(product)" style="color: #FFB400; text-decoration: underline;" >
+                                    {{ product.progressStatus }}
+                                </span>
+                                <!-- <nuxt-link
+                                    v-else
+                                    :to="{ name: 'checkout',  query: { product: JSON.stringify(product) }}"
+                                    class="checkout-link"
+                                    style="color: #FFB400; text-decoration: underline;"
+                                >
+                                    {{ product.progressStatus }} -->
+                                </nuxt-link>
                             </td>
 
                             <td class="delivery-status">
@@ -69,7 +82,7 @@ export default {
                     price: '27,000',
                     quantity: 2,
                     image: require('../../assets/img/jin.jpg'),
-                    progressStatus: '결제완료',
+                    progressStatus: '결제대기',
                     deliveryStatus: '배송준비중',
                     purchaseDate: '2024.04.28'
                 }, {
@@ -86,6 +99,16 @@ export default {
             ]
         }
     },
+    methods: {
+        redirectToCheckout(product) {
+            // 진행 상태가 '결제대기'인 경우에만 처리합니다.
+            if (product.progressStatus === '결제대기') {
+                // 체크아웃 페이지로 제품 데이터를 보냅니다.
+                this.$router.push({ path: '/checkout', query: { product: product }});
+                // this.$router.push({ name: 'checkout', params: { product: product } });
+            }
+        }
+    }
 }
 </script>
 <style scoped="scoped">
@@ -96,10 +119,10 @@ export default {
 
 .product-detail {
     color: black;
-    cursor: default;
+    cursor: pointer;
 }
 
-.product-detail:hover {
+.checkout-link {
     cursor: pointer;
 }
 
