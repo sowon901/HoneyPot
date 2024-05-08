@@ -7,8 +7,10 @@
 <script>
 import CheckoutItem from '../components/cart/CheckoutItem';
 export default {
-    components: {
+{
+    components: 
         CheckoutItem,
+        
     }
 }
 </script>

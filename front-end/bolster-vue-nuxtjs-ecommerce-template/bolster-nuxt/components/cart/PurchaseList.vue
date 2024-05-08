@@ -13,6 +13,7 @@
                         </tr>
                     </thead>
 
+
                     <tbody v-if="product.length > 0">
                         <tr v-for="(product, i) in product" :key="i" style="text-align: center;">
                             <td class="product-information" style="text-align: left;">
