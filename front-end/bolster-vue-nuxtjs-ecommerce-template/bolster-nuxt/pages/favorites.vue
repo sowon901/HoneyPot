@@ -245,7 +245,8 @@ export default {
             return this.selectedIdols.includes(idolName);
         },
         submitSelection() {
-            alert(`선택된 아이돌: ${this.selectedIdols.join(', ')}`);
+            //alert(`선택된 아이돌: ${this.selectedIdols.join(', ')}`);
+            alert('회원가입이 완료되었습니다! \n꿀단지를 채워보세요🍯');
         },
     },
 };
