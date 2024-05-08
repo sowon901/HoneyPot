@@ -70,7 +70,24 @@
                                 id="password"
                                 name="password"
                                 v-model="password"
+                                @input="checkPassword"
                             />
+                        </div>
+
+                        <div class="form-group">
+                            <label>비밀번호 확인<h4 style="color: orangered; display: inline;">*</h4></label>
+                            <input
+                                type="password"
+                                class="form-control"
+                                placeholder="비밀번호를 한 번 더 입력해 주세요."
+                                id="password-check"
+                                name="password-check"
+                                v-model="passwordCheck"
+                                @input="checkPassword"
+                            />
+                            <span v-if="passwordMatch && password !== '' && passwordCheck !== ''" style="color: green;">비밀번호가 일치합니다.</span>
+                            <span v-else-if="password !== '' && passwordCheck !== ''" style="color: red;">위와 동일한 비밀번호를 입력해주세요.</span>
+                            <!-- 입력란이 비어 있을 때 경고 메시지를 표시하지 않음 -->
                         </div>
 
                         <div class="form-group">
@@ -87,8 +104,6 @@
 
                         <div class="form-group">
                             <label>별명<h4 style="color: orangered; display: inline;">*</h4></label>
-                            <p v-if="showSpecialCharacterWarning" style="color: red;">_와- 를 제외한 특수문자는 입력하실 수 없습니다.</p>
-                            <p v-if="showLengthWarning" style="color: red;">글자수는 2자 이상 10자 이하여야 합니다.</p>
                             <input
                                 type="text"
                                 class="form-control"
@@ -98,6 +113,8 @@
                                 @input="checkInputValidity"
                                 v-model="nickname"
                             />
+                            <p v-if="showSpecialCharacterWarning" style="color: red;">_와- 를 제외한 특수문자는 입력하실 수 없습니다.</p>
+                            <p v-if="showLengthWarning" style="color: red;">글자수는 2자 이상 10자 이하여야 합니다.</p>
                         </div>
 
                         <div class="form-group">
@@ -352,6 +369,8 @@ export default {
             formatInvalid: false, // 파일 형식이 유효한지 여부를 저장할 변수
             showSpecialCharacterWarning: false,
             showLengthWarning: false,
+            passwordCheck: '',
+            passwordMatch: false
         };
     },
     methods: {
@@ -423,7 +442,7 @@ export default {
         },
         preventNonNumeric(event) {
             // 입력된 키가 숫자가 아닌 경우 입력을 막습니다.
-            if (!/^\d$/.test(event.key)) {
+            if (!/^\d+$/.test(event.key)) {
                 event.preventDefault();
             }
         },
@@ -450,6 +469,9 @@ export default {
             };
             reader.readAsDataURL(file);
             this.profileImage = file;
+        },
+        checkPassword() {
+            this.passwordMatch = this.password === this.passwordCheck;
         },
     },
 };
