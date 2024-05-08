@@ -2,16 +2,14 @@
     <div class="container">
         <div class="bid-details-content">
             <!-- 상품 메인 이미지 및 상세 이미지 -->
-            
+
             <div class="product-layout">
-                
-                        <div class="product-main-image">
-                            <img class="main-image" :src="product.image" alt="Product Image">
-                        </div>
+                    <div class="product-main-image">
+                        <img class="main-image" :src="product.image" alt="Product Image">
+                    </div>
                     <div class="product-detail-image-list">
-                        <div v-for="(index) in 4" :key="index" class="product-detail-image">
-                            <!-- <img :src="product.image"> -->
-                        </div>
+                        <img v-for="(image, index) in product.image.slice(0,4)" :key="index" :src="product.image" alt="Product Image" class="product-detail-image">                            <!-- <img :src="product.image"> -->
+                        <!-- </div> -->
                     </div>
             </div>      
             
@@ -28,16 +26,11 @@
                             <b>{{product.name}}</b>
                     </div>
                     <hr>
-
-                    <div class="seller">
-
-                    </div>
-
                     <table>
-
                         <tr>
                             <td><b>판매자</b></td>
-                            <td style="padding-left: 300px;">{{product.sellerId}}</td>
+                            <td style="padding-left: 300px;">{{product.Id}}</td>
+
                             <!-- {{seller_id}} -->
                         </tr>
                         <tr>
@@ -80,14 +73,13 @@
             </div>
 
             <div class="buttons">
-                    <div class="item">
-                        <button class="btn-bid" @click="bid" v-bind:disabled="agree==false">입찰하기</button>
-                        <!-- <a href="#" class="btn btn-bid">입찰하기</a> -->
-                    </div>
 
+                        <button class="btn-bid" @click="bid" :disabled="!agree" >입찰하기</button>
+                        <!-- <a href="#" class="btn btn-bid">입찰하기</a> -->
                     <div class="wishlist-btn">
-                        <a href="#" class="btn btn-wish">
-                            <i class="far fa-heart" style="color:red">
+                        <a href="#" class="btn-wish">
+                            <i class="far fa-heart" style="color:red; text-align:center">
+
                             </i>
                         </a>
                         <div style="text-align: right; vertical-align:bottom; margin-top:20px;">
@@ -96,9 +88,11 @@
                         </div>
                     </div>
                 </div>
+                </div>
+                </div>
 
-            </div>
-        </div>
+ 
+
 
         <div class="text-description">
             <b><h2>제품설명</h2></b>
@@ -117,6 +111,46 @@
                 </div>
             </div>
         </div>
+
+        <div class="bid-modal" v-if="bidCheck == true" >
+                            <div class="bid-modal-container">
+                                    <div class = "label" style="display: flex; justify-content: space-around;" >
+                                        <div class="input-label">
+                                            현재 최고가
+                                        </div>
+                                        <div class="input">
+                                            {{price}} 원
+                                        </div>
+                                    </div>
+                                    <div class = "label" style="display: flex; justify-content: space-around;" >
+                                        <div class="input-label">
+                                            호가 단위 입찰
+                                        </div>
+                                        <div class="input" style= " display: flex; justify-content:space-around; text-align:right" >
+                                            <button class="minus" @click="bid" >-</button>
+                                            <div class="price">
+                                                <!-- {{price%10}} -->
+                                            </div>
+                                            <button class="plus" @click="plus" >+</button>
+                                            원
+                                        </div>
+                                    </div>
+                                    <div class = "label" style="display: flex; justify-content: space-around;" >
+                                        <div class="input-label">
+                                            총 금액
+                                        </div>
+                                        <div class="input">
+                                            {{price}} 원
+                                        </div>
+                                    </div>
+                                    <div class="modal-btn" style="display:flex;" >
+                                        <button class="btn-bid-confirm" @click="bidConfirm">입찰</button>
+                                        <button class="btn-bid-cancel" @click="bidCancel">취소</button>
+                                </div>
+                               </div>
+                               </div>
+
+
     </div>
 </template>
 
@@ -128,7 +162,9 @@ export default {
             getExistPId: false,
             quantity: 1,
             agree:false, //체크박스 상태 저장
-            product: null
+            product: null,
+            bidCheck:false,
+            price: 16000,
         }
     },
     created() {
@@ -156,14 +192,12 @@ export default {
         },
 
         bid() {
+            this.bidCheck=true;
             // 입찰 페이지 이동
-            if (this.agree) {
-                //'/bid'로 이동하도록 설정
-                //  this.$router.push('/bid'); 
-            } else {
-                // 체크되어 있지 않다면 알림 메시지 표시
-                this.$toast.warning("이용약관에 동의해주세요.");
-            }
+        },
+
+        bidCancel() {
+            this.bidCheck = false;
         },
 
         wish(){
@@ -177,21 +211,19 @@ export default {
 <style scoped>
 
 .bid-details-content {
-    justify-content: center;
-    align-items: center;
     display: flex;
+    width: 100%;
 }
 
 .product-layout{
-    display: flex;
-    justify-content: center;
     margin-right: 50px;
+    width: 100%;
 }
-
 
 .product-name {
     padding-bottom: 10px;
     font-size: 30px;
+    text-align:left;
 }
 
 .tr{
@@ -204,34 +236,27 @@ export default {
 }
 
 .product-main-image{
-    width: 500px;
-    height: 500px;
-
-    background-color:lightgrey;
-    margin-bottom: 10px;
+    padding-top: 50px;
+    padding-bottom: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .main-image {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 500px;
+    max-height: 500px;
 }
 
 .product-detail-image-list{
     display:flex;
-    flex-direction: column;
-    margin-right: 50px;
+    justify-content: space-around;
 }
 
 .product-detail-image{
-    width: 80px;
-    height: 80px;
-    background-color:lightgrey;
-    margin-bottom: 20px;
-    margin-left: 20px;
-    justify-content : center;
+    width: 15%; /* 이미지 너비를 조정합니다. */
+    max-height: 100%; /* 최대 높이를 100%로 설정하여 비율을 유지합니다. */
+    object-fit: contain;
 }
 
 .timer {
@@ -246,15 +271,15 @@ export default {
     text-align:center;
     align-items: center;
     align-content: center;
-
-    width: 80%;
+    width: 50%;
 }
 
-.description{
+/* .description{
     text-align: left;
     line-height: 50px;
     font-size: 15px;
-}
+    width: 50%;
+} */
 
 
 
@@ -277,30 +302,23 @@ export default {
 .buttons {
     display: flex;
     justify-content: space-around;
-    margin-top:50px
+    margin-top:50px;
+    width:100%;
+
 }
 
 .btn-wish {
     background-color: white;
-    width: 200px;
+    width: 50px;
     height: 50px;
     font-size: 20px;
     align-content: center;
     border:black solid 1px;
+    text-align:center;
 }
-
-.wished {
-    background-color: white;
-    width: 200px;
-    height: 50px;
-    font-size: 20px;
-    align-content: center;
-    border:black solid 1px;
-}
-
 .btn-bid {
     background-color:#ffb400;
-    width: 500px;
+    width: 50%;
     height: 50px;
     color:white;
     font-size: 20px;
@@ -346,10 +364,59 @@ export default {
     border: 1px solid #ddd;
     color: black;
 }
-/* 
-.container{
-    width: 80%;
-} */
 
+.bid-modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+}
+/* modal or popup */
+.bid-modal-container {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.label {
+    justify-content: space-around;
+}
+
+.input-label{
+    text-align:left;
+    width: 50%;
+    margin-bottom: 30px;
+}
+.input{
+    text-align:right;
+    width: 50%;
+}
+
+.btn-bid-confirm {
+    background-color:#ffb400;
+    color:white;
+    font-size: 20px;
+    border:#ffb400 solid 1px;
+    width: 50%;
+}
+
+.btn-bid-cancel {
+    background-color:white;
+    color:black;
+    font-size: 20px;
+    border:white solid 1px;
+    width: 50%;
+}
+
+.wishlist-btn {
+    text-align:center;
+}
 
 </style>
