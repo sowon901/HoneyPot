@@ -148,9 +148,11 @@ export default {
 }
 
 .section-divider {
+
   margin-top: 17px;
-  border: 0.3px #ccc;
-}
+  border: 1px #ccc;
+  }
+
 
 .stock-request {
   flex: 3;
