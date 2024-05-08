@@ -20,10 +20,14 @@
         </div>
       </div>
     </div>
-
+    <div class="interests">
+      <button v-for="tag in tags" :key="tag" :class="{ 'selected': selectedTags.includes(tag) }" @click="toggleTag(tag)">
+        {{ tag }}
+      </button>
+    </div>
     <div class="row">
-      <ProductItem v-for="(product, index) in displayedProducts" :product="product" :key="index"
-        :className="`col-lg-3 col-md-6 col-sm-6`"></ProductItem>
+      <!-- 필터링된 상품 목록을 보여주는 부분 -->
+      <ProductItem v-for="(product, index) in displayedProducts" :product="product" :key="index" :className="`col-lg-3 col-md-6 col-sm-6`"></ProductItem>
     </div>
     <nav class="woocommerce-pagination">
       <ul>
@@ -58,10 +62,22 @@ export default {
     displayedProducts() {
       const startIndex = (this.currentPage - 1) * this.itemsPerPage;
       const endIndex = Math.min(startIndex + this.itemsPerPage, this.totalProducts);
-      return this.products.slice(startIndex, endIndex);
+      // return this.products.slice(startIndex, endIndex);
+      // 필터링된 상품 목록의 일부만 가져오도록 수정합니다.
+      return this.filteredProducts.slice(this.startIndex - 1, this.endIndex);
     },
     totalPages() {
       return Math.ceil(this.totalProducts / this.itemsPerPage);
+    },
+    // 선택된 태그로 필터링된 상품 목록을 반환하는 computed 속성
+    filteredProducts() {
+      // 선택된 태그가 없을 때는 모든 상품을 반환합니다.
+      if (this.selectedTags.length === 0) {
+        return this.products;
+      } else {
+        // 선택된 태그로 필터링된 상품 목록을 반환합니다.
+        return this.products.filter(product => this.selectedTags.includes(product.category_id));
+      }
     },
   },
   data() {
@@ -69,8 +85,7 @@ export default {
       currentPage: 1,
       itemsPerPage: 40,
       selectedSorting: '1',
-      tags: [  "(여자)아이들(G-IDLE)",  "아이브(IVE)",  "아이유(IU)",  "아이즈원(IZ*ONE)",  "에이티즈(ATEEZ)",  "엔하이픈(ENHYPEN)",  "엔시티(NCT)",  "엔믹스(NMIXX)",  "오마이걸(OH MY GIRL)",  "오렌지카라멜(Orange Caramel)",  "뉴진스(NewJeans)",  "레드벨벳(Red Velvet)",  "르세라핌(LE SSERAFIM)", "방탄소년단(BTS)" ,"보이넥스트도어(BOYNEXTDOOR)",  "블랙핑크(BLACKPINK)",  "비비지(VIVIZ)",  "샤이니(SHINee)",  "소녀시대",  "스트레이 키즈(Stray Kids)",  "씨아이엑스(CIX)",  "케플러(Kep1er)",  "트레저(TREASURE)",  "트와이스(TWICE)",  "더보이즈(THE BOYZ)",  "몬스타엑스(MONSTA X)",  "있지(ITZY)",  "우주소녀(WJSN)",  "제로베이스원(ZEROBASEONE)"]
-,
+      tags: ['BLACKPINK', 'IVE', 'NewJeans', 'BTS', 'TWICE', 'Stray Kids', 'THEBOYZ', 'AESPA', 'LE SSERAFIM', 'NMIXX', '에스파', '아이유', 'ITZY', 'ENHYPEN', 'TREASURE', 'G-IDLE', 'NCT', 'ATEEZ', '우주소녀', '몬스타엑스', 'SHINee', 'Kep1er', 'CIX', '레드벨벳', '오마이걸', '아이즈원', 'BOYNEXTDOOR', 'ZEROBASEONE', '소녀시대', '오렌지카라멜', 'VIVIZ'],
       selectedTags: [],
     };
   },
@@ -94,6 +109,45 @@ export default {
           this.products.sort((a, b) => new Date(b.date) - new Date(a.date));
       }
     },
+    toggleTag(tag) {
+  const index = this.selectedTags.indexOf(tag);
+  if (index >= 0) {
+    // 이미 선택된 태그인 경우 선택을 해제합니다.
+    this.selectedTags.splice(index, 1);
+  } else {
+    // 선택된 태그가 없으면 선택한 태그로 설정합니다.
+    if (this.selectedTags.length === 0) {
+      this.selectedTags.push(tag);
+    } else {
+      // 이미 선택된 태그가 있으면 첫 번째 것을 교체합니다.
+      this.selectedTags.splice(0, 1, tag);
+    }
+  }
+},
+
   },
-}
+};
 </script>
+
+<style scoped>
+.interests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.interests button {
+  border: none;
+  border-radius: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+}
+
+.interests .selected {
+  background-color: #ffb400;
+  color: white;
+}
+</style>

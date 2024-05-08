@@ -2,9 +2,11 @@
     <div :class="className">
         <div class="single-product-box">
             <div class="product-image">
+                <div class="image-wrapper">
                 <nuxt-link :to="`/products-details/${product.id}`">
                     <img :src="product.image" :alt="product.name" class="product-image" />
                 </nuxt-link>
+            </div>
             </div>
 
             <div class="product-content">
@@ -52,3 +54,27 @@ export default {
     },
 }
 </script>
+
+
+<style scoped>
+.product-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 123.08%;
+    background-color: white;
+}
+
+.product-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+</style>
