@@ -102,20 +102,5 @@ export default {
 .product-detail:hover {
     cursor: pointer;
 }
-</script>
-<style scoped="scoped">
-.table td,
-.table th {
-    color: black;
-}
-
-.product-detail {
-    color: black;
-    cursor: default;
-}
-
-.product-detail:hover {
-    cursor: pointer;
-}
 
 </style>
