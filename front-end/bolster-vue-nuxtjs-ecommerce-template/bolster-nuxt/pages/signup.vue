@@ -178,8 +178,6 @@
                                 </div>
                             </div>
                         </div>
-
-
                         <div class="form-group">
                             <label>주소</label>
                             <input
@@ -267,10 +265,12 @@
     color: #ffb400;
 }
 
+
 #postcode {
     background-color: gray;
     color: white;
 }
+
 
 #postcode:hover {
     background-color: transparent;
@@ -333,10 +333,10 @@
 
 </style>
 
-
 <script>
 import TopHeader from '../layouts/TopHeader'
 import Menubar from '../layouts/Menubar'
+import Vue from 'vue';
 
 export default {
     components: {
