@@ -1,36 +1,38 @@
 <template>
-    <div class="container">
-        <div class="wrapper">
-            <div class="content">
-                <div class="sidebar">
-                    <Sidebar />
-                </div>
-                <div class="user-info">
-                    <div class="header">
-                        <h4>프로필 관리</h4>
-                        <button @click="saveProfile" class="save-button">저장</button>
-                    </div>
-                    <hr class="section-divider" />
-                    <div class="profile-container">
-                        <div class="profile-pic">
-                            <img v-if="profileImage" :src="profileImage" alt="프로필 사진" class="image" />
-                            <div v-else class="default-image"></div>
-                            <button class="upload-button" @click.stop="triggerUpload">+</button>
-                            <input type="file" ref="fileInput" @change="previewImage" style="display: none;" />
-                        </div>
-                        <input v-model="nickname" placeholder="닉네임" class="nickname-input" />
-                    </div>
-                    <hr class="section-divider" />
-                    <div class="interests">
-                        <button v-for="tag in tags" :key="tag" :class="{ 'selected': selectedTags.includes(tag) }"
-                            @click="toggleTag(tag)">
-                            {{ tag }}
-                        </button>
-                    </div>
-                </div>
-            </div>
+  <div class="container">
+    <div class="wrapper">
+      <div class="content">
+        <div class="sidebar">
+          <Sidebar />
         </div>
+        <div class="user-info">
+          <div class="header">
+            <h4>프로필 관리</h4>
+            <button @click="saveProfile" class="save-button">저장</button>
+          </div>
+          <hr class="section-divider" />
+          <div class="profile-container">
+            <div class="profile-pic">
+              <!-- 이미지 또는 기본 이미지를 v-show로 제어 -->
+              <img v-show="profileImage" :src="profileImage" alt="프로필 사진" class="image" />
+              <div v-show="!profileImage" class="default-image"></div>
+              <button class="upload-button" @click.stop="triggerUpload">+</button>
+              <input type="file" ref="fileInput" @change="previewImage" style="display: none;" />
+            </div>
+
+            <input v-model="nickname" placeholder="닉네임" class="nickname-input" />
+          </div>
+          <hr class="section-divider" />
+          <div class="interests">
+            <button v-for="tag in tags" :key="tag" :class="{ 'selected': selectedTags.includes(tag) }"
+              @click="toggleTag(tag)">
+              {{ tag }}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
   
   <script>
@@ -50,6 +52,10 @@
       }
     },
     methods: {
+      saveProfile() {
+      // 프로필 저장 로직 구현
+      console.log("프로필 정보 저장");
+    },
       toggleTag(tag) {
         const index = this.selectedTags.indexOf(tag);
         if (index >= 0) {
@@ -66,140 +72,148 @@
         this.$refs.fileInput.click();
       },
       previewImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-            this.profileImage = e.target.result;
-            console.log('New image loaded:', this.profileImage);  // 로그 추가
-            };
-            reader.readAsDataURL(file);
-        }
-      }
-
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.profileImage = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    this.profileImage = this.defaultImage; // 파일이 없을 경우 기본 이미지 설정
+  }
+      },
     }
   }
   </script>
   
   
   <style scoped>
-.container {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
+  .container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
 
-.wrapper {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-}
+  .wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+  }
 
-.content {
-  display: flex;
-  width: 100%;
-}
+  .content {
+    display: flex;
+    width: 100%;
+  }
 
-.sidebar {
-  flex: 0 0 200px;
-  padding: 20px;
-}
+  .sidebar {
+    flex: 0 0 200px;
+    padding: 20px;
+  }
 
-.user-info {
-  flex-grow: 1;
-  margin-left: 20px;
-  background-color: #fff;
-  padding: 20px;
-}
+  .user-info {
+    flex-grow: 1;
+    margin-left: 20px;
+    background-color: #fff;
+    padding: 20px;
+  }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.save-button {
-  background-color: #ffb400;
-  color: white;
-  border-radius: 10px;
-  padding: 7px 15px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-}
+  .save-button {
+    background-color: #ffb400;
+    color: white;
+    border-radius: 10px;
+    padding: 7px 15px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
 
-.nickname-input {
-  margin-left: 20px;
-  padding: 5px 10px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  width: 200px;
-}
+  .nickname-input {
+    margin-left: 20px;
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    width: 200px;
+  }
 
-.upload-button {
-  position: absolute;
-  bottom: 0px;
-  right: 0px;
-  width: 30px;
-  height: 30px;
-  background-color: black;
-  color: white;
-  border-radius: 50%;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-}
+  .upload-button {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    width: 30px;
+    height: 30px;
+    background-color: black;
+    color: white;
+    border-radius: 50%;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+  }
 
-.profile-container {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
+  .profile-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
 
-.profile-pic {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #ccc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  .profile-pic {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #dfdfdf;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-.profile-pic .default-image {
-  width: 100%;
-  height: 100%;
-  background-image: url('@/assets/img/favicon-honeyPot.png');
-  background-size: cover;
-  border-radius: 50%;
-}
+  .profile-pic .default-image {
+    width: 100%;
+    height: 100%;
+    background-image: url('@/assets/img/favicon-honeyPot.png');
+    background-size: cover;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    border-radius: 50%;
+    overflow: hidden;
+  }
 
-.interests {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
-}
+  .interests {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
 
-.interests button {
-  border: none;
-  border-radius: 10px;
-  padding: 5px 10px;
-  cursor: pointer;
-  background-color: white;
-  color: black;
-}
+  .interests button {
+    border: none;
+    border-radius: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+  }
 
-.interests .selected {
-  background-color: #ffb400;
-  color: white;
-}
+  .interests .selected {
+    background-color: #ffb400;
+    color: white;
+  }
 
-.section-divider {
-  border: none;
-  height: 1px;
-  background-color: #333;
-  margin: 20px 0;
-}
+  .section-divider {
+    border: none;
+    height: 1px;
+    background-color: #333;
+    margin: 20px 0;
+  }
 </style>
