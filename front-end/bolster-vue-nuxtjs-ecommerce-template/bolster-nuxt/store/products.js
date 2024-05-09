@@ -2,7 +2,7 @@ const state = () => ({
     all: [
         {
             id: 1,
-            category_id: '방탄소년단(BTS)',
+            category_id: 'BTS',
             serial_number: 'SN001',
             name: 'BTS JIN PHOTOCARD',
             image: require('../assets/img/jin.jpg'),
