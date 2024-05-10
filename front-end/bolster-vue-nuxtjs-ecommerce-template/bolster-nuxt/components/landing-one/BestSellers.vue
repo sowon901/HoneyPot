@@ -2,7 +2,7 @@
   <div>
     <!-- Start All Products Area -->
     <div class="container">
-        <button @click="leftSlide" class="btn-left">
+        <button @click="leftSlide" class="btn-left" :class="{'disabled': currentIndex === 0 }">
           <i class="fas fa-chevron-left"></i>
         </button>
       <div class="row">
@@ -10,7 +10,7 @@
            <ProductItem :product="product"></ProductItem>
          </div>
        </div>
-          <button @click="rightSlide" class="btn-right">
+          <button @click="rightSlide" class="btn-right" :class="{'disabled': currentIndex === this.totalSlides - 1 }">
             <i class="fas fa-chevron-right"></i>
           </button>
     </div>
@@ -82,11 +82,20 @@ export default {
 
 .btn-left i,
 .btn-right i {
-  color: #333; /* 아이콘 색상 설정 */
+  color: #999;
 }
 
 .btn-left:hover i,
 .btn-right:hover i {
-  color: #555;
+  color: black;
 }
+
+.btn-left.disabled i {
+  color: #999; 
+}
+
+.btn-right.disabled i {
+  color: #999; 
+}
+
 </style>
