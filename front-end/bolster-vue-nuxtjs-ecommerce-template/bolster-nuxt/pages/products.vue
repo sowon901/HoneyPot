@@ -41,15 +41,16 @@
 
 <script>
 import ProductItem from '../components/landing-one/ProductItem'
+import axios from 'axios';
 
 export default {
   components: {
     ProductItem,
   },
   computed: {
-    products() {
-      return this.$store.state.products.all;
-    },
+    // products() {
+    //   return this.$store.state.products.all;
+    // },
     totalProducts() {
       return this.products.length;
     },
@@ -83,10 +84,11 @@ export default {
   data() {
     return {
       currentPage: 1,
-      itemsPerPage: 40,
+      itemsPerPage: 4,
       selectedSorting: '1',
       tags: ['BLACKPINK', 'IVE', 'NewJeans', 'BTS', 'TWICE', 'Stray Kids', 'THEBOYZ', 'AESPA', 'LE SSERAFIM', 'NMIXX', '에스파', '아이유', 'ITZY', 'ENHYPEN', 'TREASURE', 'G-IDLE', 'NCT', 'ATEEZ', '우주소녀', '몬스타엑스', 'SHINee', 'Kep1er', 'CIX', '레드벨벳', '오마이걸', '아이즈원', 'BOYNEXTDOOR', 'ZEROBASEONE', '소녀시대', '오렌지카라멜', 'VIVIZ'],
       selectedTags: [],
+      products: [],
     };
   },
   methods: {
@@ -125,6 +127,18 @@ export default {
   }
 },
 
+  },
+  mounted() {
+    // 컴포넌트가 마운트된 후에 서버에서 제품 목록을 가져오는 HTTP GET 요청을 수행
+    axios.get("http://localhost:8080/products")
+      .then(response => {
+        console.log("success");
+        this.products = response.data; // 받은 데이터를 컴포넌트의 products 데이터에 저장
+        
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
   },
 };
 </script>

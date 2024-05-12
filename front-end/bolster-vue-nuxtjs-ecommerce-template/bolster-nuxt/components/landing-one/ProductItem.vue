@@ -4,7 +4,7 @@
             <div class="product-image">
                 <div class="image-wrapper">
                 <nuxt-link :to="`/products-details/${product.id}`">
-                    <img :src="product.image" :alt="product.name" class="product-image" />
+                    <img :src="product.image1" :alt="product.name" class="product-image" />
                 </nuxt-link>
             </div>
             </div>
@@ -12,7 +12,7 @@
             <div class="product-content">
                 <h3>
                     <nuxt-link :to="`/products-details/${product.id}`">
-                        {{ product.name }}
+                        {{ product.productName }}
                     </nuxt-link>
                 </h3>
                 <div>
@@ -21,7 +21,7 @@
                             {{ product.price }}
                         </div>
                         <div style="margin-left: auto; color: gray;">
-                            입찰 건
+                            입찰 {{product.bidCnt}}건
                         </div>
                     </div>
                     <div style="display: flex; color: gray; justify-content: space-between;">
