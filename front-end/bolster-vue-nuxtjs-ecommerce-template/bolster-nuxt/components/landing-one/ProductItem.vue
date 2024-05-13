@@ -3,15 +3,15 @@
         <div class="single-product-box">
             <div class="product-image">
                 <div class="image-wrapper">
-                <nuxt-link :to="`/products-details/${product.id}`">
-                    <img :src="product.image1" :alt="product.name" class="product-image" />
-                </nuxt-link>
-            </div>
+                    <nuxt-link :to="`/bid-details/${product.productId}`">
+                        <img :src="product.image1" :alt="product.productName" class="product-image" />
+                    </nuxt-link>
+                </div>
             </div>
 
             <div class="product-content">
-                <h3>
-                    <nuxt-link :to="`/products-details/${product.id}`">
+                <h3 style="text-align: left;">
+                    <nuxt-link :to="`/bid-details/${product.productId}`">
                         {{ product.productName }}
                     </nuxt-link>
                 </h3>
@@ -21,7 +21,7 @@
                             {{ product.price }}
                         </div>
                         <div style="margin-left: auto; color: gray;">
-                            입찰 {{product.bidCnt}}건
+                            입찰 {{ product.bidCnt }}건
                         </div>
                     </div>
                     <div style="display: flex; color: gray; justify-content: space-between;">
@@ -29,7 +29,7 @@
                             또는 즉시 구매
                         </div>
                         <div style="margin-left: auto;">
-                            남은 시간
+                            {{ remainingTime }}
                         </div>
                     </div>
                 </div>
@@ -46,12 +46,34 @@ export default {
     },
     data() {
         return {
-            showBuyNow: true,
         }
     },
     props: ['product', 'className'],
     computed: {
+        showBuyNow() {
+            return this.product.buyNow !== null && this.product.buyNow !== 0;
+        },
+        remainingTime() {
+            const currentTime = new Date();
+            const timeLimit = new Date(this.product.timeLimit);
+            if (currentTime > timeLimit) {
+                return "종료됨";
+            } else {
+                const remainingMilliseconds = timeLimit - currentTime;
+                const days = Math.floor(remainingMilliseconds / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((remainingMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                let remainingTimeStr = "";
+                if (days > 0) {
+                    remainingTimeStr += `${days}일 `;
+                }
+                if (hours > 0) {
+                    remainingTimeStr += `${hours}시간 `;
+                }
+                return `${remainingTimeStr}`;
+            }
+        }
     },
+
 }
 </script>
 
