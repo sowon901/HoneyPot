@@ -21,13 +21,15 @@
       </div>
     </div>
     <div class="interests">
-      <button v-for="tag in tags" :key="tag" :class="{ 'selected': selectedTags.includes(tag) }" @click="toggleTag(tag)">
+      <button v-for="tag in tags" :key="tag" :class="{ 'selected': selectedTags.includes(tag) }"
+        @click="toggleTag(tag)">
         {{ tag }}
       </button>
     </div>
     <div class="row">
       <!-- 필터링된 상품 목록을 보여주는 부분 -->
-      <ProductItem v-for="(product, index) in displayedProducts" :product="product" :key="index" :className="`col-lg-3 col-md-6 col-sm-6`"></ProductItem>
+      <ProductItem v-for="(product, index) in displayedProducts" :product="product" :key="index"
+        :className="`col-lg-3 col-md-6 col-sm-6`"></ProductItem>
     </div>
     <nav class="woocommerce-pagination">
       <ul>
@@ -48,9 +50,6 @@ export default {
     ProductItem,
   },
   computed: {
-    // products() {
-    //   return this.$store.state.products.all;
-    // },
     totalProducts() {
       return this.products.length;
     },
@@ -77,7 +76,7 @@ export default {
         return this.products;
       } else {
         // 선택된 태그로 필터링된 상품 목록을 반환합니다.
-        return this.products.filter(product => this.selectedTags.includes(product.category_id));
+        return this.products.filter(product => this.selectedTags.includes(product.idolName));
       }
     },
   },
@@ -86,7 +85,7 @@ export default {
       currentPage: 1,
       itemsPerPage: 4,
       selectedSorting: '1',
-      tags: ['BLACKPINK', 'IVE', 'NewJeans', 'BTS', 'TWICE', 'Stray Kids', 'THEBOYZ', 'AESPA', 'LE SSERAFIM', 'NMIXX', '에스파', '아이유', 'ITZY', 'ENHYPEN', 'TREASURE', 'G-IDLE', 'NCT', 'ATEEZ', '우주소녀', '몬스타엑스', 'SHINee', 'Kep1er', 'CIX', '레드벨벳', '오마이걸', '아이즈원', 'BOYNEXTDOOR', 'ZEROBASEONE', '소녀시대', '오렌지카라멜', 'VIVIZ'],
+      tags: ['AESPA','BLACKPINK','BOYNEXTDOOR', 'BTS', 'ENHYPEN', 'EXO','GIRLSRENERATION','ITZY','LESSERAFIM','NCT','NEWJEANS','NMIXX','FROMIS_9','RIIZE','STRAYKIDS','SEVENTEEN', 'SHINEE','SUPERJUNIOR','TXT','TWICE','WINNER'],
       selectedTags: [],
       products: [],
     };
@@ -112,20 +111,20 @@ export default {
       }
     },
     toggleTag(tag) {
-  const index = this.selectedTags.indexOf(tag);
-  if (index >= 0) {
-    // 이미 선택된 태그인 경우 선택을 해제합니다.
-    this.selectedTags.splice(index, 1);
-  } else {
-    // 선택된 태그가 없으면 선택한 태그로 설정합니다.
-    if (this.selectedTags.length === 0) {
-      this.selectedTags.push(tag);
-    } else {
-      // 이미 선택된 태그가 있으면 첫 번째 것을 교체합니다.
-      this.selectedTags.splice(0, 1, tag);
-    }
-  }
-},
+      const index = this.selectedTags.indexOf(tag);
+      if (index >= 0) {
+        // 이미 선택된 태그인 경우 선택을 해제합니다.
+        this.selectedTags.splice(index, 1);
+      } else {
+        // 선택된 태그가 없으면 선택한 태그로 설정합니다.
+        if (this.selectedTags.length === 0) {
+          this.selectedTags.push(tag);
+        } else {
+          // 이미 선택된 태그가 있으면 첫 번째 것을 교체합니다.
+          this.selectedTags.splice(0, 1, tag);
+        }
+      }
+    },
 
   },
   mounted() {
@@ -133,8 +132,9 @@ export default {
     axios.get("http://localhost:8080/products")
       .then(response => {
         console.log("success");
+        console.log(response.data);
         this.products = response.data; // 받은 데이터를 컴포넌트의 products 데이터에 저장
-        
+
       })
       .catch(error => {
         console.error('Error fetching products:', error);
@@ -149,6 +149,7 @@ export default {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .interests button {

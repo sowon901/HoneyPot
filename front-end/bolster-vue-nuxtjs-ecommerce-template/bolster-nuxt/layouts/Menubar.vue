@@ -21,6 +21,9 @@
                                 <input type="text" placeholder="판매자나 상품명을 검색해 보세요." class="search-input"></div>
                             <div class="others-option">
                                 <div class="option-item">
+                                    <nuxt-link to="/products">모두보기</nuxt-link>
+                                </div>
+                                <div class="option-item">
                                     <nuxt-link to="/login">판매하기</nuxt-link>
                                 </div>
                                 <div class="option-item">
