@@ -15,6 +15,7 @@
                 </button>            
               </div>   
                 <LatestProducts></LatestProducts>
+
             </div>
             <div class="best-sellers">
               <div class="section-title-filter">

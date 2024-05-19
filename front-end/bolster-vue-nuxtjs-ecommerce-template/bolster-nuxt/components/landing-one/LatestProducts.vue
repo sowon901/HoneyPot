@@ -22,6 +22,7 @@
         </div>
       </div>
     </div>
+
 </template>
 
 <script>
@@ -40,12 +41,14 @@ export default {
       totalSlides:3,
       products: []
     };
+
   },
 
   computed: {
     // products() {
     //   return this.$store.state.products.all;
     // },
+
     props: ['product'],
     slicedProducts() {
       const start = this.currentIndex * this.itemsPerPage;
@@ -96,6 +99,7 @@ export default {
   margin-right: 20px;
   margin-left: 20px;
   outline: none;
+
 }
 
 .btn-left i,
@@ -119,4 +123,5 @@ export default {
 .btn-arrow {
   height: 250px;
 }
+
 </style>

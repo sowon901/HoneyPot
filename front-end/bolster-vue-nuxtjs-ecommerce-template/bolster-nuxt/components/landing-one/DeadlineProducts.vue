@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <div class="container">
       <div class="btn-arrow">
         <button @click="leftSlide" class="btn-left" :class="{'disabled': currentIndex === 0 }">
@@ -8,6 +9,7 @@
       </div>
       <div>
       </div>
+
       <div class="row">
          <div class="col-md-3" v-for="(product, index) in slicedProducts" :key="index">
            <ProductItem :product="product"></ProductItem>
@@ -31,6 +33,7 @@ import axios from 'axios';
 
 export default {
   components: {
+
     ProductItem,
   },
   data() {

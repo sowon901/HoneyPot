@@ -8,11 +8,13 @@
       </div>
       <div>
       </div>
+
       <div class="row">
          <div class="col-md-3" v-for="(product, index) in slicedProducts" :key="index">
            <ProductItem :product="product"></ProductItem>
          </div>
        </div>
+
        <div class="btn-arrow">
           <button @click="rightSlide" class="btn-right" :class="{'disabled': currentIndex === this.totalSlides - 1 }">
             <i class="fas fa-chevron-right"></i>
@@ -22,6 +24,7 @@
         </div>
       </div>
     </div>
+
 </template>
 
 <script>
@@ -46,6 +49,7 @@ export default {
     // products() {
     //   return this.$store.state.products.all;
     // },
+
     props: ['product'],
     slicedProducts() {
       const start = this.currentIndex * this.itemsPerPage;
@@ -96,15 +100,18 @@ export default {
   margin-right: 20px;
   margin-left: 20px;
   outline: none;
+
 }
 
 .btn-left i,
 .btn-right i {
   color: #999;
+
 }
 
 .btn-left:hover i,
 .btn-right:hover i {
+
   color: black;
 }
 

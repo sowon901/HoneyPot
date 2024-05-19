@@ -4,6 +4,7 @@
             <div class="product-image">           
                 <nuxt-link :to="`/bid-details/${product.productId}`">
                     <img :src="product.image1" :alt="product.productName"/> 
+
                 </nuxt-link>
 
                 <!-- <Timer
@@ -135,5 +136,4 @@ export default {
 }
 
     
-
 </style>

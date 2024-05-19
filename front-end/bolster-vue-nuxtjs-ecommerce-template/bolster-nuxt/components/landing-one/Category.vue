@@ -3,6 +3,7 @@
       <!-- Start Trending Products Area -->
         <div class="container">
           <div class="section-title">
+
             <h1><b> 관심 가질만한 상품</b></h1>
           </div>
 
@@ -45,6 +46,7 @@
         selectedIdol: ['아이브', '르세라핌', '세븐틴'],
         idols: ['아이브', '르세라핌', '세븐틴'], // 아이돌 이름 배열,
         products: []
+
       };
     },
 
@@ -65,6 +67,7 @@
           console.error('Error fetching data:', error);
         });
       },
+
     },
   
     computed: {
@@ -78,6 +81,7 @@
         if(!this.selectedIdol) return this.products;
 
         return this.products.filter(product => product.idolName === this.selectedIdol);
+
       },
       props: ['product']
   },
