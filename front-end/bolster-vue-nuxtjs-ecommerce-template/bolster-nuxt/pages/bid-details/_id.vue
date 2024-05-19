@@ -186,6 +186,7 @@ export default {
                 this.product = response.data;
             })
             .catch(error => {
+                console.log(response.data);
                 // 오류가 발생했을 때 오류 메시지를 출력합니다.
                 console.error('Error fetching product data:', error);
             });
@@ -193,7 +194,6 @@ export default {
     // props: ['product_id', 'product_name', 'price', 'image1', 'image2', 'image3','image4' ],
     // props: ['product'],
     computed: {
-
     },
     methods: {
 
