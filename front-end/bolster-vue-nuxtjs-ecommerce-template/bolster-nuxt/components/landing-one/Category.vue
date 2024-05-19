@@ -3,7 +3,7 @@
       <!-- Start Trending Products Area -->
         <div class="container">
           <div class="section-title">
-            <h2><b> 관심 가질만한 상품</b></h2>
+            <h1><b> 관심 가질만한 상품</b></h1>
           </div>
 
           <div class="btn-category">
@@ -32,6 +32,9 @@
   import QuckView from '../modals/QuckView'
   import { mutations } from '../../utils/sidebar-util'
   import ProductItem from './ProductItemMain'
+  import axios from 'axios';
+
+
   export default {
     components: {
       QuckView,
@@ -40,7 +43,8 @@
     data() {
       return {
         selectedIdol: ['아이브', '르세라핌', '세븐틴'],
-        idols: ['아이브', '르세라핌', '세븐틴'] // 아이돌 이름 배열,
+        idols: ['아이브', '르세라핌', '세븐틴'], // 아이돌 이름 배열,
+        products: []
       };
     },
 
@@ -50,7 +54,17 @@
       },
       filterByIdol(idol) {
         this.selectedIdol = idol;
-      }
+      },
+      fetchData() {
+        axios.get('http://localhost:8080/filterByCategory')
+        .then(response => {
+          this.products = response.data; 
+          console.log("successMain", this.products);
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+      },
     },
   
     computed: {
@@ -64,7 +78,12 @@
         if(!this.selectedIdol) return this.products;
 
         return this.products.filter(product => product.idolName === this.selectedIdol);
-      }
+      },
+      props: ['product']
+  },
+
+      mounted() {
+        this.fetchData();
   },
 }
   </script>

@@ -14,9 +14,7 @@
                   </nuxt-link>
                 </button>            
               </div>   
-              <div class="section-product"> 
                 <LatestProducts></LatestProducts>
-              </div>
             </div>
             <div class="best-sellers">
               <div class="section-title-filter">
@@ -53,6 +51,7 @@ import LatestProducts from '../components/landing-one/LatestProducts';
 import DeadlineProducts from '../components/landing-one/DeadlineProducts.vue';
 import BestSellers from '../components/landing-one/BestSellers.vue';
 import Category from '../components/landing-one/Category.vue';
+import axios from 'axios';
 
 
 export default {
@@ -67,7 +66,20 @@ export default {
   },
   methods: {
      
-  }
+  },
+  mounted() {
+    // 컴포넌트가 마운트된 후에 서버에서 제품 목록을 가져오는 HTTP GET 요청을 수행
+    axios.get("http://localhost:8080/")
+      .then(response => {
+        console.log("success");
+        console.log(response.data);
+        this.products = response.data; // 받은 데이터를 컴포넌트의 products 데이터에 저장
+
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
+  },
 }
 </script>
 
@@ -100,8 +112,8 @@ export default {
 
 .section-title-filter {
   text-align: left;
-  padding-top: 20px;
-  height: 90px;
+  margin-top: 50px;
+  height: 70px;
 }
 
 .latest-product {
