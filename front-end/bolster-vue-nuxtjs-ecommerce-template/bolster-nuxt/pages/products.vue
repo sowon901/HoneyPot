@@ -85,7 +85,9 @@ export default {
       currentPage: 1,
       itemsPerPage: 4,
       selectedSorting: '1',
+
       tags: ['AESPA', 'BLACKPINK', 'BOYNEXTDOOR', 'BTS', 'ENHYPEN', 'EXO', 'GIRLSRENERATION', 'ITZY', 'LESSERAFIM', 'NCT', 'NEWJEANS', 'NMIXX', 'FROMIS_9', 'RIIZE', 'STRAYKIDS', 'SEVENTEEN', 'SHINEE', 'SUPERJUNIOR', 'TXT', 'TWICE', 'WINNER'],
+
       selectedTags: [],
       products: [],
     };
@@ -133,6 +135,7 @@ export default {
       .then(response => {
         console.log("success");
         console.log(response.data);
+
         this.products = response.data;
       })
       .catch(error => {
