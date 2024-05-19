@@ -68,7 +68,6 @@
                     </table>
                 </div>
 
-
                 <div class="caution">
                     <!-- 이용약관-->
                     <b>주의사항</b>
@@ -120,6 +119,7 @@
         <div class="text-description">
             제품 정보
             <hr />
+
 
             <div class="detail-desciprtion-text">
                 <!-- 상품 상세 설명 추가 -->
@@ -206,6 +206,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -225,6 +226,7 @@ export default {
             agree: false, //체크박스 상태 저장
             product: null,
             bidCheck: false,
+
             price: "",
             product: "",
             days: '',
@@ -239,6 +241,7 @@ export default {
             hideMoreButton: false,
             mainImage: "",
             priceUnit: "",
+
         }
     },
     mounted() {
@@ -295,6 +298,7 @@ export default {
                 this.product.image4,
                 this.product.image5,
             ].filter(image => image)
+
         },
         more() {
 
@@ -344,6 +348,7 @@ export default {
         //     }
         // }
 
+
     }
 }
 </script>
@@ -385,7 +390,6 @@ export default {
 .main-image {
     max-width: 500px;
     max-height: 500px;
-}
 
 .product-detail-image-list{
     display:flex;
@@ -396,6 +400,7 @@ export default {
     width: 15%; /* 이미지 너비를 조정합니다. */
     max-height: 100%; /* 최대 높이를 100%로 설정하여 비율을 유지합니다. */
     margin-right: 10px;
+
     object-fit: contain;
 }
 
@@ -494,6 +499,13 @@ export default {
     justify-content: center;
 }
 
+.detail-big-image {
+    width: 1000px;
+    height: 1000px;
+    background-color: lightgrey;
+    margin: 100px;
+}
+
 
 .more-button {
     width: 500px;
@@ -520,11 +532,11 @@ export default {
     border-radius: 10px; /* 모달의 둥근 모서리 설정 */
     padding: 20px; /* 모달 내부 여백 설정 */
     box-sizing: border-box; /* padding이 박스 크기에 포함되도록 설정 */
-
 }
 
 /* modal or popup */
 .bid-modal-container {
+
 
   background: #fff;
   border-radius: 10px;
@@ -533,6 +545,7 @@ export default {
   box-sizing: border-box;
   align-items: center;
   border-color: black;
+
 }
 
 .label {
@@ -627,6 +640,4 @@ export default {
   top:0; left: 0; bottom: 0; right: 0;
   background: rgba(0, 0, 0, 0.8);
 }
-
-
 </style>

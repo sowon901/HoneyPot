@@ -1,16 +1,15 @@
 <template>
     <div>
-        <CheckoutItem />
+        <honeyCheckoutItem />
     </div>
 </template>
 
 <script>
-import CheckoutItem from '../components/cart/CheckoutItem';
+import honeyCheckoutItem from '../components/cart/honeyCheckoutItem';
 export default {
-    components: 
-        {
-        CheckoutItem,
-        
+    components:
+    {
+        honeyCheckoutItem,
     }
 }
 </script>
