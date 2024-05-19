@@ -22,7 +22,7 @@
             </div>
 
             <!-- 상품 상세 설명 -->
-            <div class ="product-details">
+            <div class="product-details">
                 <div class="timer">
                     <b>
                         <Timer v-if="product.timePeriod"
@@ -32,11 +32,11 @@
                         <!-- Timer -->
                     </b>
                 </div>
-             <!-- 타이머 기능 추후 구현 -->
-               
-             <div class="description">
-                    <div class ="product-name">
-                            <b>{{product.name}}</b>
+                <!-- 타이머 기능 추후 구현 -->
+
+                <div class="description">
+                    <div class="product-name">
+                        <b>{{ product.productName }}</b>
                     </div>
                     <hr />
                     <table>
@@ -58,6 +58,7 @@
                             {{ product.price }}원
                         </td>
                         <!-- {{price}}원 -->
+
                         <tr>
                             <td><b>즉시 판매가</b></td>
                             <td style="padding-left: 300px;">
@@ -66,7 +67,7 @@
                         </tr>
                     </table>
                 </div>
-    
+
 
                 <div class="caution">
                     <!-- 이용약관-->
@@ -115,12 +116,14 @@
             </div>
         </div>
 
+
         <div class="text-description">
             제품 정보
             <hr />
+
             <div class="detail-desciprtion-text">
                 <!-- 상품 상세 설명 추가 -->
-                {{product.details}}
+                {{ product.productInfo }}
             </div>
         </div>
 
@@ -214,11 +217,12 @@ export default {
     components: {
         Timer,
     },
+
     data() {
         return {
             getExistPId: false,
             quantity: 1,
-            agree:false, //체크박스 상태 저장
+            agree: false, //체크박스 상태 저장
             product: null,
             bidCheck: false,
             price: "",
@@ -237,7 +241,7 @@ export default {
             priceUnit: "",
         }
     },
-    created() {
+    mounted() {
         // 동적 라우트 매개변수인 상품 ID를 가져옵니다.
         const productId = this.$route.params.id
         console.log(productId)
@@ -302,6 +306,7 @@ export default {
 
         bid() {
             this.bidCheck = true
+
             // 입찰 페이지 이동
         },
 
@@ -311,6 +316,7 @@ export default {
         },
 
         wish() {
+
             this.isWished = !this.isWished
         },
         bidPlus() {
@@ -337,18 +343,18 @@ export default {
         //         return `${remainingTimeStr}`;
         //     }
         // }
+
     }
 }
 </script>
 
 <style scoped>
-
 .bid-details-content {
     display: flex;
     width: 100%;
 }
 
-.product-layout{
+.product-layout {
     margin-right: 50px;
     width: 100%;
 }
@@ -356,10 +362,10 @@ export default {
 .product-name {
     padding-bottom: 10px;
     font-size: 30px;
-    text-align:left;
+    text-align: left;
 }
 
-.tr{
+.tr {
     font-size: 30px;
 }
 
@@ -368,7 +374,7 @@ export default {
     display: flex;
 }
 
-.product-main-image{
+.product-main-image {
     padding-top: 50px;
     padding-bottom: 30px;
     display: flex;
@@ -395,14 +401,14 @@ export default {
 
 .timer {
     font-size: 50px;
-    margin-bottom:20px;
+    margin-bottom: 20px;
     margin-top: 80px;
     text-align: right;
 }
 
 .product-details {
     justify-content: center;
-    text-align:center;
+    text-align: center;
     align-items: center;
     align-content: center;
     width: 50%;
@@ -420,8 +426,8 @@ export default {
 }
 
 
-.caution{
-    margin-top:30px;
+.caution {
+    margin-top: 30px;
     text-align: left;
 }
 
@@ -433,14 +439,15 @@ export default {
 .confirm {
     justify-content: center;
     align-content: center;
-    font-size:20px;
+    font-size: 20px;
     text-align: center;
 }
+
 .buttons {
     display: flex;
     justify-content: space-around;
-    margin-top:50px;
-    width:100%;
+    margin-top: 50px;
+    width: 100%;
 
 }
 
@@ -450,24 +457,25 @@ export default {
     height: 50px;
     font-size: 20px;
     align-content: center;
-    border:black solid 1px;
-    text-align:center;
-}
-.btn-bid {
-    background-color:#ffb400;
-    width: 50%;
-    height: 50px;
-    color:white;
-    font-size: 20px;
-    border:#ffb400 solid 1px;
+    border: black solid 1px;
+    text-align: center;
 }
 
-.text-description{
-    justify-content : center;
+.btn-bid {
+    background-color: #ffb400;
+    width: 50%;
+    height: 50px;
+    color: white;
+    font-size: 20px;
+    border: #ffb400 solid 1px;
+}
+
+.text-description {
+    justify-content: center;
     align-items: center;
-    text-align:center;  
+    text-align: center;
     margin-top: 100px;
-    margin-bottom:30px;
+    margin-bottom: 30px;
 }
 
 .detail-desciprtion-text {
@@ -476,20 +484,21 @@ export default {
 
 
 .detail-image-description {
-    display:flex;
-    justify-content : center;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    text-align:center;   
+    text-align: center;
 }
 
 .big-detail-image-list {
-    justify-content : center;
+    justify-content: center;
 }
 
 
 .more-button {
     width: 500px;
     height:40px;
+
     background-color: white;
     border: 1px solid white;
     transition: color 0.5s ease;
@@ -511,7 +520,9 @@ export default {
     border-radius: 10px; /* 모달의 둥근 모서리 설정 */
     padding: 20px; /* 모달 내부 여백 설정 */
     box-sizing: border-box; /* padding이 박스 크기에 포함되도록 설정 */
+
 }
+
 /* modal or popup */
 .bid-modal-container {
 
@@ -529,38 +540,39 @@ export default {
     
 }
 
-.input-label{
-    text-align:left;
+.input-label {
+    text-align: left;
     width: 50%;
     align-items: center;
     height: 50px;
     margin-top: 20px;
     font-size: 20px;
 }
-.input{
-    text-align:right;
+
+.input {
+    text-align: right;
     width: 50%;
     font-size: 20px;
 }
 
 .btn-bid-confirm {
-    background-color:#ffb400;
-    color:white;
+    background-color: #ffb400;
+    color: white;
     font-size: 20px;
-    border:#ffb400 solid 1px;
+    border: #ffb400 solid 1px;
     width: 50%;
 }
 
 .btn-bid-cancel {
-    background-color:white;
-    color:black;
+    background-color: white;
+    color: black;
     font-size: 20px;
-    border:white solid 1px;
+    border: white solid 1px;
     width: 50%;
 }
 
 .wishlist-btn {
-    text-align:center;
+    text-align: center;
 }
 
 .btn-minus {
