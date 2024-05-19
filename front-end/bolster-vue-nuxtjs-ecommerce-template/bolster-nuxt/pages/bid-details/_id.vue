@@ -390,7 +390,7 @@ export default {
 .main-image {
     max-width: 500px;
     max-height: 500px;
-
+}
 .product-detail-image-list{
     display:flex;
     justify-content: center;
