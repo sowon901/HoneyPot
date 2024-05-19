@@ -85,7 +85,7 @@ export default {
       currentPage: 1,
       itemsPerPage: 4,
       selectedSorting: '1',
-      tags: ['AESPA','BLACKPINK','BOYNEXTDOOR', 'BTS', 'ENHYPEN', 'EXO','GIRLSRENERATION','ITZY','LESSERAFIM','NCT','NEWJEANS','NMIXX','FROMIS_9','RIIZE','STRAYKIDS','SEVENTEEN', 'SHINEE','SUPERJUNIOR','TXT','TWICE','WINNER'],
+      tags: ['AESPA', 'BLACKPINK', 'BOYNEXTDOOR', 'BTS', 'ENHYPEN', 'EXO', 'GIRLSRENERATION', 'ITZY', 'LESSERAFIM', 'NCT', 'NEWJEANS', 'NMIXX', 'FROMIS_9', 'RIIZE', 'STRAYKIDS', 'SEVENTEEN', 'SHINEE', 'SUPERJUNIOR', 'TXT', 'TWICE', 'WINNER'],
       selectedTags: [],
       products: [],
     };
@@ -97,17 +97,17 @@ export default {
     sortProducts() {
       switch (this.selectedSorting) {
         case '1': // 최신순
-          this.products.sort((a, b) => new Date(b.date) - new Date(a.date));
+          this.products.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
           break;
         case '2': // 조회순
-          this.products.sort((a, b) => b.views - a.views);
+          this.products.sort((a, b) => b.bidCnt - a.bidCnt);
           break;
         case '3': // 마감 임박순
-          this.products.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+          this.products.sort((a, b) => new Date(a.timeLimit) - new Date(b.timeLimit));
           break;
         default:
           // 기본적으로는 최신순으로 정렬합니다.
-          this.products.sort((a, b) => new Date(b.date) - new Date(a.date));
+          this.products.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
       }
     },
     toggleTag(tag) {
@@ -133,8 +133,7 @@ export default {
       .then(response => {
         console.log("success");
         console.log(response.data);
-        this.products = response.data; // 받은 데이터를 컴포넌트의 products 데이터에 저장
-
+        this.products = response.data;
       })
       .catch(error => {
         console.error('Error fetching products:', error);
