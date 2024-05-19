@@ -68,7 +68,6 @@
                     </table>
                 </div>
 
-
                 <div class="caution">
                     <!-- 이용약관-->
                     <b>주의사항</b>
@@ -386,7 +385,6 @@ export default {
     max-width: 500px;
     max-height: 500px;
 }
-
 .product-detail-image-list{
     display:flex;
     justify-content: center;
@@ -520,12 +518,10 @@ export default {
     border-radius: 10px; /* 모달의 둥근 모서리 설정 */
     padding: 20px; /* 모달 내부 여백 설정 */
     box-sizing: border-box; /* padding이 박스 크기에 포함되도록 설정 */
-
 }
 
 /* modal or popup */
 .bid-modal-container {
-
   background: #fff;
   border-radius: 10px;
   height: 600px;
@@ -627,6 +623,4 @@ export default {
   top:0; left: 0; bottom: 0; right: 0;
   background: rgba(0, 0, 0, 0.8);
 }
-
-
 </style>

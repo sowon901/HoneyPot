@@ -1,40 +1,33 @@
 <template>
     <div :class="className">
         <div class="single-product-box" >
-            <div class="product-image">
-                <nuxt-link :to="`/bid-details/1`">
-                    <!-- <nuxt-link :to="`/bid-details/${product.productId}`">-->
-                    <img :src="product.image" :alt="product.name"/>
-                    <!-- <img :src="product.imageHover" :alt="product.name" /> -->
-                </nuxt-link>
+            <div class="product-image">           
+                <nuxt-link :to="`/bid-details/${product.productId}`">
+                    <img :src="product.image1" :alt="product.productName"/> 
 
-                <!-- <nuxt-link :to="`/bid/${product.productId}`">
-                    <img :src="product.productImage" :alt="product.productName" />
-                    <img :src="product.imageHover" :alt="product.name" />
-                </nuxt-link> -->
+                </nuxt-link>
 
                 <!-- <Timer
                     v-if="product.timePeriod"
                     v-bind:dateTime="product.dateTime"
                 ></Timer> -->
             </div>
+            {{ product.userId }}
 
             <div class="product-content" style="text-align: left;">
                 <div class="main_description">
                     <div class="idol_name">
-                        아이돌 명
-                        <!-- {{ product.idolName }} -->
+                         <!-- 아이돌 명 -->
+                         {{ product.idolName }}
                     </div>
                     <div class="product_type">
-                        상품 타입
-                        <!-- {{ product.productType }} -->
+                        <!-- 상품 타입 -->
+                        {{ product.ptypeName}}
                     </div>
                 </div>
                 <h3>
-                    <nuxt-link :to="`/products-details/${product.id}`">
-                        {{ product.name }}
-                        <!-- {{product.productName}} -->
-                        <!-- 상품 이름을 카테고리 테이블의 아이돌 이름으로  -->
+                    <nuxt-link :to="`/bid-details/${product.productId}`">
+                        <b>{{product.productName}}</b>
                     </nuxt-link>
                 </h3>
 
@@ -122,6 +115,7 @@ export default {
         vertical-align: middle;
         align-content: center;
         text-align: center;
+        object-fit: contain;
     }
 
     .product-content{
@@ -131,7 +125,15 @@ export default {
 
     .product-image img{
         width: 100%;
-        height: 300px;
+        height: 100%;
+        object-fit: contain;
     }
 
+    .product-link img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+}
+
+    
 </style>
