@@ -328,6 +328,22 @@ export default {
             console.log(this.price,"가격")       
          },
 
+         bidConfirm() {
+            const bidData = {
+                productId: this.product.id,
+                bidAmount: this.totalAmount,
+            };
+            axios.post('http://localhost:8080/bid', bidData)
+                .then(response => {
+                    console.log('입찰 성공:', response.data);
+                    this.bidCheck = false;
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error('입찰 실패:', error);
+                });
+        },
+
         // remainingTime() {
         //     const currentTime = new Date();
         //     const timeLimit = new Date(this.product.timeLimit);
