@@ -28,214 +28,213 @@
                 </div>
             </div>
 
-        <div class="signup-area ptb-60">
-            <div class="container">
-                <div class="signup-content">
-                    <!-- 아이디 필터링하기 -->
-                    <label style="color: darkgray; display: inline-block; text-align: right; width: 100%;"><h4 style="color: orangered; display: inline;">*</h4>표시는 필수 입력 항목입니다.</label>
-                    <form class="signup-form">
-                        <div class="form-group">
-                            <label>회원 사진</label>
-                            <label style="color: lightgray">프로필 사진은 200x200 픽셀 이하, 10MB 이하의 JPEG, PNG 형식의 파일만 올리실 수 있습니다.</label>
-                            <input
-                                type="file"
-                                id="profileImage"
-                                name="profileImage"
-                                @change="handleFileUpload"
-                            />
-                            <p v-if="sizeExceeded" style="color: red;">파일 크기가 너무 큽니다. (최대 5MB까지 허용됩니다.)</p>
-                            <p v-if="formatInvalid" style="color: red;">올바른 이미지 형식이 아닙니다. (JPEG 또는 PNG 형식을 허용합니다.)</p>
-                            <!-- 파일 미리보기를 위한 이미지 태그 -->
-                            <img v-if="imageUrl" :src="imageUrl" alt="Profile Picture Preview" style="max-width: 200px; max-height: 200px;">
-                        </div>
+            <div class="signup-area ptb-60">
+                <div class="container">
+                    <div class="signup-content">
+                        <!-- 아이디 필터링하기 -->
+                        <label style="color: darkgray; display: inline-block; text-align: right; width: 100%;"><h4 style="color: orangered; display: inline;">*</h4>표시는 필수 입력 항목입니다.</label>
+                        <form class="signup-form">
+                            <div class="form-group">
+                                <label>회원 사진</label>
+                                <label style="color: lightgray">프로필 사진은 200x200 픽셀 이하, 10MB 이하의 JPEG, PNG 형식의 파일만 올리실 수 있습니다.</label>
+                                <input
+                                    type="file"
+                                    id="profileImage"
+                                    name="profileImage"
+                                    @change="handleFileUpload"
+                                />
+                                <p v-if="sizeExceeded" style="color: red;">파일 크기가 너무 큽니다. (최대 5MB까지 허용됩니다.)</p>
+                                <p v-if="formatInvalid" style="color: red;">올바른 이미지 형식이 아닙니다. (JPEG 또는 PNG 형식을 허용합니다.)</p>
+                                <!-- 파일 미리보기를 위한 이미지 태그 -->
+                                <img v-if="imageUrl" :src="imageUrl" alt="Profile Picture Preview" style="max-width: 200px; max-height: 200px;">
+                            </div>
 
-                        <div class="form-group">
-                            <label>ID <h4 style="color: orangered; display: inline;">*</h4></label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="4자 이상 20자 이하, 영소문자, 숫자, 특수문자(_) 가능"
-                                id="id"
-                                name="id"
-                                v-model="id"
-                            />
-                        </div>
-
-                        <div class="form-group">
-                            <label>비밀번호<h4 style="color: orangered; display: inline;">*</h4></label>
-                            <input
-                                type="password"
-                                class="form-control"
-                                placeholder="8자 이상 16자 이하의 숫자 하나, 특수문자 하나 이상을 포함한 영문자)"
-                                id="password"
-                                name="password"
-                                v-model="password"
-                                @input="checkPassword"
-                            />
-                        </div>
-
-                        <div class="form-group">
-                            <label>비밀번호 확인<h4 style="color: orangered; display: inline;">*</h4></label>
-                            <input
-                                type="password"
-                                class="form-control"
-                                placeholder="비밀번호를 한 번 더 입력해 주세요."
-                                id="password-check"
-                                name="password-check"
-                                v-model="passwordCheck"
-                                @input="checkPassword"
-                            />
-                            <span v-if="passwordMatch && password !== '' && passwordCheck !== ''" style="color: green;">비밀번호가 일치합니다.</span>
-                            <span v-else-if="password !== '' && passwordCheck !== ''" style="color: red;">위와 동일한 비밀번호를 입력해주세요.</span>
-                            <!-- 입력란이 비어 있을 때 경고 메시지를 표시하지 않음 -->
-                        </div>
-
-                        <div class="form-group">
-                            <label>이름</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                id="name"
-                                name="name"
-                                v-model="name"
-                            />
-                        </div>
-
-                        <div class="form-group">
-                            <label>별명<h4 style="color: orangered; display: inline;">*</h4></label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="2자 이상, 10자 이하의 한글,숫자,영문자"
-                                id="nickname"
-                                name="nickname"
-                                @input="checkInputValidity"
-                                v-model="nickname"
-                            />
-                            <p v-if="showSpecialCharacterWarning" style="color: red;">_와- 를 제외한 특수문자는 입력하실 수 없습니다.</p>
-                            <p v-if="showLengthWarning" style="color: red;">글자수는 2자 이상 10자 이하여야 합니다.</p>
-                        </div>
-
-                        <div class="form-group">
-                            <label>휴대전화번호<h4 style="color: orangered; display: inline;">*</h4></label>
-                            <div class="input-group">
-                                <!--                                <div class="input-group-prepend">
-                                                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                        국가 선택
-                                                                    </button>
-                                                                    <div class="dropdown-menu">
-                                                                        <a class="dropdown-item" href="#">한국</a>
-                                                                        <a class="dropdown-item" href="#">미국</a>
-                                                                        <a class="dropdown-item" href="#">영국</a>
-                                                                        &lt;!&ndash; 다른 국가들을 필요에 따라 추가하세요 &ndash;&gt;
-                                                                    </div>
-                                                                </div>-->
+                            <div class="form-group">
+                                <label>ID <h4 style="color: orangered; display: inline;">*</h4></label>
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder="-을 제외한 숫자만 입력해주세요"
-                                    id="mobileNumber"
-                                    name="mobileNumber"
-                                    @keydown.prevent="preventNonNumeric"
-                                    v-model="mobileNumber"
+                                    placeholder="4자 이상 20자 이하, 영소문자, 숫자, 특수문자(_) 가능"
+                                    id="id"
+                                    name="id"
+                                    v-model="id"
                                 />
                             </div>
-                        </div>
 
+                            <div class="form-group">
+                                <label>비밀번호<h4 style="color: orangered; display: inline;">*</h4></label>
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    placeholder="8자 이상 16자 이하의 숫자 하나, 특수문자 하나 이상을 포함한 영문자)"
+                                    id="password"
+                                    name="password"
+                                    v-model="password"
+                                    @input="checkPassword"
+                                />
+                            </div>
 
-                        <div class="form-group">
-                            <label>Email<h4 style="color: orangered; display: inline;">*</h4></label>
-                            <input
-                                type="email"
-                                class="form-control"
-                                placeholder="아이디@도메인주소.com"
-                                id="email"
-                                name="email"
-                                v-model="email"
-                            />
-                        </div>
+                            <div class="form-group">
+                                <label>비밀번호 확인<h4 style="color: orangered; display: inline;">*</h4></label>
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    placeholder="비밀번호를 한 번 더 입력해 주세요."
+                                    id="password-check"
+                                    name="password-check"
+                                    v-model="passwordCheck"
+                                    @input="checkPassword"
+                                />
+                                <span v-if="passwordMatch && password !== '' && passwordCheck !== ''" style="color: green;">비밀번호가 일치합니다.</span>
+                                <span v-else-if="password !== '' && passwordCheck !== ''" style="color: red;">위와 동일한 비밀번호를 입력해주세요.</span>
+                                <!-- 입력란이 비어 있을 때 경고 메시지를 표시하지 않음 -->
+                            </div>
 
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label>우편번호</label>
+                            <div class="form-group">
+                                <label>이름</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    id="name"
+                                    name="name"
+                                    v-model="name"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>별명<h4 style="color: orangered; display: inline;">*</h4></label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="2자 이상, 10자 이하의 한글,숫자,영문자"
+                                    id="nickname"
+                                    name="nickname"
+                                    @input="checkInputValidity"
+                                    v-model="nickname"
+                                />
+                                <p v-if="showSpecialCharacterWarning" style="color: red;">_와- 를 제외한 특수문자는 입력하실 수 없습니다.</p>
+                                <p v-if="showLengthWarning" style="color: red;">글자수는 2자 이상 10자 이하여야 합니다.</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label>휴대전화번호<h4 style="color: orangered; display: inline;">*</h4></label>
+                                <div class="input-group">
+                                    <!--                                <div class="input-group-prepend">
+                                                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                            국가 선택
+                                                                        </button>
+                                                                        <div class="dropdown-menu">
+                                                                            <a class="dropdown-item" href="#">한국</a>
+                                                                            <a class="dropdown-item" href="#">미국</a>
+                                                                            <a class="dropdown-item" href="#">영국</a>
+                                                                            &lt;!&ndash; 다른 국가들을 필요에 따라 추가하세요 &ndash;&gt;
+                                                                        </div>
+                                                                    </div>-->
                                     <input
                                         type="text"
                                         class="form-control"
-                                        placeholder=""
-                                        v-model="postcode"
-                                        id="zipcode"
-                                        name="zipcode"
-                                        readonly
+                                        placeholder="-을 제외한 숫자만 입력해주세요"
+                                        id="mobileNumber"
+                                        name="mobileNumber"
+                                        v-model="mobileNumber"
                                     />
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label style="visibility: hidden;">미사용 라벨</label>
-                                    <button type="button" id="postcode" class="btn btn-primary btn-block" @click="execDaumPostcode">우편번호 찾기</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>주소</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                id="address"
-                                name="address"
-                                v-model="address"
-                                readonly
-                            />
-                        </div>
 
-                        <div class="form-group">
-                            <label>상세주소</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                id="address-details"
-                                name="address-details"
-                                v-model="detailAddress"
-                            />
-                        </div>
 
-                        <div class="form-group">
-                            <label>생년월일 8자리</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                id="birthdate"
-                                name="birthdate"
-                                v-model="birthdate"
-                            />
-                        </div>
-                        <div id="gender-app">
                             <div class="form-group">
-                                <label>성별</label>
-                                <div class="btn-group" role="group" aria-label="Gender" style="width: 100%;">
-                                    <button type="button" id="gender-btn" class="btn btn-primary" @click="selectGender('male')" :class="{ 'active': selectedGender === 'male', 'clicked': selectedGender === 'male' }">남자</button>
-                                    <button type="button" id="gender-btn" class="btn btn-primary" @click="selectGender('female')" :class="{ 'active': selectedGender === 'female', 'clicked': selectedGender === 'female' }">여자</button>
-                                    <button type="button" id="gender-btn" class="btn btn-primary" @click="selectGender('not_specified')" :class="{ 'active': selectedGender === 'not_specified', 'clicked': selectedGender === 'not_specified' }">선택 안함</button>
-                                </div>
-                                <input type="hidden" name="gender" v-model="selectedGender">
+                                <label>Email<h4 style="color: orangered; display: inline;">*</h4></label>
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    placeholder="아이디@도메인주소.com"
+                                    id="email"
+                                    name="email"
+                                    v-model="email"
+                                />
                             </div>
-                        </div>
-                        <br><br>
-                        <button type="submit" class="btn btn-primary">회원 정보 입력</button>
-                        <br>
-<!--                        <nuxt-link to="/" class="return-store"
-                        >메인으로 돌아가기</nuxt-link
-                        >-->
-                    </form>
+
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>우편번호</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            placeholder=""
+                                            v-model="postcode"
+                                            id="zipcode"
+                                            name="zipcode"
+                                            readonly
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label style="visibility: hidden;">미사용 라벨</label>
+                                        <button type="button" id="postcode" class="btn btn-primary btn-block" @click="execDaumPostcode">우편번호 찾기</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>주소</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    id="address"
+                                    name="address"
+                                    v-model="address"
+                                    readonly
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>상세주소</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    id="address-details"
+                                    name="address-details"
+                                    v-model="detailAddress"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>생년월일 8자리</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    id="birthdate"
+                                    name="birthdate"
+                                    v-model="birthdate"
+                                />
+                            </div>
+                            <div id="gender-app">
+                                <div class="form-group">
+                                    <label>성별</label>
+                                    <div class="btn-group" role="group" aria-label="Gender" style="width: 100%;">
+                                        <button type="button" id="gender-btn" class="btn btn-primary" @click="selectGender('male')" :class="{ 'active': selectedGender === 'male', 'clicked': selectedGender === 'male' }">남자</button>
+                                        <button type="button" id="gender-btn" class="btn btn-primary" @click="selectGender('female')" :class="{ 'active': selectedGender === 'female', 'clicked': selectedGender === 'female' }">여자</button>
+                                        <button type="button" id="gender-btn" class="btn btn-primary" @click="selectGender('not_specified')" :class="{ 'active': selectedGender === 'not_specified', 'clicked': selectedGender === 'not_specified' }">선택 안함</button>
+                                    </div>
+                                    <input type="hidden" name="gender" v-model="selectedGender">
+                                </div>
+                            </div>
+                            <br><br>
+                            <button type="submit" class="btn btn-primary" @click="honeypotSignup">회원 정보 입력</button>
+                            <br>
+                            <!--                        <nuxt-link to="/" class="return-store"
+                                                    >메인으로 돌아가기</nuxt-link
+                                                    >-->
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </template>
 
@@ -334,53 +333,83 @@
 </style>
 
 <script>
-import TopHeader from '../layouts/TopHeader'
-import Menubar from '../layouts/Menubar'
-import Vue from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
+import TopHeader from '../layouts/TopHeader';
+import Menubar from '../layouts/Menubar';
+import axios from 'axios';
 
 export default {
+    name: 'signupPage',
     components: {
         TopHeader,
         Menubar,
     },
-    mounted() {
-        const script = document.createElement('script');
-        script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
-        script.onload = () => console.log('카카오 우편번호 서비스 로드 완료');
-        document.head.appendChild(script);
-    },
-    data() {
-        return {
-            profileImage: null,
-            id: '',
-            password: '',
-            name: '',
-            nickname: '',
-            mobileNumber: '',
-            email: '',
-            postcode: '',
-            address: '',
-            detailAddress: '',
-            birthDate: '',
-            selectedGender: '',
+    setup() {
+        const profileImage = ref(null);
+        const id = ref('');
+        const password = ref('');
+        const name = ref('');
+        const nickname = ref('');
+        const mobileNumber = ref('');
+        const email = ref('');
+        const postcode = ref('');
+        const address = ref('');
+        const detailAddress = ref('');
+        const birthDate = ref('');
+        const selectedGender = ref('');
 
-            imageUrl: null, // 업로드된 이미지의 URL을 저장할 변수
-            sizeExceeded: false, // 파일 크기가 제한을 초과했는지 여부를 저장할 변수
-            formatInvalid: false, // 파일 형식이 유효한지 여부를 저장할 변수
-            showSpecialCharacterWarning: false,
-            showLengthWarning: false,
-            passwordCheck: '',
-            passwordMatch: false
+        const imageUrl = ref(null);
+        const sizeExceeded = ref(false);
+        const formatInvalid = ref(false);
+        const showSpecialCharacterWarning = ref(false);
+        const showLengthWarning = ref(false);
+        const passwordCheck = ref('');
+        const passwordMatch = ref(false);
+        const formError = ref(null);
+
+        const selectGender = (gender) => {
+            selectedGender.value = gender;
         };
-    },
-    methods: {
-        selectGender(gender) {
-            this.selectedGender = gender;
-        },
-        submitForm() {
-            console.log("성별 정보:", this.selectedGender);
-        },
-        execDaumPostcode() {
+
+        const honeypotSignup = async () => {
+            console.log("메서드 호출이 되긴 하니?");
+            try {
+                let profileImageBase64 = '';
+                if (profileImage.value) {
+                    profileImageBase64 = await toBase64(profileImage.value);
+                }
+
+                const signupData = {
+                    profileImage: profileImageBase64,
+                    username: id.value,
+                    password: password.value,
+                    nickname: nickname.value,
+                    mobileNumber: mobileNumber.value,
+                    email: email.value,
+                    postcode: postcode.value,
+                    roadAddress: address.value,
+                    detailAddress: detailAddress.value,
+                    birthdate: birthDate.value,
+                    selectedGender: selectedGender.value
+                };
+
+
+                    const response = await axios.post('http://localhost:8080/auth/signup', signupData, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                console.log(response.data);
+                alert('회원가입이 완료되었습니다.');
+                // this.$router.push('/login'); // Vue Router 사용 시
+            } catch (error) {
+                console.error('Error during sign up:', error.response?.data || error.message);
+                formError.value = '회원가입에 실패했습니다: ' + (error.response?.data || error.message);
+                alert(formError.value);
+            }
+        };
+
+        const execDaumPostcode = () => {
             new daum.Postcode({
                 oncomplete: (data) => {
                     let addr = ''; // 주소 변수
@@ -409,70 +438,107 @@ export default {
                             extraAddr = ' (' + extraAddr + ')';
                         }
                         // 조합된 참고항목을 해당 필드에 넣는다.
-                        this.extraAddress = extraAddr;
+                        extraAddr.value = extraAddr;
                     } else {
-                        this.extraAddress = '';
+                        extraAddr.value = '';
                     }
 
                     // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                    this.postcode = data.zonecode;
-                    this.address = addr;
+                    postcode.value = data.zonecode;
+                    address.value = addr;
                     // 커서를 상세주소 필드로 이동한다.
-                    this.$refs.detailAddress.focus();
+                    detailAddress.value = '';
+                    // Use Vue.nextTick() to ensure the next DOM update cycle has finished before focusing the input
+                    nextTick(() => {
+                        document.getElementById('address-details').focus();
+                    });
                 }
             }).open();
-        },
-        checkInputValidity(event) {
+        };
+
+        const checkInputValidity = (event) => {
             const value = event.target.value;
             const regex = /[^\w\dㄱ-ㅎㅏ-ㅣ가-힣-_]/; // 특수문자를 제외한 문자를 검사하는 정규식
 
             // 글자수가 0, 1 또는 11 이상일 때 경고 메시지 표시
-            if (value.length < 2 || value.length > 10) {
-                this.showLengthWarning = true;
-            } else {
-                this.showLengthWarning = false;
-            }
+            showLengthWarning.value = value.length < 2 || value.length > 10;
 
             // 특수문자가 포함되어 있는지 검사하여 경고 메시지 표시
-            if (regex.test(value)) {
-                this.showSpecialCharacterWarning = true;
-            } else {
-                this.showSpecialCharacterWarning = false;
-            }
-        },
-        preventNonNumeric(event) {
-            // 입력된 키가 숫자가 아닌 경우 입력을 막습니다.
-            if (!/^\d+$/.test(event.key)) {
-                event.preventDefault();
-            }
-        },
-        handleFileUpload(event) {
+            showSpecialCharacterWarning.value = regex.test(value);
+        };
+
+        const handleFileUpload = (event) => {
             const file = event.target.files[0]; // 선택된 파일 가져오기
             // 파일 크기 확인 (최대 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                this.sizeExceeded = true;
-                return;
-            } else {
-                this.sizeExceeded = false;
-            }
+            sizeExceeded.value = file.size > 5 * 1024 * 1024;
+
+            if (sizeExceeded.value) return;
+
             // 파일 형식 확인 (JPEG 또는 PNG)
-            if (!file.type.match('image/jpeg') && !file.type.match('image/png')) {
-                this.formatInvalid = true;
-                return;
-            } else {
-                this.formatInvalid = false;
-            }
+            formatInvalid.value = !file.type.match('image/jpeg') && !file.type.match('image/png');
+
+            if (formatInvalid.value) return;
+
             // FileReader 객체를 사용하여 파일을 읽고 이미지 URL을 생성
             const reader = new FileReader();
             reader.onload = (e) => {
-                this.imageUrl = e.target.result; // 이미지 URL을 변수에 저장하여 미리보기에 표시
+                imageUrl.value = e.target.result; // 이미지 URL을 변수에 저장하여 미리보기에 표시
             };
             reader.readAsDataURL(file);
-            this.profileImage = file;
-        },
-        checkPassword() {
-            this.passwordMatch = this.password === this.passwordCheck;
-        },
+            profileImage.value = file;
+        };
+
+        const checkPassword = () => {
+            passwordMatch.value = password.value === passwordCheck.value;
+        };
+
+        const toBase64 = (file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        };
+
+        onMounted(() => {
+            const script = document.createElement('script');
+            script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+            script.onload = () => console.log('카카오 우편번호 서비스 로드 완료');
+            document.head.appendChild(script);
+        });
+
+        return {
+            profileImage,
+            id,
+            password,
+            name,
+            nickname,
+            mobileNumber,
+            email,
+            postcode,
+            address,
+            detailAddress,
+            birthDate,
+            selectedGender,
+
+            imageUrl,
+            sizeExceeded,
+            formatInvalid,
+            showSpecialCharacterWarning,
+            showLengthWarning,
+            passwordCheck,
+            passwordMatch,
+            formError,
+
+            selectGender,
+            honeypotSignup,
+            execDaumPostcode,
+            checkInputValidity,
+            handleFileUpload,
+            checkPassword,
+            toBase64
+        };
     },
 };
 </script>
