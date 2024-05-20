@@ -48,8 +48,8 @@
 
             <div class="categories">
               <label>카테고리 선택:</label>
-              <button v-for="category in categories" :key="category"
-                :class="{ selected: selectedCategory === category }" @click.prevent="selectCategory(category)">
+              <button v-for="(category, index) in categories" :key="category"
+                :class="{ selected: selectedCategory === index + 1 }" @click.prevent="selectCategory(index + 1)">
                 {{ category }}
               </button>
             </div>
@@ -58,7 +58,7 @@
 
             <div class="interests">
               <label>아이돌 선택:</label>
-              <button v-for="tag in tags" :key="tag" :class="{ selected: selectedTag === tag }" @click.prevent="selectTag(tag)">
+              <button v-for="(tag, index) in tags" :key="tag" :class="{ selected: selectedTag === index + 1 }" @click.prevent="selectTag(index + 1)">
                 {{ tag }}
               </button>
             </div>
@@ -222,6 +222,7 @@ export default defineComponent({
         .then((response) => {
           console.log("Product registered successfully:", response.data);
           alert("Product registered successfully");
+          window.location.reload(); // 등록 성공 후 페이지 새로고침
         })
         .catch((error) => {
           console.error("Registration failed:", error);
