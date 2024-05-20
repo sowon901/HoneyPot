@@ -270,6 +270,8 @@ export default {
         // createdAt: new Date(),
       },
       info: {},
+      serialNumber: this.serialNumber,
+      productId: this.productId,
     }
   },
   computed: {

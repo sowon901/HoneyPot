@@ -83,7 +83,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      itemsPerPage: 4,
+      itemsPerPage: 40,
       selectedSorting: '1',
 
       tags: ['AESPA', 'BLACKPINK', 'BOYNEXTDOOR', 'BTS', 'ENHYPEN', 'EXO', 'GIRLSRENERATION', 'ITZY', 'LESSERAFIM', 'NCT', 'NEWJEANS', 'NMIXX', 'FROMIS_9', 'RIIZE', 'STRAYKIDS', 'SEVENTEEN', 'SHINEE', 'SUPERJUNIOR', 'TXT', 'TWICE', 'WINNER'],
