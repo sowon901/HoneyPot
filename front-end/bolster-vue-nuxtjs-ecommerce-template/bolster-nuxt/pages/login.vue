@@ -10,16 +10,13 @@
                 </ul>
             </div>
         </div>
-
         <div class="login-area ptb-60">
             <div class="container">
                 <div class="row">
-
                     <div class="login-content">
                         <div class="section-title" style="background-color: white;">
                             <h2>Login</h2>
                         </div>
-
                         <form
                             class="login-form"
                             v-if="!$store.state.authUser"
@@ -38,7 +35,6 @@
                                     name="username"
                                 />
                             </div>
-
                             <div class="form-group">
                                 <label>비밀번호</label>
                                 <input
@@ -49,15 +45,13 @@
                                     name="password"
                                 />
                             </div>
-
-                            <button type="submit" class="btn btn-primary">Login</button>
+                            <button type="submit" class="btn btn-primary" @click="serviceLogin">Login</button>
                             <br>
                             <a id="kakao-login-btn" @click="kakaoLogin">
                                 <img src="../assets/img/kakao_button.png"
                                      alt="카카오 로그인"
                                      style="width: auto; height: auto;"/>
                             </a>
-                            <!--                                <div @click="kakaoLogout">로그아웃</div>-->
                             <br><br>
                             <div class="links-container">
                                 <nuxt-link to="/findId" class="forgot-id">
@@ -80,7 +74,7 @@
     </div>
 </template>
 
-<style>
+<style scoped>
 .links-container {
     display: flex;
     justify-content: space-between;
@@ -108,101 +102,133 @@
 }
 
 #kakao-login-btn {
-    /* 기본 스타일 */
-    /*
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    */
-    cursor: pointer; /* 마우스 커서를 포인터로 설정 */
-
-    /* hover 시 스타일 */
-    transition: background-color 0.3s ease; /* hover 시 부드러운 전환 효과 */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-/* 마우스 커서를 손가락 모양으로 변경 */
 #kakao-login-btn:hover {
     cursor: pointer;
 }
-
 </style>
 
 <script>
-import TopHeader from '../layouts/TopHeader'
-import Menubar from '../layouts/Menubar'
+import { ref, onMounted } from 'vue';
+import TopHeader from '../layouts/TopHeader';
+import Menubar from '../layouts/Menubar';
+import axios from 'axios';
 
 export default {
+    name: 'LoginPage',
     components: {
         TopHeader,
         Menubar,
     },
-    mounted() {
-        const script = document.createElement('script');
-        script.src = 'https://developers.kakao.com/sdk/js/kakao.js';
+    setup() {
+        const formUsername = ref('');
+        const formPassword = ref('');
+        const formError = ref(null);
+        const kakaologinBackUrl = 'http://localhost:8080/api/oauth2/kakaologin';
+        const serviceloginBackUrl = 'http://localhost:8080/auth/login';
 
-        // Kakao SDK 스크립트가 로드된 후에 실행될 함수를 지정합니다.
-        script.onload = () => {
-            console.log('카카오 SDK 스크립트 로드 완료');
-
-            // Kakao SDK 스크립트가 로드된 후에 Kakao.init()을 호출합니다.
-            window.Kakao.init("c09ba2b5d947c0381265485bac8961d6");
-        };
-        document.head.appendChild(script);
-    },
-    data() {
-        return {
-            formError: null,
-            formUsername: '',
-            formPassword: '',
-        }
-    },
-    methods: {
-        async login() {
+/*        const login = async () => {
             try {
                 await this.$store.dispatch('login', {
-                    username: this.formUsername,
-                    password: this.formPassword,
-                })
-                this.formUsername = ''
-                this.formPassword = ''
-                this.formError = null
-                this.$router.push('/')
+                    username: formUsername.value,
+                    password: formPassword.value,
+                });
+                formUsername.value = '';
+                formPassword.value = '';
+                formError.value = null;
+                this.$router.push('/');
             } catch (error) {
-                this.formError = error.message
+                formError.value = error.message;
             }
-        },
-        kakaoLogin() {
+        };*/
+
+        onMounted(() => {
+            const script = document.createElement('script');
+            script.src = 'https://developers.kakao.com/sdk/js/kakao.js';
+            script.onload = () => {
+                console.log('카카오 SDK 스크립트 로드 완료');
+                window.Kakao.init('c09ba2b5d947c0381265485bac8961d6'); // 여기에 JavaScript 키를 넣습니다.
+            };
+            document.head.appendChild(script);
+        });
+
+        const serviceLogin = async () => {
+            try {
+                const response = await axios.post(serviceloginBackUrl, {
+                    username: formUsername.value,
+                    password: formPassword.value,
+                });
+                if (response.data.success) {
+                    // Handle successful login, e.g., save token, redirect
+                    this.$store.commit('setAuthUser', response.data.user);
+                    this.$router.push('/');
+                } else {
+                    formError.value = response.data.message;
+                }
+            } catch (error) {
+                console.error('There was an error!', error);
+                formError.value = '로그인 실패. 다시 시도해 주세요.';
+            }
+        };
+
+        const kakaoLogin = () => {
             window.Kakao.Auth.login({
-                scope: "profile_image, account_email",
-                success: this.getKakaoAccount,
-            });
-        },
-        getKakaoAccount() {
-            window.Kakao.API.request({
-                url: "/v2/user/me",
-                success: (res) => {
-                    const kakao_account = res.kakao_account;
-                    const ninkname = kakao_account.profile.ninkname;
-                    const email = kakao_account.email;
-                    console.log("ninkname", ninkname);
-                    console.log("email", email);
-
-                    //로그인처리구현
-
-                    alert("로그인 성공!");
+                scope: 'profile_image, account_email',
+                success: (authObj) => {
+                    console.log(authObj);
+                    window.Kakao.API.request({
+                        url: '/v2/user/me',
+                        success: (res) => {
+                            const kakaoAccount = res.kakao_account;
+                            const userData = {
+                                accessToken: authObj.access_token,
+                                expiresIn: authObj.expires_in,
+                                refreshToken: authObj.refresh_token,
+                                refreshTokenExpiresIn: authObj.refresh_token_expires_in,
+                                email: kakaoAccount.email,
+                                profileImage: kakaoAccount.profile.profile_image_url
+                            };
+                            console.log('User Data:', userData);
+                            axios.post(kakaologinBackUrl, userData, {
+                                headers: {
+                                    'Content-Type' : 'application/json'
+                                }
+                            })
+                                .then(response => {
+                                    console.log(response.data);
+                                    if (response.data.success) {
+                                        // 성공적으로 로그인 처리 (예: 토큰 저장, 리디렉션)
+                                    } else {
+                                        formError.value = response.data.message;
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('There was an error!', error);
+                                    formError.value = '로그인 실패. 다시 시도해 주세요.';
+                                });
+                        },
+                        fail: (err) => {
+                            console.error(err);
+                            formError.value = '사용자 정보 요청 실패. 다시 시도해 주세요.';
+                        }
+                    });
                 },
-                fail: (error) => {
-                    console.log(error);
+                fail: (err) => {
+                    console.error(err);
                 },
             });
-        },
-        kakaoLogout() {
-            window.Kakao.Auth.logout((res) => {
-                console.log(res);
-            });
-        },
+        };
+
+        return {
+            formUsername,
+            formPassword,
+            formError,
+            serviceLogin,
+            kakaoLogin,
+        };
     },
-}
+};
 </script>
