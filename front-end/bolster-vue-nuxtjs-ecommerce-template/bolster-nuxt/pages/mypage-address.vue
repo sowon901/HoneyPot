@@ -19,9 +19,9 @@
             <div class="address-info">
               <div v-for="(address, index) in addresses" :key="address.id" class="address-item">
                 <div class="address-details">
-                  <h6>{{ address.name }}</h6>
-                  <p>{{ address.recipient }} {{ address.phone }}
-                  <br>{{ address.address }}, {{ address.details }} [{{ address.postcode }}]</p>
+                  <h6>{{ address.addressName }}</h6>
+                  <p>{{ address.recipientName }} {{ address.recipientPhone }}
+                  <br>{{ address.roadAddress }}, {{ address.detailAddress }} [{{ address.postCode }}]</p>
                 </div>
                 <div class="button-group">
                   <button @click="openEditModal(address)" class="edit-button">수정</button> 
@@ -46,29 +46,29 @@
             <p></p>
             <label for="postcode">우편번호</label>
             <div class="input-group">
-              <input id="postcode" v-model="address.postcode" type="text" disabled>
+              <input id="postcode" v-model="address.postCode" type="text" disabled>
               <button @click.prevent="openPostcodeFinder" class="colored-button">우편번호 찾기</button>
             </div>
           </div>
           <div class="form-group">
             <label for="address">주소지</label>
-            <input id="address" v-model="address.address" type="text" disabled>
+            <input id="address" v-model="address.roadAddress" type="text" disabled>
           </div>
           <div class="form-group">
             <label for="details">상세주소</label>
-            <input id="details" v-model="address.details" type="text">
+            <input id="details" v-model="address.detailAddress" type="text">
           </div>
           <div class="form-group">
             <label for="name">배송지명</label>
-            <input id="name" v-model="address.name" type="text">
+            <input id="name" v-model="address.addressName" type="text">
           </div>
           <div class="form-group">
             <label for="recipient">수령인</label>
-            <input id="recipient" v-model="address.recipient" type="text">
+            <input id="recipient" v-model="address.recipientName" type="text">
           </div>
           <div class="form-group">
             <label for="phone">휴대폰</label>
-            <input id="phone" v-model="address.phone" type="text">
+            <input id="phone" v-model="address.recipientPhone" type="text">
           </div>
           <button type="submit" class="colored-button" >{{ isEdit ? '수정하기' : '등록하기' }}</button>
         </form>
@@ -79,6 +79,7 @@
 
 <script>
 import Sidebar from '../components/all-products/Sidebar';
+import axios from 'axios';
 
 export default {
   mounted() {
@@ -86,14 +87,7 @@ export default {
     script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
     script.onload = () => console.log('카카오 우편번호 서비스 로드 완료');
     document.head.appendChild(script);
-  },
-  computed: {
-  isFormValid() {
-    const valid = this.address.name && this.address.recipient && this.address.phone &&
-           this.address.address && this.address.details && this.address.postcode;
-    console.log('isFormValid:', valid); // 디버깅 메시지
-    return valid;
-  }
+    this.fetchAddresses();
   },
   components: {
     Sidebar
@@ -103,17 +97,35 @@ export default {
       showModal: false,  // 모달 표시 상태를 제어하는 데이터 속성
       addresses: [],     // 이 배열은 주소 데이터를 저장합니다.
       address: {
-        postcode: '',
-        address: '',
-        details: '',
-        name: '',
-        recipient: '',
-        phone: ''
+        addressId: '',
+        addressName: '',
+        detailAddress: '',
+        postCode: '',
+        recipientName: '',
+        recipientPhone: '',
+        roadAddress: '',
+        serialNumber: ''
       },
       isEdit: false      // 편집 상태 여부
     };
   },
   methods: {
+    isFormValid() {
+    const valid = this.address.addressName && this.address.recipientName && this.address.recipientPhone &&
+             this.address.roadAddress && this.address.detailAddress && this.address.postCode;
+    console.log('isFormValid:', valid); // 디버깅 메시지
+    return valid;
+    },
+    fetchAddresses() {
+      const serialNumber = 123456789; // 유저의 시리얼 넘버 (로그인된 유저의 시리얼 넘버로 대체)
+      axios.get(`http://localhost:8080/mypage-address/${serialNumber}`)
+        .then(response => {
+          this.addresses = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching addresses:', error);
+        });
+    },
     openAddModal() {
       if (this.addresses.length >= 3) {
       alert('최대 3개의 주소만 등록할 수 있습니다.');
@@ -129,7 +141,14 @@ export default {
       this.showModal = true;
     },
     deleteAddress(index) {
-      this.addresses.splice(index, 1);  // 주소 삭제 로직
+      const addressId = this.addresses[index].addressId;
+      axios.delete(`http://localhost:8080/mypage-address/${addressId}`)
+        .then(() => {
+          this.addresses.splice(index, 1);
+        })
+        .catch(error => {
+          console.error('Error deleting address:', error);
+        });
     },
     closeModal() {
       this.showModal = false;  // 모달 닫기
@@ -137,8 +156,8 @@ export default {
     openPostcodeFinder() {
       new daum.Postcode({
         oncomplete: (data) => {
-          this.address.postcode = data.zonecode;
-          this.address.address = data.address;
+          this.address.postCode = data.zonecode;
+          this.address.roadAddress = data.address;
         }
       }).open();
     },
@@ -148,20 +167,19 @@ export default {
       alert('모든 내용을 작성해야 합니다.');
       return;
     }
-      if (this.isEdit) {
-      // 수정 로직
-      const index = this.addresses.findIndex(a => a.id === this.address.id);
-      if (index !== -1) {
-        this.addresses.splice(index, 1, { ...this.address });
-      }
-    } else {
-      // 추가 로직
-      this.address.id = Date.now();  // 간단한 ID 생성 로직
-      this.addresses.push({...this.address});
+    const addressData = { ...this.address, serialNumber: 123456789 }; // 유저의 시리얼 넘버 (로그인된 유저의 시리얼 넘버로 대체)
+    const request = this.isEdit
+      ? axios.put(`http://localhost:8080/mypage-address/${this.address.addressId}`, addressData)
+      : axios.post('http://localhost:8080/mypage-address', addressData);
 
-    }
-    this.closeModal();
+      request.then(() => {
+        this.fetchAddresses();
+        this.closeModal();
+      }).catch(error => {
+        console.error('Error submitting form:', error);
+      });
     },
+    
     updateAddress() {
       // 주소 업데이트 로직
     },
@@ -170,12 +188,14 @@ export default {
     },
     clearAddress() {
       this.address = {
-        postcode: '',
-        address: '',
-        details: '',
-        name: '',
-        recipient: '',
-        phone: ''
+        addressId: '',
+        addressName: '',
+        detailAddress: '',
+        postCode: '',
+        recipientName: '',
+        recipientPhone: '',
+        roadAddress: '',
+        serialNumber: ''
       };
     },
 
