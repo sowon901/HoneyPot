@@ -18,7 +18,7 @@
                 <div>
                     <div style="display: flex; justify-content: space-between;">
                         <div style="margin-right: auto; font-size: 16px; font-weight: bold; color: black;">
-                            {{ product.price }}
+                            {{ product.startPrice + (product.priceUnit * product.bidCnt)}}
                         </div>
                         <div style="margin-left: auto; color: gray;">
                             입찰 {{ product.bidCnt }}건
@@ -38,8 +38,8 @@
     </div>
 </template>
 
-<script>
 
+<script>
 export default {
     name: 'ProductItem',
     components: {
