@@ -118,6 +118,7 @@ import { useStore } from 'vuex'; // vuex에서 useStore 가져오기
 import TopHeader from '../layouts/TopHeader';
 import Menubar from '../layouts/Menubar';
 import axios from 'axios';
+import apiClient from '../api/apiClient'; // apiClient를 가져옵니다
 
 export default {
     name: 'LoginPage',
@@ -162,7 +163,7 @@ export default {
 
         const serviceLogin = async () => {
             try {
-                const response = await axios.post(serviceloginBackUrl, {
+                const response = await apiClient.post('/auth/login', {
                     username: formUsername.value,
                     password: formPassword.value,
                 });
@@ -171,8 +172,18 @@ export default {
                     // Save the token and user data in the store
                     authUser.value = response.data.data.user;
 
-                    // Get the redirect URL from the response
+                    const accessToken = response.data.data.accessToken;
+                    const refreshToken = response.data.data.refreshToken;
+                    const accessTokenExpiration = response.data.data.accessTokenExpiration;
+                    const refreshTokenExpiration = response.data.data.refreshTokenExpiration;
                     const redirectUrl = response.data.data.redirectUrl;
+
+                    // 세션 스토리지에 저장
+                    sessionStorage.setItem('JWT_TOKEN', accessToken);
+                    sessionStorage.setItem('REFRESH_TOKEN', refreshToken);
+                    sessionStorage.setItem('ACCESS_TOKEN_EXPIRATION', accessTokenExpiration);
+                    sessionStorage.setItem('REFRESH_TOKEN_EXPIRATION', refreshTokenExpiration);
+
                     if (redirectUrl) {
                         // Redirect to the specified URL
                         console.log('Redirecting to:', redirectUrl);
@@ -198,7 +209,7 @@ export default {
                     console.log(authObj);
                     window.Kakao.API.request({
                         url: '/v2/user/me',
-                        success: (res) => {
+                        success: async (res) => {
                             const kakaoAccount = res.kakao_account;
                             const userData = {
                                 accessToken: authObj.access_token,
@@ -206,31 +217,49 @@ export default {
                                 refreshToken: authObj.refresh_token,
                                 refreshTokenExpiresIn: authObj.refresh_token_expires_in,
                                 email: kakaoAccount.email,
-                                profileImage: kakaoAccount.profile.profile_image_url
+                                profileImage: kakaoAccount.profile.profile_image_url,
                             };
                             console.log('User Data:', userData);
-                            axios.post(kakaologinBackUrl, userData, {
-                                headers: {
-                                    'Content-Type' : 'application/json'
-                                }
-                            })
-                                .then(response => {
-                                    console.log(response.data);
-                                    if (response.data.success) {
-                                        // 성공적으로 로그인 처리 (예: 토큰 저장, 리디렉션)
-                                    } else {
-                                        formError.value = response.data.message;
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('There was an error!', error);
-                                    formError.value = '로그인 실패. 다시 시도해 주세요.';
+                            try {
+                                const response = await apiClient.post('/api/oauth2/kakaologin', userData, {
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
                                 });
+                                console.log(response.data);
+                                if (response.data.success) {
+                                    authUser.value = response.data.data.user;
+
+                                    const accessToken = response.data.data.accessToken;
+                                    const refreshToken = response.data.data.refreshToken;
+                                    const accessTokenExpiration = response.data.data.accessTokenExpiration;
+                                    const refreshTokenExpiration = response.data.data.refreshTokenExpiration;
+                                    const redirectUrl = response.data.data.redirectUrl;
+
+                                    sessionStorage.setItem('JWT_TOKEN', accessToken);
+                                    sessionStorage.setItem('REFRESH_TOKEN', refreshToken);
+                                    sessionStorage.setItem('ACCESS_TOKEN_EXPIRATION', accessTokenExpiration);
+                                    sessionStorage.setItem('REFRESH_TOKEN_EXPIRATION', refreshTokenExpiration);
+
+                                    if (redirectUrl) {
+                                        console.log('Redirecting to:', redirectUrl);
+                                        window.location.href = redirectUrl;
+                                    } else {
+                                        console.log('Redirecting to home page');
+                                        window.location.href = '/';
+                                    }
+                                } else {
+                                    formError.value = response.data.message;
+                                }
+                            } catch (error) {
+                                console.error('There was an error!', error);
+                                formError.value = '로그인 실패. 다시 시도해 주세요.';
+                            }
                         },
                         fail: (err) => {
                             console.error(err);
                             formError.value = '사용자 정보 요청 실패. 다시 시도해 주세요.';
-                        }
+                        },
                     });
                 },
                 fail: (err) => {
