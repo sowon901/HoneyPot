@@ -88,7 +88,7 @@ export default {
     methods: {
         redirectToCheckout(product) {
             if (product.paymentStatus === 0) {
-                this.$router.push({ path: '/checkout', query: { productId: product.productId} });
+                this.$router.push({ path: '/checkout', query: { serialNumber: product.serialNumber, productId: product.productId} });
             }
         }
     }
