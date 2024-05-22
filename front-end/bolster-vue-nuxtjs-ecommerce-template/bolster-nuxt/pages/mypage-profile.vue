@@ -24,8 +24,9 @@
           </div>
           <hr class="section-divider" />
           <div class="interests">
-            <button v-for="tag in tags" :key="tag" :class="{ 'selected': selectedTags.includes(tag) }"
-              @click="toggleTag(tag)">
+            <button v-for="(tag, index) in tags" :key="tag"
+              :class="{ selected: isSelectedTag(index + 1) }"
+              @click="toggleTag(index + 1)">
               {{ tag }}
             </button>
           </div>
@@ -37,6 +38,7 @@
   
   <script>
   import Sidebar from '../components/all-products/Sidebar'
+  import axios from 'axios'
   
   export default {
     components: {
@@ -47,14 +49,54 @@
         defaultImage: require('@/assets/img/favicon-honeyPot.png'),
         profileImage: null,
         nickname: '',
-        tags: ['BLACKPINK', 'IVE', 'NewJeans', '방탄소년단', 'TWICE', 'Stray Kids', '더보이즈', 'aespa', 'LE SSERAFIM', 'NMIXX', '에스파', '아이유', 'ITZY', 'ENHYPEN', 'TREASURE', 'G-IDLE', 'NCT', 'ATEEZ', '우주소녀', '몬스타엑스', 'SHINee', 'Kep1er', 'CIX', '레드벨벳', '오마이걸', '아이즈원', 'BOYNEXTDOOR', 'ZEROBASEONE', '소녀시대', '오렌지카라멜', 'VIVIZ'],
+        tags: ['AESPA','BLACKPINK','BOYNEXTDOOR', 'BTS', 'ENHYPEN', 'EXO','GIRLSRENERATION','ITZY','LESSERAFIM','NCT','NEWJEANS','NMIXX','FROMIS_9','RIIZE','STRAYKIDS','SEVENTEEN', 'SHINEE','SUPERJUNIOR','TXT','TWICE','WINNER','OTHERS'],
         selectedTags: []
       }
     },
+    mounted() {
+    this.loadProfile();
+    },
     methods: {
+      loadProfile() {
+      const serialNumber = '123456789'; // 실제 사용자 시리얼 넘버 사용
+      axios.get(`http://localhost:8080/mypage-profile/${serialNumber}`)
+        .then(response => {
+          const { profileImage, nickname, tag1, tag2, tag3 } = response.data;
+          this.profileImage = profileImage;
+          this.nickname = nickname;
+          this.selectedTags = [tag1, tag2, tag3].map(Number).filter(tag => tag); // null 또는 빈 태그 제거
+        })
+        .catch(error => {
+          console.error("Failed to load profile:", error);
+        });
+      },
       saveProfile() {
-      // 프로필 저장 로직 구현
-      console.log("프로필 정보 저장");
+      const serialNumber=123456789;
+      const formData = new FormData();
+      const userDTO = {
+        nickname: this.nickname,
+        tag1: this.selectedTags[0] || '',
+        tag2: this.selectedTags[1] || '',
+        tag3: this.selectedTags[2] || ''
+      };
+      formData.append('userDTO', new Blob([JSON.stringify(userDTO)], { type: 'application/json' }));
+      if (this.$refs.fileInput.files[0]) {
+        formData.append('profileImageFile', this.$refs.fileInput.files[0]);
+      }
+      
+      axios.post(`http://localhost:8080/mypage-profile/${serialNumber}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        console.log("Profile updated successfully:", response.data);
+        alert("Profile updated successfully");
+      })
+      .catch(error => {
+        console.error("Failed to update profile:", error);
+        alert("Failed to update profile");
+      });
     },
       toggleTag(tag) {
         const index = this.selectedTags.indexOf(tag);
@@ -67,6 +109,9 @@
             alert('최대 3개까지만 선택 가능합니다!');
           }
         }
+      },
+      isSelectedTag(tag) {
+      return this.selectedTags.includes(tag);
       },
       triggerUpload() {
         this.$refs.fileInput.click();
