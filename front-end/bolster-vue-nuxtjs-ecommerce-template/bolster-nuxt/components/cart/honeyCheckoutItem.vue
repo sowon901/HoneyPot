@@ -8,12 +8,11 @@
             <div class="col-lg-6 col-md-12">
               <div class="billing-details">
                 <h3 class="title">배송지</h3>
-
                 <div class="row">
                   <div class="col-lg-12 col-md-6">
                     <div class="form-group">
                       <label>받는사람 <span class="required">*</span></label>
-                      <input type="text" id="fullName" v-model="this.info.recipientName" class="form-control"
+                      <input type="text" id="fullName" v-model="selectedAddress.recipientName" class="form-control"
                         readonly />
                     </div>
                   </div>
@@ -25,48 +24,40 @@
                   <div class="col-lg-6 col-md-3">
                     <div class="form-group">
                       <label>주소 <span class="required">*</span></label>
-                      <input type="text" id="zipcode" v-model="personDetails.address" class="form-control"
-                        placeholder="우편번호" />
+                      <input type="text" id="zipcode" v-model="selectedAddress.postCode" class="form-control"
+                        placeholder="우편번호" readonly />
                     </div>
                   </div>
                   <div class="col-lg-12 col-md-6">
                     <div class="form-group">
-                      <input type="text" id="address" v-model="personDetails.address" class="form-control"
-                        placeholder="기본주소" />
+                      <input type="text" id="address" v-model="selectedAddress.roadAddress" class="form-control"
+                        placeholder="기본주소" readonly />
                     </div>
-
-
                     <div class="form-group">
-                      <input type="text" id="address" v-model="personDetails.address" class="form-control"
+                      <input type="text" id="addressDetail" v-model="selectedAddress.detailAddress" class="form-control"
                         placeholder="나머지 주소" />
                     </div>
                   </div>
-
                   <div class="row">
                     <div class="col-lg-6 col-md-6">
                       <div class="form-group">
                         <label>휴대전화 <span class="required">*</span></label>
-                        <input type="text" id="phone" v-model="personDetails.phone" class="form-control phone-input" />
+                        <input type="text" id="phone" class="form-control phone-input" v-model="selectedAddress.recipientPhone" />
                       </div>
                     </div>
-
                     <div class="col-lg-6 col-md-6">
                       <div class="form-group">
-                        <label>이메일 <span class="required">*</span></label>
-                        <input type="email" id="email" v-model="personDetails.email" class="form-control" />
+                        <label>이메일 <span class="required"></span></label>
+                        <input type="email" id="email" class="form-control" />
                       </div>
                     </div>
                   </div>
-
-
                 </div>
               </div>
             </div>
-
             <div class="col-lg-6 col-md-12">
               <div class="order-details">
                 <h3 class="title">결제정보</h3>
-
                 <div class="order-table table-responsive">
                   <table class="table table-bordered">
                     <thead>
@@ -89,7 +80,7 @@
                           <span>상품 가격</span>
                         </td>
                         <td class="order-subtotal-price">
-                          <span class="order-subtotal-amount">{{ this.price }}원</span>
+                          <span class="order-subtotal-amount">{{ finalProductPrice }}원</span>
                         </td>
                       </tr>
                       <tr>
@@ -116,32 +107,12 @@
                           <span>최종 결제 금액</span>
                         </td>
                         <td class="product-subtotal">
-                          <span class="subtotal-amount">{{ this.price }}원</span>
+                          <span class="subtotal-amount">{{ finalAmount }}원</span>
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-
-                <!-- <div class="payment-method">
-                    <p>
-                      <input type="radio" id="direct-bank-transfer" name="radio-group" checked />
-                      <label for="direct-bank-transfer">Direct Bank Transfer</label>
-  
-                      Make your payment directly into our bank account. Please use
-                      your Order ID as the payment reference. Your order will not
-                      be shipped until the funds have cleared in our account.
-                    </p>
-                    <p>
-                      <input type="radio" id="paypal" name="radio-group" />
-                      <label for="paypal">PayPal</label>
-                    </p>
-                    <p>
-                      <input type="radio" id="cash-on-delivery" name="radio-group" />
-                      <label for="cash-on-delivery">Cash on Delivery</label>
-                    </p>
-                  </div> -->
-
                 <a href="javascript:void(0)" @click="add" class="btn btn-primary order-btn">결제 하기</a>
               </div>
             </div>
@@ -154,51 +125,41 @@
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
         <h2>주소 선택</h2>
-        <!-- 모달 내용: 여기서 주소를 선택할 수 있도록 구현 -->
-        <div v-for="address in info.addresses" :key="address.id" @click="selectAddress(address)" class="address-item">
-          <p>{{ address.postCode }} {{ address.roadAddress }} {{ address.detailAddress }}</p>
+        <div v-for="address in info.address" :key="address.id" @click="selectAddress(address)"
+          class="address-item">
+          <div class="address-details">
+            <h6>{{ address.addressName }}</h6>
+            <p>{{ address.recipientName }} {{ address.recipientPhone }}
+              <br>{{ address.postCode }} {{ address.roadAddress }} {{ address.detailAddress }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
     <!-- End Checkout Area -->
-
   </div>
 </template>
 
 <script>
-import firebase from '../../plugins/firebase';
 import axios from 'axios';
 
 export default {
   data() {
     return {
-      personDetails: {
-        // fullName: 'John Doe',
-        // address: '',
-        // city: 'New York',
-        // email: 'john@gmail.com',
-        // phone: '01021228150',
-        // createdAt: new Date(),
-      },
-      info: {
-        addresses: [],
-      },
+      info: {},
       serialNumber: '',
       productId: '',
-      showModal: false, // showModal 속성을 여기에 정의합니다.
+      showModal: false,
       price: '',
+      selectedAddress: {},
     }
-    
   },
   computed: {
-    cart() {
-      return this.$store.getters.cart
+    finalProductPrice() {
+      return this.price = this.info.startPrice + (this.info.bidCnt*this.info.priceUnit);
     },
-    cartTotal() {
-      return this.$store.getters.totalAmount
-    },
-    cartTotal() {
-      return this.$store.getters.totalAmount
+    finalAmount() {
+      return this.price + 2500 + 3900; // 상품 가격 + 배송비 + 검수비용
     },
   },
   methods: {
@@ -207,13 +168,12 @@ export default {
       this.showModal = true;
     },
     closeModal(event) {
-      // this.showModal = false;
       if (event.target.classList.contains('modal') || event.target.classList.contains('close')) {
         this.showModal = false;
       }
     },
     selectAddress(address) {
-      this.personDetails.address = `${address.roadAddress} ${address.detailAddress}`;
+      this.selectedAddress = address;
       this.showModal = false;
     },
     add() {
@@ -229,28 +189,6 @@ export default {
       })
       this.$store.dispatch('cartEmpty')
       this.$router.push('/')
-    },
-    removeItemFromCart(id) {
-      this.$store.dispatch('deleteCart', id)
-    },
-    onIncrement(id) {
-      this.$store.dispatch('updateCart', {
-        id,
-        unit: 1,
-        cart: this.cart,
-      })
-    },
-    onDecrement(id, quantity) {
-      if (quantity > 1) {
-        this.$store.dispatch('updateCart', {
-          id,
-          unit: -1,
-          cart: this.cart,
-        })
-      } else {
-        this.removeItemFromCart(id)
-        this.$toast.warning('Item deleted!')
-      }
     },
   },
   mounted() {
@@ -274,17 +212,16 @@ export default {
         // 에러 처리
         console.error("제품 정보 가져오기 실패:", error);
       });
-    // 예시로 주소 목록을 설정
-    this.addresses = [
-      { id: 1, roadAddress: '서울특별시 강남구 테헤란로', detailAddress: '101동 102호' },
-      { id: 2, roadAddress: '서울특별시 송파구 올림픽로', detailAddress: '202동 203호' }
-      // 실제 데이터를 서버에서 가져올 수도 있음
-    ];
   }
 }
 </script>
 
 <style scoped>
+.billing-details .find-address-button {
+  margin-bottom: 10px;
+  margin-top: 2px;
+}
+
 .billing-details .find-address-button button {
   background-color: #FFB400;
   color: white;
@@ -307,7 +244,7 @@ export default {
   /* Hidden by default */
   position: fixed;
   /* Stay in place */
-  z-index: 1;
+  z-index: 9999;
   /* Sit on top */
   left: 0;
   top: 0;
@@ -326,11 +263,9 @@ export default {
 .modal-content {
   background-color: #fefefe;
   margin: 15% auto;
-  /* 15% from the top and centered */
   padding: 20px;
   border: 1px solid #888;
-  width: 80%;
-  /* Could be more or less, depending on screen size */
+  width: 60%;
 }
 
 .close {
