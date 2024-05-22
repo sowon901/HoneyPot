@@ -49,7 +49,8 @@ export default {
     //   return this.$store.state.products.all;
     // },
 
-    props: ['product'],
+    // props: ['product'],
+
     slicedProducts() {
       const start = this.currentIndex * this.itemsPerPage;
       const end = start + this.itemsPerPage;

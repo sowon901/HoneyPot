@@ -2,9 +2,18 @@
   <div class="container">
       <div class="main-layout" style="text-align: center;">
           <Banner></Banner>
-          <Category></Category>
+          <!-- <Category></Category> -->
 
           <div class="products">
+
+
+            <div class="user-idol">
+              <div class="section-title">  
+                <span style="padding-right: 10px"><b>관심 상품 추천</b></span>    
+              </div>   
+              <Category></Category>
+            </div>
+
             <div class="latest-products">
               <div class="section-title-filter">
                 <button class="category">
@@ -15,8 +24,8 @@
                 </button>            
               </div>   
                 <LatestProducts></LatestProducts>
-
             </div>
+
             <div class="best-sellers">
               <div class="section-title-filter">
                 <button class="category">
@@ -28,6 +37,7 @@
               </div>
               <BestSellers></BestSellers>
             </div>
+
             <div class = "deadline">
               <div class="section-title-filter">
                 <button class="category">
@@ -70,21 +80,22 @@ export default {
   },
   mounted() {
     // 컴포넌트가 마운트된 후에 서버에서 제품 목록을 가져오는 HTTP GET 요청을 수행
-    axios.get("http://localhost:8080/")
-      .then(response => {
-        console.log("success");
-        console.log(response.data);
-        this.products = response.data; // 받은 데이터를 컴포넌트의 products 데이터에 저장
+    // axios.get("http://localhost:8080/")
+    //   .then(response => {
+    //     console.log("success");
+    //     console.log(response.data);
+    //     this.products = response.data; // 받은 데이터를 컴포넌트의 products 데이터에 저장
 
-      })
-      .catch(error => {
-        console.error('Error fetching products:', error);
-      });
+    //   })
+    //   .catch(error => {
+    //     console.error('Error fetching products:', error);
+    //   });
   },
 }
 </script>
 
 <style scoped>
+
 .container {
   display: flex;
   justify-content: center;
@@ -117,9 +128,10 @@ export default {
   height: 70px;
 }
 
-.latest-product {
+.latest-products, .best-sellers, .deadline {
   margin-top: 80px;
   margin-bottom: 80px;
+  
 }
 
 .category {
@@ -152,7 +164,18 @@ export default {
     color: black;
 }
 
-  .producst{
+  .product{
     padding-top: 100px;
   }
+
+  .section-title {
+    display:flex;
+    margin-top:50px;
+    justify-content: center;
+    text-align: center;
+    font-style: bold;
+    font-size: 20px;
+    color: #ffb400;
+}
+
 </style>
