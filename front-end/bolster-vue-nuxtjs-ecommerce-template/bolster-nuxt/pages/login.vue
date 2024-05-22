@@ -19,8 +19,8 @@
                         </div>
                         <form
                             class="login-form"
-                            v-if="!$store.state.authUser"
-                            @submit.prevent="login"
+                            v-if="!authUser"
+                            @submit.prevent="serviceLogin"
                         >
                             <p v-if="formError" class="error">
                                 {{ formError }}
@@ -45,7 +45,7 @@
                                     name="password"
                                 />
                             </div>
-                            <button type="submit" class="btn btn-primary" @click="serviceLogin">Login</button>
+                            <button type="submit" class="btn btn-primary">Login</button>
                             <br>
                             <a id="kakao-login-btn" @click="kakaoLogin">
                                 <img src="../assets/img/kakao_button.png"
@@ -113,6 +113,8 @@
 
 <script>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router'; // vue-router에서 useRouter 가져오기
+import { useStore } from 'vuex'; // vuex에서 useStore 가져오기
 import TopHeader from '../layouts/TopHeader';
 import Menubar from '../layouts/Menubar';
 import axios from 'axios';
@@ -129,6 +131,9 @@ export default {
         const formError = ref(null);
         const kakaologinBackUrl = 'http://localhost:8080/api/oauth2/kakaologin';
         const serviceloginBackUrl = 'http://localhost:8080/auth/login';
+        const authUser = ref(null);
+        // const router = useRouter();
+        // const store = useStore();
 
 /*        const login = async () => {
             try {
@@ -161,10 +166,22 @@ export default {
                     username: formUsername.value,
                     password: formPassword.value,
                 });
+                console.log('서버 응답:', response.data);
                 if (response.data.success) {
-                    // Handle successful login, e.g., save token, redirect
-                    this.$store.commit('setAuthUser', response.data.user);
-                    this.$router.push('/');
+                    // Save the token and user data in the store
+                    authUser.value = response.data.data.user;
+
+                    // Get the redirect URL from the response
+                    const redirectUrl = response.data.data.redirectUrl;
+                    if (redirectUrl) {
+                        // Redirect to the specified URL
+                        console.log('Redirecting to:', redirectUrl);
+                        window.location.href = redirectUrl;
+                    } else {
+                        // If no redirect URL is provided, redirect to the home page
+                        console.log('Redirecting to home page');
+                        window.location.href = '/';
+                    }
                 } else {
                     formError.value = response.data.message;
                 }
@@ -226,6 +243,7 @@ export default {
             formUsername,
             formPassword,
             formError,
+            authUser,
             serviceLogin,
             kakaoLogin,
         };
