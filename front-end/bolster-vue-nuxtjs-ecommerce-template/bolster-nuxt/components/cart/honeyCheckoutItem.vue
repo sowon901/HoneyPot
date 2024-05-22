@@ -1,71 +1,9 @@
 <template>
   <div>
-    <!-- <div class="container">
-      <div class="row">
-        <div class="col-lg-12 col-md-12">
-          <form>
-            <div class="cart-table table-responsive">
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th scope="col">주문상품</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td class="product-thumbnail">
-                      <img :src="product.image1" />
-                    </td>
-                    <td class="product-name">
-                      <nuxt-link :to="`/products-details/${product.productId}`">
-                        {{ product.productName }}
-                      </nuxt-link>
-                      <ul>
-                        <li>Color: <strong>Light Blue</strong></li>
-                        <li>Size: <strong>XL</strong></li>
-                        <li>Material: <strong>Cotton</strong></li>
-                      </ul>
-                    </td>
-
-                    <td class="product-price">
-                      <span class="unit-amount">${{ cart.price }}</span>
-                    </td>
-
-                    <td class="product-quantity">
-                      <div class="input-counter">
-                        <span @click="onDecrement(cart.id, cart.quantity)" class="minus-btn"><i
-                            class="fas fa-minus"></i></span>
-                        {{ cart.quantity }}
-                        <span @click="onIncrement(cart.id)" class="plus-btn"><i class="fas fa-plus"></i></span>
-                      </div>
-                    </td>
-
-                    <td class="product-subtotal">
-                      <span class="subtotal-amount">${{ cart.price * cart.quantity }}</span>
-
-                      <a href="javascript:void(0)" @click="removeItemFromCart(cart.id)" class="remove"><i
-                          class="far fa-trash-alt"></i></a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-
-          </form>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- Start Page Title Area -->
-
-    <!-- End Page Title Area -->
-
     <!-- Start Checkout Area -->
     <div class="checkout-area ptb-60">
       <div class="container">
-        <form>
+        <form @submit.prevent="onSubmit">
           <div class="row">
             <div class="col-lg-6 col-md-12">
               <div class="billing-details">
@@ -75,44 +13,32 @@
                   <div class="col-lg-12 col-md-6">
                     <div class="form-group">
                       <label>받는사람 <span class="required">*</span></label>
-                      <input type="text" id="fullName" v-model="personDetails.fullName" class="form-control" />
+                      <input type="text" id="fullName" v-model="this.info.recipientName" class="form-control"
+                        readonly />
                     </div>
                   </div>
-
+                  <div>
+                    <div class="find-address-button">
+                      <button type="button" @click="openModal">주소선택</button>
+                    </div>
+                  </div>
                   <div class="col-lg-6 col-md-3">
                     <div class="form-group">
                       <label>주소 <span class="required">*</span></label>
-                      <!-- TODO::personDetails 에서 zipcode 추가 -->
                       <input type="text" id="zipcode" v-model="personDetails.address" class="form-control"
                         placeholder="우편번호" />
                     </div>
                   </div>
-                  <div class="col-lg-6 col-md-3">
-                    <br><br>
-                    <div class="find-address-button">
-                      <button class="btn btn-primary">주소검색</button>
-                    </div>
-                  </div>
-
-
                   <div class="col-lg-12 col-md-6">
                     <div class="form-group">
-                      <!-- <label>Town / City <span class="required">*</span></label> -->
-                      <!-- <input
-                            type="text"
-                            id="city"
-                            v-model="personDetails.city"
-                            class="form-control"
-                          /> -->
                       <input type="text" id="address" v-model="personDetails.address" class="form-control"
                         placeholder="기본주소" />
                     </div>
 
 
                     <div class="form-group">
-                      <!-- TODO::address2 추가-->
                       <input type="text" id="address" v-model="personDetails.address" class="form-control"
-                        placeholder="나머지 주소(선택 입력 가능)" />
+                        placeholder="나머지 주소" />
                     </div>
                   </div>
 
@@ -135,20 +61,6 @@
 
                 </div>
               </div>
-
-
-
-              <!-- <div class="cart-buttons">
-                  <div class="row">
-                    <div class="col-lg-7 col-md-7">
-                      <div class="continue-shopping-box">
-                        <nuxt-link to="/products" class="btn btn-light">Continue Shopping</nuxt-link>
-                      </div>
-                    </div>
-  
-  
-                  </div>
-                </div> -->
             </div>
 
             <div class="col-lg-6 col-md-12">
@@ -163,33 +75,21 @@
                         <th scope="col">Total</th>
                       </tr>
                     </thead>
-
                     <tbody>
-                      <!-- <tr v-for="(cart, i) in cart" :key="i">
-                        <td class="product-name">
-                          <a href="#">{{ cart.name }}</a>
-                        </td>
-
-                        <td class="product-total">
-                          <span class="subtotal-amount">${{ cart.price * cart.quantity }}</span>
-                        </td>
-                      </tr> -->
                       <tr>
                         <td class="order-subtotal">
                           <span>상품 이름</span>
                         </td>
-
-                        <td class="order-subtotal-price">
-                          <span class="order-subtotal-amount">${{ cartTotal }}</span>
+                        <td>
+                          <span>{{ info.productName }}</span>
                         </td>
                       </tr>
                       <tr>
                         <td class="order-subtotal">
                           <span>상품 가격</span>
                         </td>
-
                         <td class="order-subtotal-price">
-                          <span class="order-subtotal-amount">${{ cartTotal }}</span>
+                          <span class="order-subtotal-amount">{{ this.price }}원</span>
                         </td>
                       </tr>
                       <tr>
@@ -198,7 +98,7 @@
                         </td>
 
                         <td class="shipping-price">
-                          <span>2,500원</span>
+                          <span>2500원</span>
                         </td>
                       </tr>
 
@@ -208,16 +108,15 @@
                         </td>
 
                         <td class="insepction-fee">
-                          <span>3,900원</span>
+                          <span>3900원</span>
                         </td>
                       </tr>
                       <tr>
                         <td class="total-price">
                           <span>최종 결제 금액</span>
                         </td>
-
                         <td class="product-subtotal">
-                          <span class="subtotal-amount">${{ parseFloat(cartTotal + 10).toFixed(2) }}</span>
+                          <span class="subtotal-amount">{{ this.price }}원</span>
                         </td>
                       </tr>
                     </tbody>
@@ -250,7 +149,19 @@
         </form>
       </div>
     </div>
+    <!-- 모달 창 -->
+    <div v-if="showModal" class="modal" @click="closeModal">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <h2>주소 선택</h2>
+        <!-- 모달 내용: 여기서 주소를 선택할 수 있도록 구현 -->
+        <div v-for="address in info.addresses" :key="address.id" @click="selectAddress(address)" class="address-item">
+          <p>{{ address.postCode }} {{ address.roadAddress }} {{ address.detailAddress }}</p>
+        </div>
+      </div>
+    </div>
     <!-- End Checkout Area -->
+
   </div>
 </template>
 
@@ -269,10 +180,15 @@ export default {
         // phone: '01021228150',
         // createdAt: new Date(),
       },
-      info: {},
-      serialNumber: this.serialNumber,
-      productId: this.productId,
+      info: {
+        addresses: [],
+      },
+      serialNumber: '',
+      productId: '',
+      showModal: false, // showModal 속성을 여기에 정의합니다.
+      price: '',
     }
+    
   },
   computed: {
     cart() {
@@ -286,6 +202,20 @@ export default {
     },
   },
   methods: {
+    openModal(event) {
+      console.log("modal open");
+      this.showModal = true;
+    },
+    closeModal(event) {
+      // this.showModal = false;
+      if (event.target.classList.contains('modal') || event.target.classList.contains('close')) {
+        this.showModal = false;
+      }
+    },
+    selectAddress(address) {
+      this.personDetails.address = `${address.roadAddress} ${address.detailAddress}`;
+      this.showModal = false;
+    },
     add() {
       const cartData = {
         details: this.personDetails,
@@ -324,21 +254,32 @@ export default {
     },
   },
   mounted() {
+    this.serialNumber = this.$route.query.serialNumber;
+    this.productId = this.$route.query.productId;
+
+    console.log(this.serialNumber);
+    console.log(this.productId);
     axios.get('http://localhost:8080/productDetails', {
       params: {
-        serialNumber: serialNumber,
-        productId: productId
+        serialNumber: this.serialNumber,
+        productId: this.productId
       }
     })
       .then(response => {
         // 응답 성공 처리
-        info = response.data;
+        this.info = response.data;
         console.log(response.data);
       })
       .catch(error => {
         // 에러 처리
         console.error("제품 정보 가져오기 실패:", error);
       });
+    // 예시로 주소 목록을 설정
+    this.addresses = [
+      { id: 1, roadAddress: '서울특별시 강남구 테헤란로', detailAddress: '101동 102호' },
+      { id: 2, roadAddress: '서울특별시 송파구 올림픽로', detailAddress: '202동 203호' }
+      // 실제 데이터를 서버에서 가져올 수도 있음
+    ];
   }
 }
 </script>
@@ -358,5 +299,62 @@ export default {
   background-color: white;
   color: black;
   border: 1px solid black;
+}
+
+/* 모달 창 스타일 */
+.modal {
+  display: block;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  /* Could be more or less, depending on screen size */
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.address-item {
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.address-item:hover {
+  background-color: #f1f1f1;
 }
 </style>
