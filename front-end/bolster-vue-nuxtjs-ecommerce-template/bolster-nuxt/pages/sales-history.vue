@@ -1,27 +1,32 @@
 <template>
-     <div class="container">
+    <div class="container">
         <div class="wrapper">
             <div class="content">
                 <div class="sidebar">
-                    <Sidebar/>
+                    <Sidebar />
                 </div>
                 <div class="cart-items">
-                    <SalesList />
+                    <SalesList :serialNumber="serialNumber" />
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script>
-    import Sidebar from '../components/all-products/Sidebar'
-    import SalesList from '../components/cart/SalesList'
+import Sidebar from '../components/all-products/Sidebar'
+import SalesList from '../components/cart/SalesList'
 
-    export default {
-        components: {
-            Sidebar,
-            SalesList
+export default {
+    components: {
+        Sidebar,
+        SalesList
+    },
+    data() {
+        return {
+            serialNumber: '123456789'
         }
-    }
+    },
+}
 </script>
 <style scoped>
 .wrapper {
@@ -34,10 +39,12 @@
 }
 
 .sidebar {
-    flex: 0 0 25%; /* 사이드바 너비 */
+    flex: 0 0 25%;
+    /* 사이드바 너비 */
 }
 
 .cart-items {
-    flex: 1; /* 카트 아이템이 나머지 공간을 채움 */
+    flex: 1;
+    /* 카트 아이템이 나머지 공간을 채움 */
 }
 </style>

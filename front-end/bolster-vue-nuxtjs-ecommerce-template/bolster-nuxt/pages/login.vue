@@ -135,20 +135,20 @@ export default {
         // const router = useRouter();
         // const store = useStore();
 
-/*        const login = async () => {
-            try {
-                await this.$store.dispatch('login', {
-                    username: formUsername.value,
-                    password: formPassword.value,
-                });
-                formUsername.value = '';
-                formPassword.value = '';
-                formError.value = null;
-                this.$router.push('/');
-            } catch (error) {
-                formError.value = error.message;
-            }
-        };*/
+        /*        const login = async () => {
+                    try {
+                        await this.$store.dispatch('login', {
+                            username: formUsername.value,
+                            password: formPassword.value,
+                        });
+                        formUsername.value = '';
+                        formPassword.value = '';
+                        formError.value = null;
+                        this.$router.push('/');
+                    } catch (error) {
+                        formError.value = error.message;
+                    }
+                };*/
 
         onMounted(() => {
             const script = document.createElement('script');

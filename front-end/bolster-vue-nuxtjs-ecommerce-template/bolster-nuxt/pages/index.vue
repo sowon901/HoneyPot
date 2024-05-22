@@ -1,19 +1,46 @@
 <template>
-  <div>
-    <!-- <TopHeader /> -->
-    <!-- <Menubar /> -->
-    <Banner></Banner>
-    <Offer></Offer>
-    <LatestProducts></LatestProducts>
-    <ProductCategory></ProductCategory>
-    <TrendingProducts></TrendingProducts>
-    <BestSellers></BestSellers>
-    <Facility></Facility>
-    <Testimonials></Testimonials>
-    <NewsSlides></NewsSlides>
-    <Subscribe></Subscribe>
-    <Partner></Partner>
-    <InstagramPhotos></InstagramPhotos>
+  <div class="container">
+      <div class="main-layout" style="text-align: center;">
+          <Banner></Banner>
+          <Category></Category>
+
+          <div class="products">
+            <div class="latest-products">
+              <div class="section-title-filter">
+                <button class="category">
+                  <nuxt-link to="/products" class="category-link">
+                    <span style="padding-right: 10px">최신 등록 상품</span>
+                    <i class='fa fa-arrow-right'></i>
+                  </nuxt-link>
+                </button>            
+              </div>   
+                <LatestProducts></LatestProducts>
+
+            </div>
+            <div class="best-sellers">
+              <div class="section-title-filter">
+                <button class="category">
+                  <nuxt-link to="/products" class="category-link">
+                    <span style="padding-right: 10px">인기 상품</span>
+                    <i class='fas fa-arrow-right'></i>
+                  </nuxt-link>
+                </button>            
+              </div>
+              <BestSellers></BestSellers>
+            </div>
+            <div class = "deadline">
+              <div class="section-title-filter">
+                <button class="category">
+                  <nuxt-link to="/products" class="category-link">
+                    <span style="padding-right: 10px">마감 임박 상품</span>
+                    <i class='fas fa-arrow-right'></i>
+                  </nuxt-link>
+                </button>            
+              </div>
+              <DeadlineProducts></DeadlineProducts>
+            </div>
+        </div>
+    </div>
   </div>
 </template>
 
@@ -21,22 +48,111 @@
 import TopHeader from '../layouts/TopHeader'
 import Menubar from '../layouts/Menubar'
 import Banner from '../components/landing-one/Banner';
-import Offer from '../components/landing-one/Offer';
 import LatestProducts from '../components/landing-one/LatestProducts';
-import ProductCategory from '../components/common/ProductCategory';
-import TrendingProducts from '../components/landing-one/TrendingProducts';
-import BestSellers from '../components/landing-one/BestSellers';
-import Facility from '../components/common/Facility';
-import Testimonials from '../components/common/Testimonials';
-import NewsSlides from '../components/common/NewsSlides';
-import Subscribe from '../components/common/Subscribe';
-import Partner from '../components/common/Partner';
-import InstagramPhotos from '../components/common/InstagramPhotos';
+import DeadlineProducts from '../components/landing-one/DeadlineProducts.vue';
+import BestSellers from '../components/landing-one/BestSellers.vue';
+import Category from '../components/landing-one/Category.vue';
+import axios from 'axios';
+
 
 export default {
   components: {
-    TopHeader, Menubar, Banner, Offer, LatestProducts, ProductCategory, TrendingProducts,
-    BestSellers, Facility, Testimonials, NewsSlides, Subscribe, Partner, InstagramPhotos
-  }
+      TopHeader, Menubar, Banner, LatestProducts,
+      BestSellers, DeadlineProducts, Category,
+  },
+  data() {
+      return {
+          category: "latest"
+      }
+  },
+  methods: {
+     
+  },
+  mounted() {
+    // 컴포넌트가 마운트된 후에 서버에서 제품 목록을 가져오는 HTTP GET 요청을 수행
+    axios.get("http://localhost:8080/")
+      .then(response => {
+        console.log("success");
+        console.log(response.data);
+        this.products = response.data; // 받은 데이터를 컴포넌트의 products 데이터에 저장
+
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
+  },
 }
 </script>
+
+<style scoped>
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-label {
+  margin-top: 30px;
+  justify-content: space-around;
+}
+
+.section-title-latest, .section-title-best, .section-title-deadline {
+  cursor: pointer;
+}
+
+.active {
+  color: #ffb400;
+  font-style: bold; 
+}
+
+.section-title-filter {
+  text-align: left;
+  margin-top: 50px;
+  height: 70px;
+}
+
+.latest-product {
+  margin-top: 80px;
+  margin-bottom: 80px;
+}
+
+.category {
+    margin-left: 11px;
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-color: #ffb400; 
+    border-width: 1px; 
+    border-style: solid; 
+    border-radius: 50px; 
+    margin-bottom: 30px;
+    width: 180px;
+    text-align:center;
+    align-items:center;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+
+
+  .category:hover {
+    border-width: 3px; 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .category-link {
+    display: inline-block;
+    text-decoration: none;
+    color: black;
+}
+
+  .producst{
+    padding-top: 100px;
+  }
+</style>

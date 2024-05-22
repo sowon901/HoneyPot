@@ -46,7 +46,7 @@ export default {
     /*
     ** Customize the progress-bar colors
     */
-        loading: { color: '#fff' },
+    loading: { color: '#fff' },
     /*
     ** Plugins to load before mounting the App
     */
@@ -62,6 +62,7 @@ export default {
     ** Nuxt.js dev-modules
     */
     buildModules: [
+        '@nuxtjs/composition-api/module'
     ],
     /*
     ** Nuxt.js modules
@@ -86,8 +87,8 @@ export default {
     ],
     /** Axios module configuration
      ** See https://axios.nuxtjs.org/options
-    ** Add .
-    */
+     ** Add .
+     */
     axios: {
         proxy: true
     },

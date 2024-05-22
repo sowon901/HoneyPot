@@ -1,7 +1,7 @@
 <template>
-    <div class="container">
+    <div class="container" style="margin-top: 2px;">
         <h4>구매 목록</h4>
-        <form style="margin-top: 16px;">
+        <form style="margin-top: 20px;">
             <div class="cart-table table-responsive">
                 <table class="table table-bordered">
                     <thead>
@@ -14,38 +14,42 @@
                     </thead>
 
 
-                    <tbody v-if="product.length > 0">
-                        <tr v-for="(product, i) in product" :key="i" style="text-align: center;">
+                    <tbody v-if="products.length > 0">
+                        <tr v-for="(product, i) in products" :key="i" style="text-align: center;">
                             <td class="product-information" style="text-align: left;">
-                                <nuxt-link :to="'/bid-details/' + product.id" class="product-detail">
+                                <nuxt-link :to="`/bid-details?serialNumber=${product.serialNumber}&productId=${product.productId}`" class="product-detail">
                                     <div style="display: flex;">
                                         <div style="margin-right: 10px;">
-                                            <img :src="product.image" width="60px" />
+                                            <img :src="product.image1" width="60px" />
                                         </div>
                                         <div>
                                             <h6>
-                                                {{ product.name }}
+                                                {{ product.productName }}
                                             </h6>
-                                            {{ product.sellerId }}
+                                            판매자: {{ product.nickName }}
                                             <br>
-                                            {{ product.details }}
-                                            <br>
-                                            {{ product.price }}
+                                            결제금액: {{ product.startPrice + (product.bidCnt * product.priceUnit) }}
                                         </div>
                                     </div>
                                 </nuxt-link>
                             </td>
 
-                            <td class="progress-status">
-                                {{ product.progressStatus }}
+                            <td class="payment-status">
+                                <span v-if="product.paymentStatus === 1">
+                                    결제완료
+                                </span>
+                                <span v-else class="checkout-link" @click="redirectToCheckout(product)"
+                                    style="color: #FFB400; text-decoration: underline;">
+                                    결제대기
+                                </span>
                             </td>
 
                             <td class="delivery-status">
-                                {{ product.deliveryStatus }}
+                                {{ getDeliveryStatusInKorean(product.deliveryStatus) }}
                             </td>
 
                             <td class="purchase-date">
-                                {{ product.purchaseDate }}
+                                {{ formatDate(product.completeDate) }}
                             </td>
                         </tr>
                     </tbody>
@@ -56,36 +60,38 @@
 </template>
 
 <script>
+import axios from 'axios';
+import { mapGetters } from 'vuex';
+
 export default {
+    props: ['serialNumber'],
     data() {
         return {
-            // 테스트용 데이터로 초기화된 cart 배열
-            product: [
-                {
-                    id: 1,
-                    sellerId: 'army82801',
-                    name: 'BTS JIN PHOTOCARD',
-                    details: 'PERMISSION TO DANCE ON STAGE  미니포카',
-                    price: '27,000',
-                    quantity: 2,
-                    image: require('../../assets/img/jin.jpg'),
-                    progressStatus: '결제완료',
-                    deliveryStatus: '배송준비중',
-                    purchaseDate: '2024.04.28'
-                }, {
-                    sellerId: 'army44t343',
-                    name: 'BTS JIN PHOTOCARD',
-                    details: 'PERMISSION TO DANCE ON STAGE  미니포카',
-                    price: 20,
-                    quantity: 1,
-                    image: require('../../assets/img/jin.jpg'),
-                    progressStatus: '결제완료',
-                    deliveryStatus: '배송준비중',
-                    purchaseDate: '2024.04.28'
-                }
-            ]
-        }
+            products: []
+        };
     },
+    computed: {
+        ...mapGetters(['getDeliveryStatusInKorean', 'formatDate'])
+    },
+    mounted() {
+        axios.get(`http://localhost:8080/productList/${this.serialNumber}`)
+            .then(response => {
+                // 서버에서 받아온 상품 데이터를 products 배열에 할당
+                console.log(response.data);
+                this.products = response.data;
+
+            })
+            .catch(error => {
+                console.error('Error fetching product list:', error);
+            });
+    },
+    methods: {
+        redirectToCheckout(product) {
+            if (product.paymentStatus === 0) {
+                this.$router.push({ path: '/checkout', query: { productId: product.productId} });
+            }
+        }
+    }
 }
 </script>
 <style scoped="scoped">
@@ -96,11 +102,10 @@ export default {
 
 .product-detail {
     color: black;
-    cursor: default;
-}
-
-.product-detail:hover {
     cursor: pointer;
 }
 
+.checkout-link {
+    cursor: pointer;
+}
 </style>

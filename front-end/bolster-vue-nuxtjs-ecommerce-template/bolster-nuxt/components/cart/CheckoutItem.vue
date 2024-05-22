@@ -112,14 +112,15 @@
                     </thead>
 
                     <tbody>
-                      <tr v-for="(cart, i) in cart" :key="i">
+                      <!-- <tr v-for="(cart, i) in cart" :key="i"> -->
+                        <tr>
                         <td class="product-name">
-                          <a href="#">{{ cart.name }}</a>
+                          <a href="#">{{$route.query.product.name}}</a>
                         </td>
 
                         <td class="product-total">
                           <span class="subtotal-amount"
-                            >${{ cart.price * cart.quantity }}</span
+                            >{{$route.query.product.price}}</span
                           >
                         </td>
                       </tr>
@@ -131,7 +132,7 @@
 
                         <td class="order-subtotal-price">
                           <span class="order-subtotal-amount"
-                            >${{ cartTotal }}</span
+                            >${{  }}</span
                           >
                         </td>
                       </tr>

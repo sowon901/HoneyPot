@@ -47,7 +47,7 @@
         defaultImage: require('@/assets/img/favicon-honeyPot.png'),
         profileImage: null,
         nickname: '',
-        tags: ['BLACKPINK', 'IVE', 'NewJeans', '방탄소년단', 'TWICE', 'Stray Kids', '더보이즈', 'aespa', 'LE SSERAFIM', 'NMIXX', '에스파', '아이유', 'ITZY', 'ENHYPEN', 'TREASURE', 'G-IDLE', 'NCT', 'ATEEZ', '우주소녀', '몬스타엑스', 'SHINee', 'Kep1er', 'CIX', '레드벨벳', '오마이걸', '아이즈원', 'BOYNEXTDOOR', 'ZEROBASEONE', '소녀시대', '오렌지카라멜', 'VIVIZ'],
+        tags: ['AESPA','BLACKPINK','BOYNEXTDOOR', 'BTS', 'ENHYPEN', 'EXO','GIRLSRENERATION','ITZY','LESSERAFIM','NCT','NEWJEANS','NMIXX','FROMIS_9','RIIZE','STRAYKIDS','SEVENTEEN', 'SHINEE','SUPERJUNIOR','TXT','TWICE','WINNER','OTHERS'],
         selectedTags: []
       }
     },
@@ -202,7 +202,8 @@
   }
 
   .section-divider {
-  margin-top: 2px;
-  border: 1px solid #ccc;
+  margin-top: 10px;
+  border: 1px #ccc;
+
 }
 </style>

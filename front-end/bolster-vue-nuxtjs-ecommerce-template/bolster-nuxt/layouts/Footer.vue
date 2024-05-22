@@ -4,7 +4,9 @@
             <div class="container">
                 <div class="footer-links" style="font-size: 18px; margin-bottom: 20px;">
                     <div class="footer-link">회사소개</div>
-                    <div class="footer-link">이용약관</div>
+                    <div class="footer-link">
+                        <nuxt-link to="/policy">이용약관</nuxt-link>
+                    </div>
                     <div class="footer-link">개인정보처리방침</div>
                 </div>
                 <div class="footer-text" style="color: #666;">
@@ -21,10 +23,20 @@
 </template>
 <style scoped>
 .footer-links {
-    display: flex; /* Flexbox 사용 */
+    display: flex; /* Flexbox를 사용하여 가로로 나열 */
+    flex-direction: row; /* 기본값은 row이므로, 요소들을 가로로 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    margin-bottom: 20px; /* 하단 여백 추가 */
 }
 
 .footer-link {
-    margin-right: 20px; /* 각 요소 사이의 마진 설정 */
+    margin-right: 20px; /* 각 링크 사이의 오른쪽 마진 */
+    color: black; /* 글자 색상 */
 }
+
+.footer-link nuxt-link, .footer-link a {
+    color: black; /* 링크 글자색 변경 */
+    text-decoration: none; /* 밑줄 제거 */
+}
+
 </style>

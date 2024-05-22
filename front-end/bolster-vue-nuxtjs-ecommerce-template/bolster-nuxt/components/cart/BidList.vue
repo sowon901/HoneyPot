@@ -1,7 +1,7 @@
 <template>
-    <div class="container">
+    <div class="container" style="margin-top: 2px;">
         <h4>입찰 목록</h4>
-        <form style="margin-top: 16px;">
+        <form style="margin-top: 20px;">
             <div class="cart-table table-responsive">
                 <table class="table table-bordered">
                     <thead>
