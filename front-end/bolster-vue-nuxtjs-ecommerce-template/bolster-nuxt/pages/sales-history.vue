@@ -23,9 +23,19 @@ export default {
     },
     data() {
         return {
-            serialNumber: '123456789'
+            serialNumber: null
         }
     },
+    mounted() {
+        // sessionStorage에서 serialNumber를 가져옵니다.
+        const serialNumber = sessionStorage.getItem('SERIAL_NUMBER');
+        if (serialNumber) {
+            this.serialNumber = serialNumber;
+        } else {
+            // serialNumber가 없을 경우 처리 (예: 로그인 페이지로 리디렉션)
+            this.$router.push('/login');
+        }
+    }
 }
 </script>
 <style scoped>
