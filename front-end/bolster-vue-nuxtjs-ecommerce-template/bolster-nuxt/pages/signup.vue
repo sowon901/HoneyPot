@@ -219,7 +219,7 @@
                                     <div class="btn-group" role="group" aria-label="Gender" style="width: 100%;">
                                         <button type="button" id="gender-btn" class="btn btn-primary" @click="selectGender('male')" :class="{ 'active': selectedGender === 'male', 'clicked': selectedGender === 'male' }">남자</button>
                                         <button type="button" id="gender-btn" class="btn btn-primary" @click="selectGender('female')" :class="{ 'active': selectedGender === 'female', 'clicked': selectedGender === 'female' }">여자</button>
-                                        <button type="button" id="gender-btn" class="btn btn-primary" @click="selectGender('not_specified')" :class="{ 'active': selectedGender === 'not_specified', 'clicked': selectedGender === 'not_specified' }">선택 안함</button>
+                                        <button type="button" id="gender-btn" class="btn btn-primary" @click="selectGender('none')" :class="{ 'active': selectedGender === 'none', 'clicked': selectedGender === 'none' }">선택 안함</button>
                                     </div>
                                     <input type="hidden" name="gender" v-model="selectedGender">
                                 </div>
@@ -374,33 +374,27 @@ export default {
         const honeypotSignup = async () => {
             console.log("메서드 호출이 되긴 하니?");
             try {
-                let profileImageBase64 = '';
+                const formData = new FormData();
                 if (profileImage.value) {
-                    profileImageBase64 = await toBase64(profileImage.value);
+                    formData.append('profileImage', profileImage.value);
                 }
+                formData.append('username', id.value);
+                formData.append('password', password.value);
+                formData.append('name', name.value);
+                formData.append('nickname', nickname.value);
+                formData.append('mobileNumber', mobileNumber.value);
+                formData.append('email', email.value);
+                formData.append('postcode', postcode.value);
+                formData.append('roadAddress', address.value);
+                formData.append('detailAddress', detailAddress.value);
+                formData.append('birthdate', birthDate.value);
+                formData.append('selectedGender', selectedGender.value);
 
-                const signupData = {
-                    profileImage: profileImageBase64,
-                    username: id.value,
-                    password: password.value,
-                    nickname: nickname.value,
-                    mobileNumber: mobileNumber.value,
-                    email: email.value,
-                    postcode: postcode.value,
-                    roadAddress: address.value,
-                    detailAddress: detailAddress.value,
-                    birthdate: birthDate.value,
-                    selectedGender: selectedGender.value
-                };
-
-
-                    const response = await axios.post('http://localhost:8080/auth/signup', signupData, {
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                console.log(response.data);
+                const response = await axios.post('http://localhost:8080/auth/signup', formData);
+                const serialNumber = response.data;
+                console.log("시리얼 넘버 :" + response.data);
                 alert('회원가입이 완료되었습니다.');
+                window.location.href = `http://localhost:3000/favorites?serialNumber=${serialNumber}`;
                 // this.$router.push('/login'); // Vue Router 사용 시
             } catch (error) {
                 console.error('Error during sign up:', error.response?.data || error.message);
@@ -435,12 +429,8 @@ export default {
                         }
                         // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
                         if (extraAddr !== '') {
-                            extraAddr = ' (' + extraAddr + ')';
+                            addr += ' (' + extraAddr + ')';
                         }
-                        // 조합된 참고항목을 해당 필드에 넣는다.
-                        extraAddr.value = extraAddr;
-                    } else {
-                        extraAddr.value = '';
                     }
 
                     // 우편번호와 주소 정보를 해당 필드에 넣는다.
