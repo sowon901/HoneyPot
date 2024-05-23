@@ -25,11 +25,12 @@
                                         </div>
                                         <div style="text-align: center;">
                                             <h6>
-                                                <span>
+                                                <!-- <span>
                                                     {{ product.productName.length > 35 ? product.productName.slice(0,
                                                         35)
                                                         + '...' : product.productName }}
-                                                </span>
+                                                </span> -->
+                                                {{ product.productName }}
                                             </h6>
                                         </div>
                                     </div>
@@ -83,7 +84,7 @@ export default {
         ...mapGetters(['getDeliveryStatusInKorean', 'formatDate'])
     },
     mounted() {
-        axios.get(`http://localhost:8080/productList/${this.serialNumber}`)
+        axios.get(`http://localhost:8080/salesList/${this.serialNumber}`)
             .then(response => {
                 // 서버에서 받아온 상품 데이터를 products 배열에 할당
                 console.log(response.data);

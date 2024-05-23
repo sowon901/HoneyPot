@@ -19,8 +19,8 @@
                             <td class="product-information" style="text-align: left;">
                                 <nuxt-link :to="`/bid-details?serialNumber=${product.serialNumber}&productId=${product.productId}`" class="product-detail">
                                     <div style="display: flex;">
-                                        <div style="margin-right: 10px;">
-                                            <img :src="product.image1" width="60px" />
+                                        <div class="image-container" :class="{ 'no-image': !product.image1 }"  style="margin-right: 10px;">
+                                            <img v-if="product.image1" :src="product.image1" />
                                         </div>
                                         <div>
                                             <h6>
@@ -74,7 +74,7 @@ export default {
         ...mapGetters(['getDeliveryStatusInKorean', 'formatDate'])
     },
     mounted() {
-        axios.get(`http://localhost:8080/productList/${this.serialNumber}`)
+        axios.get(`http://localhost:8080/purchaseList/${this.serialNumber}`)
             .then(response => {
                 // 서버에서 받아온 상품 데이터를 products 배열에 할당
                 console.log(response.data);
@@ -107,5 +107,22 @@ export default {
 
 .checkout-link {
     cursor: pointer;
+}
+
+.image-container {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-container img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.image-container.no-image {
+    background-color: #e0e0e0;
 }
 </style>
