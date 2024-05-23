@@ -7,13 +7,7 @@
 
                 </nuxt-link>
 
-                <!-- <Timer
-                    v-if="product.timePeriod"
-                    v-bind:dateTime="product.dateTime"
-                ></Timer> -->
             </div>
-            {{ product.userId }}
-
             <div class="product-content" style="text-align: left;">
                 <div class="main_description">
                     <div class="idol_name">
@@ -128,12 +122,5 @@ export default {
         height: 100%;
         object-fit: contain;
     }
-
-    .product-link img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-}
-
     
 </style>

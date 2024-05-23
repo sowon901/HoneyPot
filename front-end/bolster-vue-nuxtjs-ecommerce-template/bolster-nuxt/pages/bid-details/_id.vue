@@ -23,16 +23,14 @@
 
             <!-- 상품 상세 설명 -->
             <div class="product-details">
-                <div class="timer">
+                <div class="timer" style="display:flex;">
                     <b>
-                        <Timer v-if="product.timePeriod"
-                            v-bind:dateTime="product.timeLimit">
-                        </Timer>
-                        <!-- {{ remainingTime }} -->
-                        <!-- Timer -->
+                        <div class="days">{{days}}Days</div>
+                        <div class="hours"> {{hours}}:</div>
+                        <div class="minutes"> {{minutes}}:</div>
+                        <div class="seconds"> {{seconds}}</div>
                     </b>
                 </div>
-                <!-- 타이머 기능 추후 구현 -->
 
                 <div class="description">
                     <div class="product-name">
@@ -51,13 +49,11 @@
                             <td style="padding-left: 300px;">
                                 {{ product.startPrice }}원
                             </td>
-                            <!-- {{start_price}}원 -->
                         </tr>
                         <td><b>현재가</b></td>
                         <td style="padding-left: 300px;">
                             {{ product.price }}원
                         </td>
-                        <!-- {{price}}원 -->
 
                         <tr>
                             <td><b>즉시 판매가</b></td>
@@ -92,18 +88,19 @@
             </div>
 
                 <div class="buttons">
-                    <button class="btn-bid" @click="bid" :disabled="!agree">
+                    <button class="btn-bid" @click="bid" :disabled="!agree || bidButtonDisabled" >
                         입찰하기
                     </button>
+                </div>
                     <!-- <a href="#" class="btn btn-bid">입찰하기</a> -->
                     <div class="wishlist-btn">
-                        <a href="#" class="btn-wish">
+                        <!-- <a href="#" class="btn-wish">
                             <i
                                 class="far fa-heart"
                                 style="color:red; text-align:center"
                             >
                             </i>
-                        </a>
+                        </a> -->
                         <div
                             style="text-align: right; vertical-align:bottom; margin-top:20px;"
                         >
@@ -111,7 +108,6 @@
                             <span>{{ product.view }}</span>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
 
@@ -120,22 +116,21 @@
             제품 정보
             <hr />
 
-
             <div class="detail-desciprtion-text">
                 <!-- 상품 상세 설명 추가 -->
-                {{ product.productInfo }}
+                <!-- {{ product.productInfo }} -->
+                <div v-html="product.productInfo"></div>
             </div>
         </div>
 
-        <div class="detail-image-description">
+        <!-- <div class="detail-image-description">
             <div class="big-detail-image-list">
-                <div v-for="(image, index) in productImages" :key="index" class="detail-big-image">
+                <div v-for="(image, index) in productImages" :key="index" class="detail-big-image"> -->
                     <!-- 이미지가 null이 아닌 경우에만 보여줍니다. -->
-                    <img v-if="image" :src="image" :alt="'Image ' + (index + 1)" />
+                    <!-- <img v-if="image" :src="image" :alt="'Image ' + (index + 1)" />
                 </div>
-                {{ product.productInfo }}
             </div>
-        </div>
+        </div> -->
 
         <div style="text-align: center;" v-if="!hideMoreButton">
             <hr class="hr-effect" />
@@ -165,7 +160,7 @@
                             <div class="input">
                                 <div
                                     class="count"
-                                    style="display: flex; margin-left: 30px; justify-content:space-around; text-align:right;"
+                                    style="display: flex; margin-left: 20px; justify-content:space-around; text-align:right;"
                                 >
                                     <button class="btn-minus">
                                         <i class="fas fa-minus"></i>
@@ -206,7 +201,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -226,7 +220,6 @@ export default {
             agree: false, //체크박스 상태 저장
             product: null,
             bidCheck: false,
-
             price: "",
             product: "",
             days: '',
@@ -241,13 +234,12 @@ export default {
             hideMoreButton: false,
             mainImage: "",
             priceUnit: "",
-
+            bidButtonDisabled: false,
         }
     },
     mounted() {
         // 동적 라우트 매개변수인 상품 ID를 가져옵니다.
         const productId = this.$route.params.id
-        console.log(productId)
         // Vuex 스토어에서 해당 상품을 조회합니다.
         // this.product = this.$store.state.products.all.find(product => product.id === parseInt(productId));
         // 상품 ID를 기반으로 서버로부터 상품 데이터를 가져옵니다.
@@ -260,19 +252,18 @@ export default {
                 this.mainImage = this.productImages[0];
                 this.priceUnit = this.product.priceUnit;
                 this.price = this.priceUnit;
-
-                console.log(this.price);
             })
             .catch(error => {
                 // 오류가 발생했을 때 오류 메시지를 출력합니다.
                 console.error('Error fetching product data:', error)
             })
     },
-    // props: ['dateTime'],
+    props: ['dateTime'],
     
-    // created() { // Turn data into viewable values
-    //     this.interval = setInterval(() => this.timing(product.timeLimit), 1000);
-    // },
+    created() { // Turn data into viewable values
+        this.interval = setInterval(() => this.timing(this.product.timeLimit), 1000);
+    },
+
 
     computed: {
         productImages() {
@@ -298,7 +289,6 @@ export default {
                 this.product.image4,
                 this.product.image5,
             ].filter(image => image)
-
         },
         more() {
 
@@ -325,7 +315,6 @@ export default {
         },
         bidPlus() {
             this.price = this.price + this.priceUnit;
-            console.log(this.price,"가격")       
          },
 
          bidConfirm() {
@@ -364,9 +353,50 @@ export default {
         //     }
         // }
 
+        timing(dateTime) {
+            let durationTime = this.product.timeLimit;
 
+            //durationTime을 밀리초단위로 변환
+            let durationTimeParse = durationTime * 60 * 60;
+
+            let registerTime = this.product.registrationDate;
+            let registerTimeParse = (Date.parse(registerTime)) / 1000;
+
+            let now = new Date();
+            let nowParse = (Date.parse(now) / 1000);
+            let timeLeft = registerTimeParse + durationTimeParse - nowParse;
+
+            let days = Math.floor(timeLeft / 86400); 
+            let hours = Math.floor((timeLeft - (days * 86400)) / 3600);
+            let minutes = Math.floor((timeLeft - (days * 86400) - (hours * 3600 )) / 60);
+            let seconds = Math.floor((timeLeft - (days * 86400) - (hours * 3600) - (minutes * 60)));
+            
+            if (hours < "10") { hours = "0" + hours; }
+            if (minutes < "10") { minutes = "0" + minutes; }
+            if (seconds < "10") { seconds = "0" + seconds; }
+
+            if(timeLeft < "0") {
+                days = " - ";
+                hours = " -- ";
+                minutes = " -- ";
+                seconds = " -- ";
+            }
+
+            this.days = days;
+            this.hours = hours;
+            this.minutes = minutes;
+            this.seconds = seconds;
+
+            if(timeLeft<=0) {
+                clearInterval(this.interval);
+                this.bidButtonDisabled = true; 
+            } else {
+                this.bidButtonDisabled = false; 
+            }
+        }
     }
 }
+
 </script>
 
 <style scoped>
@@ -396,8 +426,19 @@ export default {
 }
 
 .product-main-image {
-    padding-top: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70%; /* 필요한 경우 너비를 조정합니다 */
+    height: 70%; /* 필요한 경우 높이를 조정합니다 */
+    padding-top: 100px;
     padding-bottom: 30px;
+    margin: auto;
+}
+
+.product-main-image .img {
+    width : 120%;
+    height: 120%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -406,26 +447,34 @@ export default {
 .main-image {
     max-width: 500px;
     max-height: 500px;
+    display:block;
 }
-
 .product-detail-image-list{
+    padding-top: 30px;
     display:flex;
     justify-content: center;
+
 }
 
 .product-detail-image{
     width: 15%; /* 이미지 너비를 조정합니다. */
     max-height: 100%; /* 최대 높이를 100%로 설정하여 비율을 유지합니다. */
     margin-right: 10px;
-
     object-fit: contain;
 }
 
 .timer {
-    font-size: 50px;
+    display: flex;         /* 자식 요소들을 가로로 정렬 */
+    justify-content: right;
+    align-items: center;   /* 자식 요소들을 세로로 가운데 정렬 */
+    font-size: 60px;
     margin-bottom: 20px;
     margin-top: 80px;
     text-align: right;
+}
+.timer b {
+    display: flex;         /* 자식 요소들을 가로로 정렬 */
+    gap: 10px;             /* 자식 요소들 사이의 간격 */
 }
 
 .product-details {
@@ -516,13 +565,6 @@ export default {
     justify-content: center;
 }
 
-.detail-big-image {
-    width: 1000px;
-    height: 1000px;
-    background-color: lightgrey;
-    margin: 100px;
-}
-
 
 .more-button {
     width: 500px;
@@ -543,9 +585,9 @@ export default {
     left: 50%; /* 화면 좌측 기준으로 50% 위치에 배치 */
     transform: translate(-50%, -50%); /* 수평 및 수직으로 -50%씩 이동하여 중앙으로 정렬 */
     width: 600px;
-    height: 800px; /* 모달 높이 설정 */
+    height: 600px; /* 모달 높이 설정 */
     z-index: 1000; /* 다른 요소보다 위에 표시되도록 설정 */
-    background: #fff; /* 배경색 설정 */
+    /* background: #fff; 배경색 설정 */
     border-radius: 10px; /* 모달의 둥근 모서리 설정 */
     padding: 20px; /* 모달 내부 여백 설정 */
     box-sizing: border-box; /* padding이 박스 크기에 포함되도록 설정 */
@@ -553,8 +595,6 @@ export default {
 
 /* modal or popup */
 .bid-modal-container {
-
-
   background: #fff;
   border-radius: 10px;
   height: 600px;
@@ -562,7 +602,6 @@ export default {
   box-sizing: border-box;
   align-items: center;
   border-color: black;
-
 }
 
 .label {
