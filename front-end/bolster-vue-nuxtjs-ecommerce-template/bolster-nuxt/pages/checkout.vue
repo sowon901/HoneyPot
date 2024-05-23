@@ -1,20 +1,15 @@
 <template>
     <div>
-        <TopHeader />
-        <Menubar />
-        <CheckoutItem />
+        <honeyCheckoutItem />
     </div>
 </template>
 
 <script>
-import TopHeader from '../layouts/TopHeader'
-import Menubar from '../layouts/Menubar'
-import CheckoutItem from '../components/cart/CheckoutItem';
+import honeyCheckoutItem from '../components/cart/honeyCheckoutItem';
 export default {
-    components: {
-        TopHeader,
-        Menubar,
-        CheckoutItem,
+    components:
+    {
+        honeyCheckoutItem,
     }
 }
 </script>

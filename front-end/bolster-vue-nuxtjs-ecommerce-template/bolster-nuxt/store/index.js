@@ -129,7 +129,24 @@ const getters = {
     },
     getOrders(state){
         return state.orders
-    }
+    },
+    getDeliveryStatusInKorean: () => (status) => {
+        const deliveryStatusKoreanMap = {
+          PENDING: '검수중',
+          SHIPPING: '배송중',
+          DELIVERED: '배송완료',
+          RETURNING: '반품진행중',
+          CANCELLED: '반품완료'
+        };
+        return deliveryStatusKoreanMap[status] || '알 수 없음';
+      },
+      formatDate: () => (dateTimeString) => {
+        const date = new Date(dateTimeString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
 };
 
 export default{
