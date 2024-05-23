@@ -96,6 +96,7 @@ export default {
             sessionStorage.removeItem('JWT_TOKEN');
             sessionStorage.removeItem('ACCESS_TOKEN_EXPIRATION');
             sessionStorage.removeItem('REFRESH_TOKEN');
+            sessionStorage.removeItem('REFRESH_TOKEN_EXPIRATION');
             this.isLoggedIn = false;
             this.$router.push('/');
         }
