@@ -30,7 +30,7 @@
                                     <nuxt-link to="/mypage-profile">마이페이지</nuxt-link>
                                 </div>
                                 <div class="option-item">
-                                    <nuxt-link to="/login">로그아웃</nuxt-link>
+                                    <nuxt-link to="/login">로그인</nuxt-link>
                                 </div>
                             </div>
                         </b-collapse>
