@@ -24,10 +24,12 @@
                                     <nuxt-link to="/products">모두보기</nuxt-link>
                                 </div>
                                 <div class="option-item">
-                                    <nuxt-link to="/login">판매하기</nuxt-link>
+                                    <button class="text-button" @click="navigateTo('sell')">판매하기</button>
+                                    <!-- <nuxt-link to="/login">판매하기</nuxt-link> -->
                                 </div>
-                                <div class="option-item">
-                                    <nuxt-link to="/mypage-profile">마이페이지</nuxt-link>
+                                <div class="option-item" >
+                                    <button class="text-button" @click="navigateTo('mypage')">마이페이지</button>
+                                    <!-- <nuxt-link to="/mypage-profile">마이페이지</nuxt-link> -->
                                 </div>
                                 <div class="option-item" v-if="!isLoggedIn">
                                     <nuxt-link to="/login">로그인</nuxt-link>
@@ -99,7 +101,19 @@ export default {
             sessionStorage.removeItem('REFRESH_TOKEN_EXPIRATION');
             this.isLoggedIn = false;
             this.$router.push('/');
+        },
+        navigateTo(page) {
+        if (!this.isLoggedIn) {
+            alert('로그인이 필요합니다');
+            this.$router.push('/login');
+        } else {
+            if (page === 'sell') {
+                this.$router.push('/login'); // 여기를 판매하기 페이지로 변경
+            } else if (page === 'mypage') {
+                this.$router.push('/mypage-profile');
+            }
         }
+    }
     }
 }
 </script>
@@ -144,4 +158,3 @@ export default {
     text-decoration: underline; /* 링크처럼 마우스를 올렸을 때 밑줄을 추가하고 싶다면 이 줄을 추가 */
 }
 </style>
-<!--이맑음 작성-->
