@@ -265,12 +265,13 @@ export default {
                     return idolMap[idol];
                 });
 
-                await axios.post('http://localhost:8080/user-idol', {
+                await axios.post('http://localhost:8080/auth/user-idol', {
                     serialNumber: serialNumber.value,
                     idolIds: selectedIdolIds,
                 });
 
                 alert('회원가입이 완료되었습니다! \n꿀단지를 채워보세요🍯');
+                window.location.href = `http://localhost:3000`;
             } catch (error) {
                 console.error('Error during idol selection:', error.response?.data || error.message);
                 alert('아이돌 선택에 실패했습니다: ' + (error.response?.data || error.message));
