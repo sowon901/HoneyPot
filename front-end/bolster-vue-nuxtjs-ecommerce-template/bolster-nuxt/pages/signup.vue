@@ -31,9 +31,8 @@
             <div class="signup-area ptb-60">
                 <div class="container">
                     <div class="signup-content">
-                        <!-- 아이디 필터링하기 -->
                         <label style="color: darkgray; display: inline-block; text-align: right; width: 100%;"><h4 style="color: orangered; display: inline;">*</h4>표시는 필수 입력 항목입니다.</label>
-                        <form class="signup-form">
+                        <form class="signup-form" @submit.prevent="honeypotSignup">
                             <div class="form-group">
                                 <label>회원 사진</label>
                                 <label style="color: lightgray">프로필 사진은 200x200 픽셀 이하, 10MB 이하의 JPEG, PNG 형식의 파일만 올리실 수 있습니다.</label>
@@ -45,7 +44,6 @@
                                 />
                                 <p v-if="sizeExceeded" style="color: red;">파일 크기가 너무 큽니다. (최대 5MB까지 허용됩니다.)</p>
                                 <p v-if="formatInvalid" style="color: red;">올바른 이미지 형식이 아닙니다. (JPEG 또는 PNG 형식을 허용합니다.)</p>
-                                <!-- 파일 미리보기를 위한 이미지 태그 -->
                                 <img v-if="imageUrl" :src="imageUrl" alt="Profile Picture Preview" style="max-width: 200px; max-height: 200px;">
                             </div>
 
@@ -87,7 +85,6 @@
                                 />
                                 <span v-if="passwordMatch && password !== '' && passwordCheck !== ''" style="color: green;">비밀번호가 일치합니다.</span>
                                 <span v-else-if="password !== '' && passwordCheck !== ''" style="color: red;">위와 동일한 비밀번호를 입력해주세요.</span>
-                                <!-- 입력란이 비어 있을 때 경고 메시지를 표시하지 않음 -->
                             </div>
 
                             <div class="form-group">
@@ -120,17 +117,6 @@
                             <div class="form-group">
                                 <label>휴대전화번호<h4 style="color: orangered; display: inline;">*</h4></label>
                                 <div class="input-group">
-                                    <!--                                <div class="input-group-prepend">
-                                                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                            국가 선택
-                                                                        </button>
-                                                                        <div class="dropdown-menu">
-                                                                            <a class="dropdown-item" href="#">한국</a>
-                                                                            <a class="dropdown-item" href="#">미국</a>
-                                                                            <a class="dropdown-item" href="#">영국</a>
-                                                                            &lt;!&ndash; 다른 국가들을 필요에 따라 추가하세요 &ndash;&gt;
-                                                                        </div>
-                                                                    </div>-->
                                     <input
                                         type="text"
                                         class="form-control"
@@ -225,11 +211,8 @@
                                 </div>
                             </div>
                             <br><br>
-                            <button type="submit" class="btn btn-primary" @click="honeypotSignup">회원 정보 입력</button>
+                            <button type="submit" class="btn btn-primary">회원 정보 입력</button>
                             <br>
-                            <!--                        <nuxt-link to="/" class="return-store"
-                                                    >메인으로 돌아가기</nuxt-link
-                                                    >-->
                         </form>
                     </div>
                 </div>
@@ -325,9 +308,9 @@
 
 .step-line {
     height: 1px;
-    flex-grow: 1; /* 이 부분을 조정하여 실선이 원 사이에서 꽉 차도록 합니다 */
+    flex-grow: 1;
     background-color: gainsboro;
-    margin: 0 5px; /* 원과 실선 사이의 간격을 조절합니다 */
+    margin: 0 5px;
 }
 
 </style>
@@ -372,7 +355,6 @@ export default {
         };
 
         const honeypotSignup = async () => {
-            console.log("메서드 호출이 되긴 하니?");
             try {
                 const formData = new FormData();
                 if (profileImage.value) {
@@ -391,11 +373,10 @@ export default {
                 formData.append('selectedGender', selectedGender.value);
 
                 const response = await axios.post('http://localhost:8080/auth/signup', formData);
+                console.log('Signup response:', response);
                 const serialNumber = response.data;
                 console.log("시리얼 넘버 :" + response.data);
-                alert('회원가입이 완료되었습니다.');
                 window.location.href = `http://localhost:3000/favorites?serialNumber=${serialNumber}`;
-                // this.$router.push('/login'); // Vue Router 사용 시
             } catch (error) {
                 console.error('Error during sign up:', error.response?.data || error.message);
                 formError.value = '회원가입에 실패했습니다: ' + (error.response?.data || error.message);
@@ -433,12 +414,12 @@ export default {
                         }
                     }
 
-                    // 우편번호와 주소 정보를 해당 필드에 넣는다.
+
                     postcode.value = data.zonecode;
                     address.value = addr;
-                    // 커서를 상세주소 필드로 이동한다.
+
                     detailAddress.value = '';
-                    // Use Vue.nextTick() to ensure the next DOM update cycle has finished before focusing the input
+
                     nextTick(() => {
                         document.getElementById('address-details').focus();
                     });
@@ -450,15 +431,13 @@ export default {
             const value = event.target.value;
             const regex = /[^\w\dㄱ-ㅎㅏ-ㅣ가-힣-_]/; // 특수문자를 제외한 문자를 검사하는 정규식
 
-            // 글자수가 0, 1 또는 11 이상일 때 경고 메시지 표시
             showLengthWarning.value = value.length < 2 || value.length > 10;
 
-            // 특수문자가 포함되어 있는지 검사하여 경고 메시지 표시
             showSpecialCharacterWarning.value = regex.test(value);
         };
 
         const handleFileUpload = (event) => {
-            const file = event.target.files[0]; // 선택된 파일 가져오기
+            const file = event.target.files[0];
             // 파일 크기 확인 (최대 5MB)
             sizeExceeded.value = file.size > 5 * 1024 * 1024;
 
