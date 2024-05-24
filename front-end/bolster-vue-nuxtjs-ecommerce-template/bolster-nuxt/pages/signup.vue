@@ -193,7 +193,7 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder=""
+                                    placeholder="YYYYMMDD 형식으로 입력해주세요"
                                     id="birthdate"
                                     name="birthdate"
                                     v-model="birthdate"
@@ -338,7 +338,7 @@ export default {
         const postcode = ref('');
         const address = ref('');
         const detailAddress = ref('');
-        const birthDate = ref('');
+        const birthdate = ref('');
         const selectedGender = ref('');
 
         const imageUrl = ref(null);
@@ -369,7 +369,7 @@ export default {
                 formData.append('postcode', postcode.value);
                 formData.append('roadAddress', address.value);
                 formData.append('detailAddress', detailAddress.value);
-                formData.append('birthdate', birthDate.value);
+                formData.append('birthdate', birthdate.value);
                 formData.append('selectedGender', selectedGender.value);
 
                 const response = await axios.post('http://localhost:8080/auth/signup', formData);
@@ -488,7 +488,7 @@ export default {
             postcode,
             address,
             detailAddress,
-            birthDate,
+            birthdate,
             selectedGender,
 
             imageUrl,
