@@ -20,7 +20,6 @@
                         <form
                             class="login-form"
                             v-if="!authUser"
-                            @submit.prevent="serviceLogin"
                         >
                             <p v-if="formError" class="error">
                                 {{ formError }}
@@ -45,7 +44,7 @@
                                     name="password"
                                 />
                             </div>
-                            <button type="submit" class="btn btn-primary">Login</button>
+                            <button type="submit" class="btn btn-primary" @click="serviceLogin">Login</button>
                             <br>
                             <a id="kakao-login-btn" @click="kakaoLogin">
                                 <img src="../assets/img/kakao_button.png"
