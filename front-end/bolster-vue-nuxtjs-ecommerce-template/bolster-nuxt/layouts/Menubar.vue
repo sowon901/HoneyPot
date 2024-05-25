@@ -121,7 +121,6 @@ export default {
         this.isScrolled = window.scrollY > 50; // Adjust the value to your preference
     },
     }
-    }
 }
 </script>
 <style scoped="scoped">
