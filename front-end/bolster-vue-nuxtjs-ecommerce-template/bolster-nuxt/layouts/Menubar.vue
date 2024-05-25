@@ -95,6 +95,7 @@ export default {
             sessionStorage.removeItem('JWT_TOKEN');
             sessionStorage.removeItem('ACCESS_TOKEN_EXPIRATION');
             sessionStorage.removeItem('REFRESH_TOKEN');
+            sessionStorage.removeItem('REFRESH_TOKEN_EXPIRATION');
             this.isLoggedIn = false;
             this.$router.push('/');
         },
@@ -119,6 +120,7 @@ export default {
         handleScroll() {
         this.isScrolled = window.scrollY > 50; // Adjust the value to your preference
     },
+    }
     }
 }
 </script>
@@ -180,5 +182,4 @@ export default {
 .navbar-area.scrolled {
     background-color: rgba(0, 0, 0, 0.8); /* Adjust transparency and color as needed */
 }
-
 </style>

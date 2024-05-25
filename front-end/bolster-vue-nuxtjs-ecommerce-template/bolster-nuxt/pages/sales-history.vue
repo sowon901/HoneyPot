@@ -41,6 +41,7 @@ export default {
     },
     methods: {
         ...mapActions(['refreshAccessToken', 'fetchProfile']),
+
     }
 }
 </script>
