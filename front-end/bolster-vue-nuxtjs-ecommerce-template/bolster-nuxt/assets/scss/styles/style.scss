@@ -1803,17 +1803,17 @@ Main Banner Area CSS
     background: {
         color: #f1f1f1;
         size: cover;
-        repeat: no-repeat;
+        repeat: repeat;
         position: center center;
     }
     &.item-bg1 {
-        background-image: url(../../img/main-banner1.jpg);
+        background-image: url(../../img/banner-image/m02.jpeg);
     }
     &.item-bg2 {
-        background-image: url(../../img/main-banner2.jpg);
+        background-image: url(../../img/banner-image/m03.jpeg);
     }
     &.item-bg3 {
-        background-image: url(../../img/main-banner3.jpg);
+        background-image: url(../../img/banner-image/m01.jpeg);
     }
     &.item-bg4 {
         background-image: url(../../img/main-banner4.jpg);
