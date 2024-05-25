@@ -27,7 +27,7 @@
                                 <label for="confirm-password">새 비밀번호 확인</label>
                                 <input type="password" id="confirm-password" v-model="confirmPassword" required>
                             </div>
-                            <button type="submit" class="btn-change" @click="changePassword">비밀번호 변경</button>
+                            <button type="submit" class="btn-change">비밀번호 변경</button>
                         </form>
                     </div>
                 </div>
