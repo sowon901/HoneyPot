@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     fetchData() {
-        axios.get('http://localhost:8080/filterByDeadLine')
+        axios.get('http://localhost:8080/index/filterByDeadLine')
         .then(response => {
           this.products = response.data; 
           console.log("successMain", this.products);

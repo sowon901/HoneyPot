@@ -61,7 +61,7 @@ export default {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    background-color: #f5f5f5; /* 이미지가 없을 때 표시할 배경색 */
+    background-color: white; /* 이미지가 없을 때 표시할 배경색 */
 }
 
 .product-content {
