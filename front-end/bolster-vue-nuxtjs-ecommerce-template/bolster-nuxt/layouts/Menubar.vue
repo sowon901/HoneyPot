@@ -1,25 +1,21 @@
 <template>
     <div>
-        <div :class="['navbar-area']">
+        <div :class="['navbar-area', , { 'scrolled': isScrolled }]">
             <div class="comero-nav">
                 <div class="container">
                     <nav class="navbar navbar-expand-md navbar-light">
                         <nuxt-link class="navbar-brand" to="/">
-                            <img
-                                src="../assets/img/honeypotLogo.png"
-                                alt="logo"
-                                style="width: 100px; height: auto;"/>
+                            <img src="../assets/img/honeypotLogo.png" alt="logo" style="width: 100px; height: auto;" />
                         </nuxt-link>
 
                         <b-navbar-toggle target="navbarSupportedContent"></b-navbar-toggle>
 
-                        <b-collapse
-                            class="collapse navbar-collapse"
-                            id="navbarSupportedContent"
-                            is-nav="is-nav">
+                        <b-collapse class="collapse navbar-collapse" id="navbarSupportedContent" is-nav="is-nav">
                             <div class="search-bar">
-                                <input type="text" placeholder="판매자나 상품명을 검색해 보세요." class="search-input"></div>
-                            <div class="others-option">
+                                <input type="text" v-model="searchQuery" @keyup.enter="searchProducts"
+                                    placeholder="찾고 싶은 상품을 검색해보세요!" class="search-input">
+                            </div>
+                            <div class="others-option ml-auto">
                                 <div class="option-item">
                                     <nuxt-link to="/products">모두보기</nuxt-link>
                                 </div>
@@ -27,7 +23,7 @@
                                     <button class="text-button" @click="navigateTo('sell')">판매하기</button>
                                     <!-- <nuxt-link to="/login">판매하기</nuxt-link> -->
                                 </div>
-                                <div class="option-item" >
+                                <div class="option-item">
                                     <button class="text-button" @click="navigateTo('mypage')">마이페이지</button>
                                     <!-- <nuxt-link to="/mypage-profile">마이페이지</nuxt-link> -->
                                 </div>
@@ -41,19 +37,18 @@
                         </b-collapse>
                     </nav>
                 </div>
-                <hr class="footer-line"/>
+                <hr class="footer-line" />
             </div>
         </div>
     </div>
 </template>
 <script>
 export default {
-    components: {
-
-    },
     data() {
         return {
             isLoggedIn: false,
+            searchQuery: '', // 검색어 저장
+            isScrolled: false, // 스크롤 여부 저장
         }
     },
     mounted() {
@@ -71,10 +66,12 @@ export default {
         } else {
             this.isLoggedIn = false;
         }
+        window.addEventListener('scroll', this.handleScroll);
     },
-    computed: {
-
-    }, methods: {
+    beforeDestroy() {
+        window.removeEventListener('scroll', this.handleScroll);
+    },
+    methods: {
         async refreshAccessToken() {
             const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
 
@@ -102,17 +99,26 @@ export default {
             this.$router.push('/');
         },
         navigateTo(page) {
-        if (!this.isLoggedIn) {
-            alert('로그인이 필요합니다');
-            this.$router.push('/login');
-        } else {
-            if (page === 'sell') {
-                this.$router.push('/login'); // 여기를 판매하기 페이지로 변경
-            } else if (page === 'mypage') {
-                this.$router.push('/mypage-profile');
+            if (!this.isLoggedIn) {
+                alert('로그인이 필요합니다');
+                this.$router.push('/login');
+            } else {
+                if (page === 'sell') {
+                    this.$router.push('/mypage-stock');
+                } else if (page === 'mypage') {
+                    this.$router.push('/mypage-profile');
+                }
             }
-        }
-    }
+        },
+        searchProducts() {
+            if (this.searchQuery.trim() !== '') {
+                this.$router.push({ path: '/products', query: { search: this.searchQuery } });
+                // this.$emit('products', this.searchQuery);
+            }
+        },
+        handleScroll() {
+        this.isScrolled = window.scrollY > 50; // Adjust the value to your preference
+    },
     }
 }
 </script>
@@ -125,6 +131,10 @@ export default {
     border: 1px solid #ccc;
     /* 회색 테두리 */
     margin-top: 10px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
 }
 
 .search-input {
@@ -134,6 +144,7 @@ export default {
     background: transparent;
     outline: none;
     font-size: 16px;
+    margin-left: 10px;
 }
 
 .search-input::placeholder {
@@ -143,6 +154,7 @@ export default {
 .others-option {
     margin-top: 10px;
 }
+
 .text-button {
     background: none;
     border: none;
@@ -154,6 +166,19 @@ export default {
 }
 
 .text-button:hover {
-    text-decoration: underline; /* 링크처럼 마우스를 올렸을 때 밑줄을 추가하고 싶다면 이 줄을 추가 */
+    text-decoration: underline;
 }
+
+.navbar-area {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-area.scrolled {
+    background-color: rgba(0, 0, 0, 0.8); /* Adjust transparency and color as needed */
+}
+
 </style>
