@@ -158,6 +158,7 @@
 
 <script>
 import axios from 'axios';
+import { mapState, mapActions } from 'vuex'
 
 export default {
     data() {
@@ -185,9 +186,9 @@ export default {
             interval: null,
         };
     },
-    mounted() {
-        this.loadProductData();
-    },
+    // mounted() {
+    //     this.loadProductData();
+    // },
     beforeDestroy() {
         // 컴포넌트가 파괴되기 전에 타이머를 제거합니다.
         clearInterval(this.interval);
@@ -210,7 +211,23 @@ export default {
         },
         totalAmount() {
             return this.product.price + this.price + parseInt(this.specifiedBid);
+        },
+        ...mapState(['serialNumber', 'isLoggedIn', 'formError']),
+    },
+    async mounted() {
+        const accessToken = sessionStorage.getItem('JWT_TOKEN');
+        const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
+
+        console.log('Access Token:', accessToken);
+        console.log('Access Token Expiration:', accessTokenExpiration);
+
+        if (new Date(accessTokenExpiration) <= new Date()) {
+            console.log('Access Token is expired. Need to refresh token.');
+            await this.refreshAccessToken();
         }
+
+        await this.fetchProfile();
+        this.loadProductData();
     },
     methods: {
         async loadProductData() {
@@ -278,10 +295,9 @@ export default {
             }
         },
         bidConfirm() {
-            const serialNumber = 123456789; // 유저의 시리얼 넘버 (로그인된 유저의 시리얼 넘버로 대체)
             const bidData = {
                 productId: this.product.productId,
-                serialNumber: serialNumber,
+                serialNumber: this.serialNumber,
                 bidAmount: this.totalAmount,
             };
             axios
@@ -350,6 +366,7 @@ export default {
             this.interval = setInterval(this.timing, 1000);
             console.log('Timer set.');
         },
+        ...mapActions(['refreshAccessToken', 'fetchProfile']),
     },
 };
 </script>
