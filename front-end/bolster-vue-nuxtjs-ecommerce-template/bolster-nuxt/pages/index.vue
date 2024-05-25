@@ -6,7 +6,6 @@
 
           <div class="products">
 
-
             <div class="user-idol">
               <div class="section-title">
                 <span style="padding-right: 10px"><b>관심 상품 추천</b></span>
@@ -76,6 +75,7 @@ export default {
       }
   },
   methods: {
+
         async refreshAccessToken() {
             const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
 
@@ -139,6 +139,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-top: 100px;
 }
 
 .main-label {
@@ -164,6 +165,7 @@ export default {
 .latest-products, .best-sellers, .deadline {
   margin-top: 80px;
   margin-bottom: 80px;
+  
 }
 
 .category {
@@ -209,6 +211,4 @@ export default {
     font-size: 20px;
     color: #ffb400;
 }
-
 </style>
-

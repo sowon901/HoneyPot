@@ -49,6 +49,7 @@ export default {
 .wrapper {
     display: flex;
     flex-direction: column;
+    padding-top: 100px;
 }
 
 .content {

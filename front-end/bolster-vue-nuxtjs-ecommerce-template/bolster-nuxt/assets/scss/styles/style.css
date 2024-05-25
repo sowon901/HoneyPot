@@ -1841,20 +1841,20 @@ Main Banner Area CSS
   z-index: 1;
   background-color: #f1f1f1;
   background-size: cover;
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   background-position: center center;
 }
 
 .main-banner.item-bg1 {
-  background-image: url(../../img/main-banner1.jpg);
+  background-image: url(../../img/banner-image/m02.jpeg);
 }
 
 .main-banner.item-bg2 {
-  background-image: url(../../img/main-banner2.jpg);
+  background-image: url(../../img/banner-image/m03.jpeg);
 }
 
 .main-banner.item-bg3 {
-  background-image: url(../../img/main-banner3.jpg);
+  background-image: url(../../img/banner-image/m01.jpeg);
 }
 
 .main-banner.item-bg4 {

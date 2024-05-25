@@ -187,6 +187,7 @@ export default {
 .wrapper .content {
     display: flex;
     width: 100%;
+    padding-top: 100px;
 }
 
 .sidebar {

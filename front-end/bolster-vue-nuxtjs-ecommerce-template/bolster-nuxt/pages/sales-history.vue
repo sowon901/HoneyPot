@@ -15,26 +15,33 @@
 <script>
 import Sidebar from '../components/all-products/Sidebar'
 import SalesList from '../components/cart/SalesList'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     components: {
         Sidebar,
         SalesList
     },
-    data() {
-        return {
-            serialNumber: null
-        }
+    computed: {
+        ...mapState(['serialNumber', 'isLoggedIn', 'formError']),
     },
-    mounted() {
-        // sessionStorage에서 serialNumber를 가져옵니다.
-        const serialNumber = sessionStorage.getItem('SERIAL_NUMBER');
-        if (serialNumber) {
-            this.serialNumber = serialNumber;
-        } else {
-            // serialNumber가 없을 경우 처리 (예: 로그인 페이지로 리디렉션)
-            this.$router.push('/login');
+    async mounted() {
+        const accessToken = sessionStorage.getItem('JWT_TOKEN');
+        const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
+
+        console.log('Access Token:', accessToken);
+        console.log('Access Token Expiration:', accessTokenExpiration);
+
+        if (new Date(accessTokenExpiration) <= new Date()) {
+            console.log('Access Token is expired. Need to refresh token.');
+            await this.refreshAccessToken();
         }
+
+        await this.fetchProfile();
+    },
+    methods: {
+        ...mapActions(['refreshAccessToken', 'fetchProfile']),
+
     }
 }
 </script>
@@ -42,6 +49,7 @@ export default {
 .wrapper {
     display: flex;
     flex-direction: column;
+    padding-top: 100px; /* 상단바 높이만큼 패딩을 추가합니다 */
 }
 
 .content {

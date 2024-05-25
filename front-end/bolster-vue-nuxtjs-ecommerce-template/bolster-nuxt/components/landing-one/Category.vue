@@ -1,7 +1,10 @@
 <template>
   <div>
       <!-- Start Trending Products Area -->
-      <div class="container">
+      <div class="container" v-if="serialNumber">
+            <div class="section-title">  
+                <span style="padding-right: 10px"><b>관심 상품 추천</b></span>    
+            </div>
           <div class="btn-category">
               <button class="category" v-for="(idol, index) in idols" :key="index" @click="filterByIdol(idol.idolName)"
                   :class="{ active: idol.idolName === selectedIdol }">{{idol.idolName}}</button>
@@ -28,12 +31,17 @@ export default {
       QuckView,
       ProductItem,
   },
+  props: {
+    serialNumber: {
+      type: String,
+      required: true
+    }
+  },
   data() {
       return {
           selectedIdol: null,
           idols: [],
           products: [],
-          serialNumber: '123456789',
       };
   },
   methods: {
@@ -45,8 +53,7 @@ export default {
           this.fetchProductData(idol);
       },
       fetchIdolData() {
-          const serialNumber = "123456789";
-          axios.get(`http://localhost:8080/filterCategoryIdolName/${serialNumber}`)
+          axios.get(`http://localhost:8080/index/filterCategoryIdolName/${this.serialNumber}`)
           .then(response => {
               this.idols = response.data; 
               if (this.idols.length > 0) {
@@ -59,7 +66,7 @@ export default {
           });
       },
       fetchProductData(idolName) {
-          axios.get(`http://localhost:8080/filterByCategory/${idolName}`)
+          axios.get(`http://localhost:8080/index/filterByCategory/${idolName}`)
           .then(response => {
               this.products = response.data; 
               console.log("successMain", this.products);
@@ -70,19 +77,18 @@ export default {
       },
   },
   computed: {
-      products() {
-          return this.$store.state.products.all.filter(
-              (product) => product.trending === true
-          )
-      },
       filteredProducts() {
           if (!this.selectedIdol) return this.products;
           return this.products.filter(product => product.idolName === this.selectedIdol);
       },
   },
-  mounted() {
+
+watch: {
+    serialNumber(newVal, oldVal) {
+      // serialNumber props 값이 변경될 때마다 호출되는 함수
       this.fetchIdolData();
-  },
+    }
+  }
 }
 </script>
 
@@ -131,4 +137,16 @@ export default {
   color: white;
   font-weight: bold;
 }
+
+.section-title {
+    display:flex;
+    margin-top:50px;
+    justify-content: center;
+    text-align: center;
+    font-style: bold;
+    font-size: 20px;
+    color: #ffb400;
+}
+
+
 </style>
