@@ -63,7 +63,7 @@ export default {
     },
     methods: {
         fetchBids() {
-            axios.get(`http://localhost:8080/bids/${this.serialNumber}`)
+            axios.get(`http://localhost:8080/mypage/bids/${this.serialNumber}`)
                 .then(response => {
                     console.log(response.data);
                     this.products = response.data;
