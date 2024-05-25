@@ -8,9 +8,9 @@
 
 
             <div class="user-idol">
-              <div class="section-title">  
-                <span style="padding-right: 10px"><b>관심 상품 추천</b></span>    
-              </div>   
+              <div class="section-title">
+                <span style="padding-right: 10px"><b>관심 상품 추천</b></span>
+              </div>
               <Category></Category>
             </div>
 
@@ -21,8 +21,8 @@
                     <span style="padding-right: 10px">최신 등록 상품</span>
                     <i class='fa fa-arrow-right'></i>
                   </nuxt-link>
-                </button>            
-              </div>   
+                </button>
+              </div>
                 <LatestProducts></LatestProducts>
             </div>
 
@@ -33,7 +33,7 @@
                     <span style="padding-right: 10px">인기 상품</span>
                     <i class='fas fa-arrow-right'></i>
                   </nuxt-link>
-                </button>            
+                </button>
               </div>
               <BestSellers></BestSellers>
             </div>
@@ -45,7 +45,7 @@
                     <span style="padding-right: 10px">마감 임박 상품</span>
                     <i class='fas fa-arrow-right'></i>
                   </nuxt-link>
-                </button>            
+                </button>
               </div>
               <DeadlineProducts></DeadlineProducts>
             </div>
@@ -93,7 +93,6 @@ export default {
                 // 필요한 경우 사용자를 로그인 페이지로 리디렉션하거나, 에러 메시지를 표시합니다.
             }
         },
-     
   },
   async mounted() {
     // 컴포넌트가 마운트된 후에 서버에서 제품 목록을 가져오는 HTTP GET 요청을 수행
