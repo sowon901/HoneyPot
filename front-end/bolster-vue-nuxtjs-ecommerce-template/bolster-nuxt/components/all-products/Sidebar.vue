@@ -12,9 +12,6 @@
                     <a href="/mypage-profile">프로필 관리</a>
                 </li>
                 <li>
-                    <a href="/mypage-payment">결제수단 관리</a>
-                </li>
-                <li>
                     <a href="/mypage-password">비밀번호 변경</a>
                 </li>
                 <li>
