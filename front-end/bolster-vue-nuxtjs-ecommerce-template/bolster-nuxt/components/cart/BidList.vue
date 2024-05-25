@@ -7,9 +7,9 @@
                     <thead>
                         <tr style="text-align: center;">
                             <th style="width: 40%;">상품정보</th>
-                            <th style="width: 20%;">종료시간</th>
-                            <th style="width: 20%;">입찰가격</th>
-                            <th style="width: 20%;">현재가격</th>
+                            <th style="width: 30%;">종료시간</th>
+                            <th style="width: 30%;">입찰가격</th>
+                            <!-- <th style="width: 20%;">현재가격</th> -->
                         </tr>
                     </thead>
 
@@ -18,8 +18,9 @@
                             <td class="product-infomation" style="text-align: left;">
                                 <nuxt-link :to="'/bid-details/' + product.productId" class="product-detail">
                                     <div style="display: flex;">
-                                        <div style="margin-right: 10px;">
-                                            <img :src="product.image1" width="60px" />
+                                        <div class="image-container" :class="{ 'no-image': !product.image1 }"
+                                            style="margin-right: 10px;">
+                                            <img v-if="product.image1" :src="product.image1" />
                                         </div>
                                         <div>
                                             <h6>
@@ -36,9 +37,9 @@
                             <td>
                                 {{ product.currentPrice }}
                             </td>
-                            <td>
+                            <!-- <td>
                                 {{ product.currentPrice }}
-                            </td>
+                            </td> -->
                         </tr>
                     </tbody>
                 </table>
@@ -94,5 +95,22 @@ export default {
 
 .product-detail:hover {
     cursor: pointer;
+}
+
+.image-container {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-container img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.image-container.no-image {
+    background-color: #e0e0e0;
 }
 </style>

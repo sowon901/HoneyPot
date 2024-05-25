@@ -123,6 +123,25 @@ export default {
 .wrapper .content {
     display: flex;
     width: 100%;
+    padding-top: 100px;
+  }
+  
+  .sidebar {
+    flex: 1;
+  }
+  
+  .user-data {
+    flex: 3;
+    padding: 5px;
+  }
+
+  .password-header {
+    margin-bottom: 20px;
+  }
+  
+  .section-divider {
+  margin-top: 17px;
+  border: 0.3px #ccc;
 }
 
 .sidebar {

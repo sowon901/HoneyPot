@@ -182,4 +182,9 @@ export default {
 .navbar-area.scrolled {
     background-color: rgba(0, 0, 0, 0.8); /* Adjust transparency and color as needed */
 }
+
+/* hr.footer-line {
+    margin-bottom: 0;
+} */
+
 </style>

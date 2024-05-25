@@ -379,6 +379,7 @@ export default {
     max-width: 1200px; /* 전체 컨테이너의 최대 너비 설정 */
     margin: auto; /* 중앙 정렬 */
     padding: 20px;
+    padding-top: 100px;
 }
 
 .content {

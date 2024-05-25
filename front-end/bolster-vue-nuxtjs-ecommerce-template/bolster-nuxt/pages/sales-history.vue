@@ -49,6 +49,7 @@ export default {
 .wrapper {
     display: flex;
     flex-direction: column;
+    padding-top: 100px; /* 상단바 높이만큼 패딩을 추가합니다 */
 }
 
 .content {
