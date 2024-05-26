@@ -64,34 +64,47 @@
 
 <script>
 import axios from 'axios';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState, mapActions } from 'vuex';
 
 export default {
-    props: ['serialNumber'],
+    // props: ['serialNumber'],
     data() {
         return {
             products: []
         };
     },
     computed: {
-        ...mapGetters(['getDeliveryStatusInKorean', 'formatDate'])
+        ...mapGetters(['getDeliveryStatusInKorean', 'formatDate']),
+        ...mapState(['serialNumber'])
     },
     mounted() {
-        if (this.serialNumber) {
-            axios.get(`http://localhost:8080/mypage/purchaseList/${this.serialNumber}`)
-                .then(response => {
-                    // 서버에서 받아온 상품 데이터를 products 배열에 할당
-                    console.log(response.data);
-                    this.products = response.data;
-                })
-                .catch(error => {
-                    console.error('Error fetching product list:', error);
-                });
-        } else {
-            console.error('Serial number is not available.');
-        }
+        this.fetchProfileAndProducts();
     },
     methods: {
+        ...mapActions(['fetchProfile']),
+        async fetchProfileAndProducts() {
+            await this.fetchProfile();
+            console.log('Serial Number after fetchProfile:', this.serialNumber);
+
+            if (this.serialNumber) {
+                const token = sessionStorage.getItem('JWT_TOKEN');
+                axios.get(`http://localhost:8080/mypage/purchaseList/${this.serialNumber}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                    .then(response => {
+                        // 서버에서 받아온 상품 데이터를 products 배열에 할당
+                        console.log(response.data);
+                        this.products = response.data;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching product list:', error);
+                    });
+            } else {
+                console.error('Serial number is not available.');
+            }
+        },
         redirectToCheckout(product) {
             if (product.paymentStatus === 0) {
                 this.$router.push({ path: '/checkout', query: { serialNumber: product.serialNumber, productId: product.productId } });
