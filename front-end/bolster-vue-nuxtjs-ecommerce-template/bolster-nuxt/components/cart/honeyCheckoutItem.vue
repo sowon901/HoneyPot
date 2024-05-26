@@ -197,10 +197,14 @@ export default {
 
     console.log(this.serialNumber);
     console.log(this.productId);
+      const token = sessionStorage.getItem('JWT_TOKEN');
     axios.get('http://localhost:8080/mypage/productDetails', {
       params: {
         serialNumber: this.serialNumber,
         productId: this.productId
+      },
+        headers: {
+          'Authorization': `Bearer ${token}`
       }
     })
       .then(response => {

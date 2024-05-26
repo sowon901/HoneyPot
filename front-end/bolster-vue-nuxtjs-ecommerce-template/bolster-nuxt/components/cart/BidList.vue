@@ -63,7 +63,12 @@ export default {
     },
     methods: {
         fetchBids() {
-            axios.get(`http://localhost:8080/mypage/bids/${this.serialNumber}`)
+            const token = sessionStorage.getItem('JWT_TOKEN');
+            axios.get(`http://localhost:8080/mypage/bids/${this.serialNumber}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
                 .then(response => {
                     console.log(response.data);
                     this.products = response.data;
