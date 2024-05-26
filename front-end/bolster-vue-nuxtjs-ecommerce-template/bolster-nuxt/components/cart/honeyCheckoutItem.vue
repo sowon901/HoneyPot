@@ -197,7 +197,7 @@ export default {
 
     console.log(this.serialNumber);
     console.log(this.productId);
-    axios.get('http://localhost:8080/productDetails', {
+    axios.get('http://localhost:8080/mypage/productDetails', {
       params: {
         serialNumber: this.serialNumber,
         productId: this.productId

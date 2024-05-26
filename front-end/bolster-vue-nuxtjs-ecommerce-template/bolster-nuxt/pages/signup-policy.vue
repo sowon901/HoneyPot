@@ -49,7 +49,8 @@
                 </div>
             </div>
             <br><br>
-            <button type="submit" id="policy-agree" class="btn btn-primary" :disabled="!allAgreed">꿀단지의 모든 약관을 확인했으며 동의합니다</button>
+            <button type="submit" id="policy-agree" class="btn btn-primary" :disabled="!allAgreed" @click="handleAgree">
+                꿀단지의 모든 약관을 확인했으며 동의합니다</button>
             <br>
         </div>
     </div>
@@ -640,7 +641,12 @@ export default {
             this.terms.forEach(term => term.agreed = false);
         }
         }
-    }
+    },
+    methods: {
+        handleAgree() {
+            window.location.href = 'http://localhost:3000/signup';
+        },
+    },
 };
 </script>
 

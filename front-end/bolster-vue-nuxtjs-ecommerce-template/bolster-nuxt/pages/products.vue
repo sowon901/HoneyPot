@@ -21,10 +21,22 @@
       </div>
     </div>
     <div class="interests">
-      <button v-for="tag in tags" :key="tag" :class="{ 'selected': selectedTags.includes(tag) }"
-        @click="toggleTag(tag)">
-        {{ tag }}
-      </button>
+      <h5>Idol</h5>
+      <div class="buttons-container">
+        <button v-for="tag in tags" :key="tag" :class="{ 'selected': selectedTags.includes(tag) }"
+          @click="toggleTag(tag)">
+          {{ tag }}
+        </button>
+      </div>
+    </div>
+    <div class="categories">
+      <h5>Product</h5>
+      <div class="buttons-container">
+        <button v-for="category in categories" :key="category"
+          :class="{ 'selected': selectedCategories.includes(category) }" @click="toggleCategory(category)">
+          {{ category }}
+        </button>
+      </div>
     </div>
     <div class="row">
       <!-- 필터링된 상품 목록을 보여주는 부분 -->
@@ -72,12 +84,30 @@ export default {
     // 선택된 태그로 필터링된 상품 목록을 반환하는 computed 속성
     filteredProducts() {
       // 선택된 태그가 없을 때는 모든 상품을 반환합니다.
-      if (this.selectedTags.length === 0) {
-        return this.products;
-      } else {
-        // 선택된 태그로 필터링된 상품 목록을 반환합니다.
-        return this.products.filter(product => this.selectedTags.includes(product.idolName));
+      // if (this.selectedTags.length === 0) {
+      //   return this.products;
+      // } else {
+      //   // 선택된 태그로 필터링된 상품 목록을 반환합니다.
+      //   return this.products.filter(product => this.selectedTags.includes(product.idolName));
+      // }
+      let filtered = this.products;
+
+      if (this.selectedTags.length > 0) {
+        filtered = filtered.filter(product => this.selectedTags.includes(product.idolName));
       }
+
+      if (this.selectedCategories.length > 0) {
+        filtered = filtered.filter(product => this.selectedCategories.includes(product.ptypeName));
+      }
+      if (this.searchQuery) {
+        filtered = filtered.filter(product =>
+                product.productName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                product.productInfo.toLowerCase().includes(this.searchQuery.toLowerCase())
+            );
+      }
+
+
+      return filtered;
     },
   },
   data() {
@@ -85,11 +115,12 @@ export default {
       currentPage: 1,
       itemsPerPage: 40,
       selectedSorting: '1',
-
       tags: ['AESPA', 'BLACKPINK', 'BOYNEXTDOOR', 'BTS', 'ENHYPEN', 'EXO', 'GIRLSRENERATION', 'ITZY', 'LESSERAFIM', 'NCT', 'NEWJEANS', 'NMIXX', 'FROMIS_9', 'RIIZE', 'STRAYKIDS', 'SEVENTEEN', 'SHINEE', 'SUPERJUNIOR', 'TXT', 'TWICE', 'WINNER'],
-
       selectedTags: [],
+      categories: ["Photo", "Official Fanlight", "Fashion", "Acc", "Stationery", "DVD", "Music", "Living"],
+      selectedCategories: [],
       products: [],
+      searchQuery: this.$route.query.search || '', // 검색어 저장
     };
   },
   methods: {
@@ -102,7 +133,7 @@ export default {
           this.products.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
           break;
         case '2': // 조회순
-          this.products.sort((a, b) => b.bidCnt - a.bidCnt);
+          this.products.sort((a, b) => b.view - a.view);
           break;
         case '3': // 마감 임박순
           this.products.sort((a, b) => new Date(a.timeLimit) - new Date(b.timeLimit));
@@ -127,26 +158,43 @@ export default {
         }
       }
     },
-
+    toggleCategory(category) {
+      const index = this.selectedCategories.indexOf(category);
+      if (index >= 0) {
+        this.selectedCategories.splice(index, 1);
+      } else {
+        this.selectedCategories.push(category);
+      }
+    },
+    fetchProducts() {
+      axios.get("http://localhost:8080/products")
+        .then(response => {
+          this.products = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching products:', error);
+        });
+    },
+    updateSearchQuery(newQuery) {
+      this.searchQuery = newQuery;
+    }
   },
   mounted() {
-    // 컴포넌트가 마운트된 후에 서버에서 제품 목록을 가져오는 HTTP GET 요청을 수행
-    axios.get("http://localhost:8080/products")
-      .then(response => {
-        console.log("success");
-        console.log(response.data);
-
-        this.products = response.data;
-      })
-      .catch(error => {
-        console.error('Error fetching products:', error);
-      });
+    this.fetchProducts();
+    // this.searchQuery = ''; // URL에서 검색어를 가져옴
   },
+  watch: {
+    '$route.query.search'(newSearchQuery) {
+      this.searchQuery = newSearchQuery || '';
+      this.fetchProducts();
+    }
+  }
 };
 </script>
 
 <style scoped>
-.interests {
+/* .interests,
+.categories {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -154,7 +202,8 @@ export default {
   margin-bottom: 20px;
 }
 
-.interests button {
+.interests button,
+.categories button {
   border: none;
   border-radius: 10px;
   padding: 5px 10px;
@@ -163,7 +212,36 @@ export default {
   color: black;
 }
 
-.interests .selected {
+.interests .selected,
+.categories .selected {
+  background-color: #ffb400;
+  color: white;
+} */
+.interests,
+.categories {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.interests button,
+.categories button {
+  border: none;
+  border-radius: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: white;
+  color: black;
+}
+
+.interests .selected,
+.categories .selected {
   background-color: #ffb400;
   color: white;
 }

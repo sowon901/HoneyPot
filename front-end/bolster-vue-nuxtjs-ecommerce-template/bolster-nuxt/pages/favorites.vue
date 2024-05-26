@@ -176,78 +176,116 @@
 <script>
 import TopHeader from '../layouts/TopHeader'
 import Menubar from '../layouts/Menubar'
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
 export default {
     components: {
         TopHeader,
         Menubar,
     },
+    setup() {
+        const serialNumber = ref('');
+        const idols = ref([
+            { name: 'AESPA', image: require('~/assets/img/idol-logo-image/aespa.jpg') },
+            { name: 'BLACKPINK', image: require('~/assets/img/idol-logo-image/blackpink.jpg') },
+            { name: 'BOYNEXTDOOR', image: require('~/assets/img/idol-logo-image/boynextdoor.jpg') },
+            { name: 'BTS', image: require('~/assets/img/idol-logo-image/bts.jpg') },
+            { name: 'ENHYPEN', image: require('~/assets/img/idol-logo-image/enhypen.jpg') },
+            { name: 'EXO', image: require('~/assets/img/idol-logo-image/exo.png') },
+            { name: 'GIRLSGENERATION', image: require('~/assets/img/idol-logo-image/girlsgeneration.jpg') },
+            { name: 'ITZY', image: require('~/assets/img/idol-logo-image/itzy.jpg') },
+            { name: 'LE SSERAFIM', image: require('~/assets/img/idol-logo-image/leserrafim.jpg') },
+            { name: 'NCT', image: require('~/assets/img/idol-logo-image/nct.png') },
+            { name: 'NEWJEANS', image: require('~/assets/img/idol-logo-image/newjeans.jpg') },
+            { name: 'NMIXX', image: require('~/assets/img/idol-logo-image/nmixx.jpg') },
+            { name: 'FROMIS_9', image: require('~/assets/img/idol-logo-image/fromis9.jpg') },
+            { name: 'RIIZE', image: require('~/assets/img/idol-logo-image/riiz.jpg') },
+            { name: 'STRAYKIDS', image: require('~/assets/img/idol-logo-image/straykids.jpg') },
+            { name: 'SEVENTEEN', image: require('~/assets/img/idol-logo-image/seventeen.jpg') },
+            { name: 'SHINEE', image: require('~/assets/img/idol-logo-image/shinee.jpg') },
+            { name: 'SUPERJUNIOR', image: require('~/assets/img/idol-logo-image/superjunior.jpg') },
+            { name: 'TXT', image: require('~/assets/img/idol-logo-image/txt.jpg') },
+            { name: 'TWICE', image: require('~/assets/img/idol-logo-image/twice.jpg') },
+            { name: 'WINNER', image: require('~/assets/img/idol-logo-image/winner.jpg') },
+            { name: 'OTHERS', image: require('~/assets/img/idol-logo-image/honeypot_mascot.png') },
+            { name: '', image: require('~/assets/img/idol-logo-image/blank.png') },
+            { name: '', image: require('~/assets/img/idol-logo-image/blank.png') },
+        ]);
+        const selectedIdols = ref([]);
+        const selectedIdolsTags = ref([]);
 
-    mounted() {
+        onMounted(() => {
+            const urlParams = new URLSearchParams(window.location.search);
+            serialNumber.value = urlParams.get('serialNumber') || 'No serial number provided';
+        });
 
-    },
-    data() {
-        return {
-            idols: [
-                { name: 'BLACKPINK', image: require('~/assets/img/idol-logo-image/blackpink.jpg') },
-                { name: 'BTS', image: require('~/assets/img/idol-logo-image/bts.jpg') },
-                { name: 'NCT', image: require('~/assets/img/idol-logo-image/nct.png') },
-                { name: 'TWICE', image: require('~/assets/img/idol-logo-image/twice.jpg') },
-                { name: 'Stray Kids', image: require('~/assets/img/idol-logo-image/straykids.jpg') },
-                { name: 'TXT', image: require('~/assets/img/idol-logo-image/txt.jpg') },
-                { name: 'SEVENTEEN', image: require('~/assets/img/idol-logo-image/seventeen.jpg') },
-                { name: 'EXO', image: require('~/assets/img/idol-logo-image/exo.png') },
-                { name: '아이유', image: require('~/assets/img/idol-logo-image/IU.jpg') },
-                { name: 'ITZY', image: require('~/assets/img/idol-logo-image/itzy.jpg') },
-                { name: 'ENHYPEN', image: require('~/assets/img/idol-logo-image/enhypen.jpg') },
-                { name: 'TREASURE', image: require('~/assets/img/idol-logo-image/treasure.jpg') },
-                { name: '(G)I-DLE', image: require('~/assets/img/idol-logo-image/(G)I-DLE.jpg') },
-                { name: 'NewJeans', image: require('~/assets/img/idol-logo-image/newjeans.jpg') },
-                { name: 'aespa', image: require('~/assets/img/idol-logo-image/aespa.jpg') },
-                { name: 'LE SSERAFIM', image: require('~/assets/img/idol-logo-image/leserrafim.jpg') },
-                { name: 'ATEEZ', image: require('~/assets/img/idol-logo-image/ateez.jpg') },
-                { name: '우주소녀', image: require('~/assets/img/idol-logo-image/wjsn.jpg') },
-                { name: 'IVE', image: require('~/assets/img/idol-logo-image/ive.jpg') },
-                { name: '몬스타엑스', image: require('~/assets/img/idol-logo-image/monstax.jpg') },
-                { name: 'SHINee', image: require('~/assets/img/idol-logo-image/shinee.jpg') },
-                { name: 'Kep1er', image: require('~/assets/img/idol-logo-image/kep1er.jpg') },
-                { name: 'CIX', image: require('~/assets/img/idol-logo-image/cix.jpg') },
-                { name: '레드벨벳', image: require('~/assets/img/idol-logo-image/redvelvet.jpg') },
-                { name: '오마이걸', image: require('~/assets/img/idol-logo-image/ohmygirl.jpg') },
-                { name: '아일릿', image: require('~/assets/img/idol-logo-image/illit.jpg') },
-                { name: 'NMIXX', image: require('~/assets/img/idol-logo-image/nmixx.jpg') },
-                { name: '더보이즈', image: require('~/assets/img/idol-logo-image/theboyz.jpg') },
-                { name: 'BOYNEXTDOOR', image: require('~/assets/img/idol-logo-image/boynextdoor.jpg') },
-                { name: 'ZEROBASEONE', image: require('~/assets/img/idol-logo-image/zerobaseone.jpg') },
-                { name: '', image: require('~/assets/img/idol-logo-image/blank.png') },
-                { name: '', image: require('~/assets/img/idol-logo-image/blank.png') },
-
-
-
-                // 추가 그룹 이미지 및 정보
-            ],
-            selectedIdols: [],
-            selectedIdolsTags: [], // 선택한 아이돌 이름을 저장할 변수 추가
-        };
-    },
-    methods: {
-        toggleSelection(idolName) {
-            const index = this.selectedIdols.indexOf(idolName);
+        const toggleSelection = (idolName) => {
+            const index = selectedIdols.value.indexOf(idolName);
             if (index !== -1) {
-                this.selectedIdols.splice(index, 1);
-                this.selectedIdolsTags.splice(index, 1); // 아이돌 선택 해제 시 해당 태그 제거
-            } else if (this.selectedIdols.length < 3) {
-                this.selectedIdols.push(idolName);
-                this.selectedIdolsTags.push(idolName); // 아이돌 선택 시 해당 태그 추가
+                selectedIdols.value.splice(index, 1);
+                selectedIdolsTags.value.splice(index, 1); // 아이돌 선택 해제 시 해당 태그 제거
+            } else if (selectedIdols.value.length < 3) {
+                selectedIdols.value.push(idolName);
+                selectedIdolsTags.value.push(idolName); // 아이돌 선택 시 해당 태그 추가
             }
-        },
-        isSelected(idolName) {
-            return this.selectedIdols.includes(idolName);
-        },
-        submitSelection() {
-            //alert(`선택된 아이돌: ${this.selectedIdols.join(', ')}`);
-            alert('회원가입이 완료되었습니다! \n꿀단지를 채워보세요🍯');
-        },
+        };
+
+        const isSelected = (idolName) => {
+            return selectedIdols.value.includes(idolName);
+        };
+
+        const submitSelection = async () => {
+            try {
+                const selectedIdolIds = selectedIdols.value.map(idol => {
+                    const idolMap = {
+                        'AESPA': 1,
+                        'BLACKPINK': 2,
+                        'BOYNEXTDOOR': 3,
+                        'BTS': 4,
+                        'ENHYPEN': 5,
+                        'EXO': 6,
+                        'GIRLSGENERATION': 7,
+                        'ITZY': 8,
+                        'LE SSERAFIM': 9,
+                        'NCT': 10,
+                        'NEWJEANS': 11,
+                        'NMIXX': 12,
+                        'FROMIS_9': 13,
+                        'RIIZE': 14,
+                        'STRAYKIDS': 15,
+                        'SEVENTEEN': 16,
+                        'SHINEE': 17,
+                        'SUPERJUNIOR': 18,
+                        'TXT': 19,
+                        'TWICE': 20,
+                        'WINNER': 21,
+                        'OTHERS': 22,
+                    };
+                    return idolMap[idol];
+                });
+
+                await axios.post('http://localhost:8080/auth/user-idol', {
+                    serialNumber: serialNumber.value,
+                    idolIds: selectedIdolIds,
+                });
+
+                alert('회원가입이 완료되었습니다! \n꿀단지를 채워보세요🍯');
+                window.location.href = `http://localhost:3000`;
+            } catch (error) {
+                console.error('Error during idol selection:', error.response?.data || error.message);
+                alert('아이돌 선택에 실패했습니다: ' + (error.response?.data || error.message));
+            }
+        };
+
+        return {
+            idols,
+            selectedIdols,
+            selectedIdolsTags,
+            toggleSelection,
+            isSelected,
+            submitSelection,
+        };
     },
 };
 </script>

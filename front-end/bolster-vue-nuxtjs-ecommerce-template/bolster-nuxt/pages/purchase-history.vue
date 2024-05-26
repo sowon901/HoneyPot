@@ -15,23 +15,41 @@
 <script>
 import Sidebar from '../components/all-products/Sidebar'
 import PurchaseList from '../components/cart/PurchaseList'
+import { mapState, mapActions } from 'vuex'
 
 export default {
     components: {
         Sidebar,
         PurchaseList
     },
-    data() {
-        return {
-            serialNumber: '123456789'
-        }
+    computed: {
+        ...mapState(['serialNumber', 'isLoggedIn', 'formError']),
     },
+    async mounted() {
+        const accessToken = sessionStorage.getItem('JWT_TOKEN');
+        const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
+
+        console.log('Access Token:', accessToken);
+        console.log('Access Token Expiration:', accessTokenExpiration);
+
+        if (new Date(accessTokenExpiration) <= new Date()) {
+            console.log('Access Token is expired. Need to refresh token.');
+            await this.refreshAccessToken();
+        }
+
+        await this.fetchProfile();
+    },
+    methods: {
+        ...mapActions(['refreshAccessToken', 'fetchProfile']),
+    }
+
 }
 </script>
 <style scoped>
 .wrapper {
     display: flex;
     flex-direction: column;
+    padding-top: 100px;
 }
 
 .content {

@@ -49,7 +49,7 @@ export default {
     // products() {
     //   return this.$store.state.products.all;
     // },
-    props: ['product'],
+    // props: ['product'],
     slicedProducts() {
       const start = this.currentIndex * this.itemsPerPage;
       const end = start + this.itemsPerPage;
@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     fetchData() {
-        axios.get('http://localhost:8080/filterByDeadLine')
+        axios.get('http://localhost:8080/index/filterByDeadLine')
         .then(response => {
           this.products = response.data; 
           console.log("successMain", this.products);

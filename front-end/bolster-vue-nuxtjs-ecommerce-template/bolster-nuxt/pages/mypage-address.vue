@@ -80,15 +80,9 @@
 <script>
 import Sidebar from '../components/all-products/Sidebar';
 import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
 
 export default {
-  mounted() {
-    const script = document.createElement('script');
-    script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
-    script.onload = () => console.log('카카오 우편번호 서비스 로드 완료');
-    document.head.appendChild(script);
-    this.fetchAddresses();
-  },
   components: {
     Sidebar
   },
@@ -109,7 +103,43 @@ export default {
       isEdit: false      // 편집 상태 여부
     };
   },
+  async mounted() {
+    const accessToken = sessionStorage.getItem('JWT_TOKEN');
+    const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
+    const serialNumber = sessionStorage.getItem('serialNumber');
+
+    await this.fetchProfile();
+    const script = document.createElement('script');
+    script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    script.onload = () => console.log('카카오 우편번호 서비스 로드 완료');
+    document.head.appendChild(script);
+    this.fetchAddresses();
+
+    console.log('Access Token:', accessToken);
+    console.log('Access Token Expiration:', accessTokenExpiration);
+    console.log('Serial Number:', serialNumber);
+
+    if (new Date(accessTokenExpiration) <= new Date()) {
+      console.log('Access Token is expired. Need to refresh token.');
+      try {
+        await this.refreshAccessToken();
+      } catch (error) {
+        console.error('Failed to refresh access token:', error);
+        this.redirectToLogin();
+        return;
+      }
+    }
+  },
+
+  computed: {
+    ...mapState(['user', 'serialNumber', 'isLoggedIn']),
+  },
   methods: {
+    ...mapActions(['refreshAccessToken', 'fetchProfile']),
+    redirectToLogin() {
+        alert('로그인이 필요합니다.');
+        this.$router.push({ path: '/login' });
+    },
     isFormValid() {
     const valid = this.address.addressName && this.address.recipientName && this.address.recipientPhone &&
              this.address.roadAddress && this.address.detailAddress && this.address.postCode;
@@ -117,8 +147,7 @@ export default {
     return valid;
     },
     fetchAddresses() {
-      const serialNumber = 123456789; // 유저의 시리얼 넘버 (로그인된 유저의 시리얼 넘버로 대체)
-      axios.get(`http://localhost:8080/mypage-address/${serialNumber}`)
+      axios.get(`http://localhost:8080/mypage-address/${this.serialNumber}`)
         .then(response => {
           this.addresses = response.data;
         })
@@ -166,8 +195,8 @@ export default {
       if (!this.isFormValid) {
       alert('모든 내용을 작성해야 합니다.');
       return;
-    }
-    const addressData = { ...this.address, serialNumber: 123456789 }; // 유저의 시리얼 넘버 (로그인된 유저의 시리얼 넘버로 대체)
+      }
+    const addressData = { ...this.address, serialNumber: this.serialNumber }; // 유저의 시리얼 넘버 (로그인된 유저의 시리얼 넘버로 대체)
     const request = this.isEdit
       ? axios.put(`http://localhost:8080/mypage-address/${this.address.addressId}`, addressData)
       : axios.post('http://localhost:8080/mypage-address', addressData);
@@ -209,6 +238,7 @@ export default {
 .wrapper .content {
   display: flex;
   width: 100%;
+  padding-top: 100px;
 }
 
 .sidebar {

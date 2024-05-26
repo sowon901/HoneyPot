@@ -1,139 +1,91 @@
 <template>
-    <div :class="className">
-        <div class="single-product-box" >
-            <div class="product-image">           
-                <nuxt-link :to="`/bid-details/${product.productId}`">
-                    <img :src="product.image1" :alt="product.productName"/> 
-
-                </nuxt-link>
-
-                <!-- <Timer
-                    v-if="product.timePeriod"
-                    v-bind:dateTime="product.dateTime"
-                ></Timer> -->
+    <div class="single-product-box">
+        <div class="product-image">
+            <nuxt-link :to="`/bid-details/${product.productId}`">
+                <div class="image-container">
+                    <img :src="product.image1" :alt="product.productName" />
+                </div>
+            </nuxt-link>
+        </div>
+        <div class="product-content">
+            <div class="main_description">
+                <div class="idol_name">
+                    <!-- 아이돌 명 -->
+                    {{ product.idolName }}
+                </div>
+                <div class="product_type">
+                    <!-- 상품 타입 -->
+                    {{ product.ptypeName }}
+                </div>
             </div>
-            {{ product.userId }}
-
-            <div class="product-content" style="text-align: left;">
-                <div class="main_description">
-                    <div class="idol_name">
-                         <!-- 아이돌 명 -->
-                         {{ product.idolName }}
-                    </div>
-                    <div class="product_type">
-                        <!-- 상품 타입 -->
-                        {{ product.ptypeName}}
-                    </div>
-                </div>
-                <h3>
-                    <nuxt-link :to="`/bid-details/${product.productId}`">
-                        <b>{{product.productName}}</b>
-                    </nuxt-link>
-                </h3>
-
-                <div class="product-price">
-                    <!-- <span class="old-price" v-if="product.offer">
-                        ${{ product.price - product.offerPrice }}
-                    </span> -->
-                    <span class="new-price">{{ product.price }}원</span>
-                </div>
+            <h3>
+                <nuxt-link :to="`/bid-details/${product.productId}`">
+                    <b>{{ product.productName }}</b>
+                </nuxt-link>
+            </h3>
+            <div class="product-price">
+                <span class="new-price">{{ product.price }}원</span>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import Timer from './Timer'
-
 export default {
     name: 'ProductItem',
-    components: {
-        Timer,
-    },
-    data() {
-        return {
-            getExistPId: null,
-        }
-    },
     props: ['product', 'className'],
-    computed: {
-        // cart() {
-        //     return this.$store.getters.cart
-        // },
-    },
     methods: {
         quickView(e) {
             this.$emit('clicked')
-        },
-        // addToCart(item) {
-        //     const product = [
-        //         {
-        //             id: item.id,
-        //             name: item.name,
-        //             price: item.price,
-        //             image: item.image,
-        //             quantity: 1,
-        //         },
-        //     ]
-
-        //     if (this.cart.length > 0) {
-        //         let id = item.id
-        //         this.getExistPId = id
-        //         let cartIndex = this.cart.findIndex((cart) => {
-        //             return cart.id == id
-        //         })
-
-        //         if (cartIndex == -1) {
-        //             this.$store.dispatch('addToCart', product)
-        //             this.$toast('Added to cart', {
-        //                 icon: 'fas fa-cart-plus',
-        //             })
-        //         } else {
-        //             this.$store.dispatch('updateCart', {
-        //                 id,
-        //                 unit: 1,
-        //                 cart: this.cart,
-        //             })
-        //             this.$toast.info('Already added to the cart and update with one')
-        //         }
-        //     } else {
-        //         this.$store.dispatch('addToCart', product)
-        //         this.$toast('Added to cart', {
-        //             icon: 'fas fa-cart-plus',
-        //         })
-        //     }
-        // },
-    },
+        }
+    }
 }
 </script>
+
 <style scoped>
-    .main_description {
-        display:flex;
-        justify-content: space-between;
-    }
-    .product-image{
-        vertical-align: middle;
-        align-content: center;
-        text-align: center;
-        object-fit: contain;
-    }
-
-    .product-content{
-        text-align:left;
-        width:100%;
-    }
-
-    .product-image img{
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    }
-
-    .product-link img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
+.single-product-box {
+    width: 270px; /* 고정된 너비 (4개씩 배치) */
+    height: 450px; /* 고정된 높이 */
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 20px; /* 아래쪽 간격 추가 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-    
+.product-image {
+    width: 100%;
+    height: 270px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: white; /* 이미지가 없을 때 표시할 배경색 */
+}
+
+.product-content {
+    text-align: left;
+    width: 100%;
+    flex-grow: 1;
+    padding-left: 10px; /* 좌측 여백 추가 */
+    padding-right: 10px; /* 우측 여백 추가 */
+}
+
+.image-container {
+    width: 100%;
+    height: 100%; /* 부모의 높이에 맞춤 */
+    position: relative;
+    overflow: hidden;
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지를 컨테이너에 맞게 채우면서 자르기 */
+}
+.main_description {
+    display: flex;
+    justify-content: space-between;
+}
 </style>
