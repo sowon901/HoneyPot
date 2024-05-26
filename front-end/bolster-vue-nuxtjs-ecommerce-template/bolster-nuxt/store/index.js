@@ -30,6 +30,7 @@ export const totals = (paylodArr) => {
 const mutations = {
     'SET_USER'(state, user) {
         state.authUser = user
+        state.isLoggedIn = !!user; // 유저가 있으면 true, 없으면 false
     },
     'GET_ORDER'(state, payload){
         state.orders = payload
@@ -153,9 +154,11 @@ const actions = {
             const serialNumber = response.data.data.serialNumber;
             commit('SET_SERIAL_NUMBER', serialNumber);
             console.log(serialNumber);
+            commit('SET_USER', response.data.data); // 사용자 정보 설정
         } catch (error) {
             console.error('Error fetching user info:', error);
             commit('SET_FORM_ERROR', 'Failed to fetch user information.');
+            commit('SET_IS_LOGGED_IN', false);
         }
     }
 };
