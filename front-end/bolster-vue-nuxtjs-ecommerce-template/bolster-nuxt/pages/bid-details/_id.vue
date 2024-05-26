@@ -391,13 +391,21 @@ export default {
             if (hours < 10) { hours = '0' + hours; }
             if (minutes < 10) { minutes = '0' + minutes; }
             if (seconds < 10) { seconds = '0' + seconds; }
-            if (timeLeft < 0) {
+            
+            if(timeLeft === 0) {
+                this.insertResult();
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(this.interval);
                 days = ' -- ';
                 hours = ' -- ';
                 minutes = ' -- ';
                 seconds = ' -- ';
+                this.bidButtonDisabled = true;
+            } else {
+                this.bidButtonDisabled = false;
             }
-
             
             this.days = days;
             this.hours = hours;
