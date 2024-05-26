@@ -11,6 +11,7 @@
 export default {
     data() {
         return {
+            product: '',
             days: '',
             hours: '',
             minutes: '',
@@ -27,7 +28,7 @@ export default {
 
     methods: {
         timing(dateTime) {
-            let endTime = new Date(dateTime);			
+            let endTime = product.timeLimit;			
             let endTimeParse = (Date.parse(endTime)) / 1000;
             let now = new Date();
             let nowParse = (Date.parse(now) / 1000);
@@ -44,6 +45,10 @@ export default {
             this.minutes = minutes;
             this.seconds = seconds;
         }
-    }
+    },
+    mounted() {
+        // 동적 라우트 매개변수인 상품 ID를 가져옵니다.
+        
+    },
 }
 </script>

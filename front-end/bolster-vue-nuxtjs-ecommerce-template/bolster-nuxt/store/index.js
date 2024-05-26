@@ -1,12 +1,16 @@
 // axios
 import axios from 'axios';
+import apiClient from '../api/apiClient';
 
 const state = () => ({
     cart: [],
     totalAmount: 0,
     totalQuantity: 0,
     orders: [],
-    authUser: null
+    authUser: null,
+    serialNumber: null,
+    formError: null,
+    isLoggedIn: false,
 });
 
 export const totals = (paylodArr) => {
@@ -26,6 +30,7 @@ export const totals = (paylodArr) => {
 const mutations = {
     'SET_USER'(state, user) {
         state.authUser = user
+        state.isLoggedIn = !!user; // 유저가 있으면 true, 없으면 false
     },
     'GET_ORDER'(state, payload){
         state.orders = payload
@@ -60,6 +65,15 @@ const mutations = {
         state.cart = []
         state.totalAmount = 0
         state.totalQuantity = 0
+    },
+    'SET_SERIAL_NUMBER'(state, serialNumber) {
+        state.serialNumber = serialNumber;
+    },
+    'SET_FORM_ERROR'(state, error) {
+        state.formError = error;
+    },
+    'SET_IS_LOGGED_IN'(state, status) {
+        state.isLoggedIn = status;
     }
 };
 
@@ -114,6 +128,38 @@ const actions = {
     }, 
     cartEmpty({commit}){
         commit('CART_EMPTY')
+    },
+    async refreshAccessToken({ commit }) {
+        const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
+        try {
+            const response = await apiClient.post('/auth/refresh', { refreshToken });
+            const newAccessToken = response.data.accessToken;
+            const newAccessTokenExpiration = response.data.accessTokenExpiration;
+
+            sessionStorage.setItem('JWT_TOKEN', newAccessToken);
+            sessionStorage.setItem('ACCESS_TOKEN_EXPIRATION', newAccessTokenExpiration);
+
+            console.log('Access Token refreshed successfully:', newAccessToken);
+            commit('SET_IS_LOGGED_IN', true);
+        } catch (error) {
+            console.error('Failed to refresh access token:', error);
+            commit('SET_FORM_ERROR', 'Failed to refresh access token. Please log in again.');
+            commit('SET_IS_LOGGED_IN', false);
+        }
+    },
+    async fetchProfile({ commit }) {
+        try {
+            const response = await apiClient.get('/auth/user-info');
+            console.log('User info fetched successfully:', response.data);
+            const serialNumber = response.data.data.serialNumber;
+            commit('SET_SERIAL_NUMBER', serialNumber);
+            console.log(serialNumber);
+            commit('SET_USER', response.data.data); // 사용자 정보 설정
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+            commit('SET_FORM_ERROR', 'Failed to fetch user information.');
+            commit('SET_IS_LOGGED_IN', false);
+        }
     }
 };
 
@@ -129,6 +175,26 @@ const getters = {
     },
     getOrders(state){
         return state.orders
+    },
+    getDeliveryStatusInKorean: () => (status) => {
+        const deliveryStatusKoreanMap = {
+          PENDING: '검수중',
+          SHIPPING: '배송중',
+          DELIVERED: '배송완료',
+          RETURNING: '반품진행중',
+          CANCELLED: '반품완료'
+        };
+        return deliveryStatusKoreanMap[status] || '알 수 없음';
+      },
+      formatDate: () => (dateTimeString) => {
+        const date = new Date(dateTimeString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      },
+      serialNumber(state) {
+        return state.serialNumber;
     }
 };
 

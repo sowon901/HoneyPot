@@ -46,7 +46,7 @@ export default {
     /*
     ** Customize the progress-bar colors
     */
-        loading: { color: '#fff' },
+    loading: { color: '#fff' },
     /*
     ** Plugins to load before mounting the App
     */
@@ -55,12 +55,14 @@ export default {
         { src: '~/plugins/vue-backtotop', ssr: false },
         { src: '~/plugins/vue-toastification', ssr: false },
         { src: '~/plugins/vueperslides', ssr: false },
+        { src: '~/plugins/TinyMCE.js', mode: 'client' }
         // { src: '~/plugins/firebase' },
     ],
     /*
     ** Nuxt.js dev-modules
     */
     buildModules: [
+        '@nuxtjs/composition-api/module'
     ],
     /*
     ** Nuxt.js modules
@@ -85,8 +87,8 @@ export default {
     ],
     /** Axios module configuration
      ** See https://axios.nuxtjs.org/options
-    ** Add .
-    */
+     ** Add .
+     */
     axios: {
         proxy: true
     },
