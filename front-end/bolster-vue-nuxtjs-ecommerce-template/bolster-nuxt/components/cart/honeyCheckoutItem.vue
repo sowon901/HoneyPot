@@ -201,7 +201,10 @@ export default {
       params: {
         serialNumber: this.serialNumber,
         productId: this.productId
-      }
+      },
+        headers: {
+            'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
+        }
     })
       .then(response => {
         // 응답 성공 처리

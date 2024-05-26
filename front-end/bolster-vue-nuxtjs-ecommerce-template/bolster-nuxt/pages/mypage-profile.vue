@@ -76,13 +76,17 @@ export default {
             await this.refreshAccessToken();
         }
 
-        
+
     },
     methods: {
         async refreshAccessToken() {
             const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
             try {
-                const response = await apiClient.post('/auth/refresh', {refreshToken});
+                const response = await apiClient.post('/auth/refresh', {refreshToken}, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
+                    }
+                });
                 const newAccessToken = response.data.accessToken;
                 const newAccessTokenExpiration = response.data.accessTokenExpiration;
 
@@ -97,7 +101,11 @@ export default {
         },
         async fetchProfile() {
             try {
-                const response = await apiClient.get('/auth/user-info');
+                const response = await apiClient.get('/auth/user-info', {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
+                    }
+                });
                 console.log('User info fetched successfully:', response.data);
                 this.serialNumber = response.data.data.serialNumber;
                 console.log(this.serialNumber);
@@ -113,7 +121,11 @@ export default {
             }
 
             try {
-                const response = await apiClient.get(`/mypage-profile/${this.serialNumber}`); // 백엔드 엔드포인트에 맞게 수정
+                const response = await apiClient.get(`/mypage/mypage-profile/${this.serialNumber}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
+                    }
+                }); // 백엔드 엔드포인트에 맞게 수정
                 console.log('Profile fetched successfully:', response.data);
                 const { profileImage, nickname, tag1, tag2, tag3, account } = response.data;
                 this.profileImage = profileImage;
@@ -145,9 +157,10 @@ export default {
             }
 
             try {
-                const response = await apiClient.post(`/mypage-profile/${this.serialNumber}`, formData, {
+                const response = await apiClient.post(`/mypage/mypage-profile/${this.serialNumber}`, formData, {
                     headers: {
-                        'Content-Type': 'multipart/form-data'
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
                     }
                 });
                 console.log("Profile updated successfully:", response.data);

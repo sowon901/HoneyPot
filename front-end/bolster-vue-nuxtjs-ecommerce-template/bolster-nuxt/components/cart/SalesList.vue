@@ -84,7 +84,11 @@ export default {
         ...mapGetters(['getDeliveryStatusInKorean', 'formatDate'])
     },
     mounted() {
-        axios.get(`http://localhost:8080/mypage/salesList/${this.serialNumber}`)
+        axios.get(`http://localhost:8080/mypage/salesList/${this.serialNumber}`, {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
+            }
+        })
             .then(response => {
                 // 서버에서 받아온 상품 데이터를 products 배열에 할당
                 console.log(response.data);
@@ -97,7 +101,11 @@ export default {
     },
     methods: {
         startSale(productId) {
-            axios.put(`http://localhost:8080/mypage/product/${productId}/start-sale`)
+            axios.put(`http://localhost:8080/mypage/product/${productId}/start-sale`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
+                }
+            })
                 .then(response => {
                     // 판매 시작 요청이 성공적으로 처리된 경우
                     console.log('Sale started successfully:', response.data);
@@ -106,7 +114,7 @@ export default {
                             product.storageStatus = 'SELLING';
                         }
                         return product;
-                    }); 
+                    });
                 })
                 .catch(error => {
                     console.error('Error starting sale:', error);

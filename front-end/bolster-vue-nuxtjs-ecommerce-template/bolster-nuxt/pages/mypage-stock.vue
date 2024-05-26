@@ -79,11 +79,11 @@
             <div>
               <label>상품 상세 설명:</label>
               <client-only>
-                <Editor 
+                <Editor
                   api-key="bxo41dc5dxyisscks24w4z5z8j8rnp1ox7245kjjvz6kq2ni"
                   :init="editorConfig"
                   v-model="product.description"/>
-              </client-only>            
+              </client-only>
             </div>
             <button type="submit">상품 등록</button>
           </form>
@@ -101,7 +101,7 @@ import axios from 'axios';
 import { mapState, mapActions } from 'vuex';
 
 export default defineComponent({
-  components: { 
+  components: {
     Sidebar,
     Editor
   },
@@ -198,7 +198,7 @@ export default defineComponent({
         alert('로그인이 필요합니다.');
         this.$router.push({ path: '/login' });
     },
-  
+
     submitForm() {
       console.log('submitForm called');
       console.log('Product description:', this.product.description);
@@ -252,7 +252,7 @@ export default defineComponent({
       });
 
       axios
-        .post('http://localhost:8080/mypage-stock', formData, {
+        .post('http://localhost:8080/mypage/mypage-stock', formData, {
           headers: {
                     'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`,
                     'Content-Type': 'multipart/form-data'
@@ -466,7 +466,7 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  
+
 }
 
 .auction-time-control label {

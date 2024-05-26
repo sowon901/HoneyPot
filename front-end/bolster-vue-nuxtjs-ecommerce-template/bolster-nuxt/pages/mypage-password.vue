@@ -68,7 +68,11 @@ export default {
         async refreshAccessToken() {
             const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
             try {
-                const response = await apiClient.post('/auth/refresh', {refreshToken});
+                const response = await apiClient.post('/auth/refresh', {refreshToken}, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
+                    }
+                });
                 const newAccessToken = response.data.accessToken;
                 const newAccessTokenExpiration = response.data.accessTokenExpiration;
 
@@ -83,7 +87,11 @@ export default {
         },
         async changePassword() {
             try {
-                const response = await apiClient.get('/auth/user-info');
+                const response = await apiClient.get('/auth/user-info', {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
+                    }
+                });
                 console.log('User info fetched successfully:', response.data);
                 this.serialNumber = response.data.data.serialNumber;
                 console.log(this.serialNumber);
@@ -108,6 +116,10 @@ export default {
                     serialNumber: this.serialNumber,
                     currentPassword: this.currentPassword,
                     newPassword: this.newPassword
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
+                    }
                 });
                 alert("비밀번호 변경이 완료되었습니다.");
             } catch (error) {
@@ -125,11 +137,11 @@ export default {
     width: 100%;
     padding-top: 100px;
   }
-  
+
   .sidebar {
     flex: 1;
   }
-  
+
   .user-data {
     flex: 3;
     padding: 5px;
@@ -138,7 +150,7 @@ export default {
   .password-header {
     margin-bottom: 20px;
   }
-  
+
   .section-divider {
   margin-top: 17px;
   border: 0.3px #ccc;

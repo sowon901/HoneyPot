@@ -78,7 +78,11 @@ export default {
     },
     mounted() {
         if (this.serialNumber) {
-            axios.get(`http://localhost:8080/mypage/purchaseList/${this.serialNumber}`)
+            axios.get(`http://localhost:8080/mypage/purchaseList/${this.serialNumber}`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
+                }
+            })
                 .then(response => {
                     // 서버에서 받아온 상품 데이터를 products 배열에 할당
                     console.log(response.data);
