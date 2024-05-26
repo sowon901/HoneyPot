@@ -108,6 +108,10 @@ export default {
                     serialNumber: this.serialNumber,
                     currentPassword: this.currentPassword,
                     newPassword: this.newPassword
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
                 });
                 alert("비밀번호 변경이 완료되었습니다.");
             } catch (error) {
@@ -125,11 +129,11 @@ export default {
     width: 100%;
     padding-top: 100px;
   }
-  
+
   .sidebar {
     flex: 1;
   }
-  
+
   .user-data {
     flex: 3;
     padding: 5px;
@@ -138,7 +142,7 @@ export default {
   .password-header {
     margin-bottom: 20px;
   }
-  
+
   .section-divider {
   margin-top: 17px;
   border: 0.3px #ccc;

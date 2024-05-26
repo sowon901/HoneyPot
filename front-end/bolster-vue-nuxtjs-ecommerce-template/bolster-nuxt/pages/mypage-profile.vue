@@ -76,13 +76,17 @@ export default {
             await this.refreshAccessToken();
         }
 
-        
+
     },
     methods: {
         async refreshAccessToken() {
             const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
             try {
-                const response = await apiClient.post('/auth/refresh', {refreshToken});
+                const response = await apiClient.post('/auth/refresh', {refreshToken}, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
                 const newAccessToken = response.data.accessToken;
                 const newAccessTokenExpiration = response.data.accessTokenExpiration;
 
