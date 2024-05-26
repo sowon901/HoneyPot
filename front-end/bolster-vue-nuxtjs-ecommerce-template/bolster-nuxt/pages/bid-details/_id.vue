@@ -4,14 +4,16 @@
             <div class="content">
                 <div class="bid-details-content">
                     <!-- 상품 메인 이미지 및 상세 이미지 -->
-                    <div class="product-layout">
+                    <div class="product-layout" ref="imageContainer" @mousemove="moveLens" @mouseleave="zoomOut">
                         <div class="product-main-image">
-                            <img class="main-image" :src="mainImage" alt="Product Image" loading="lazy" />
+                            <img class="main-image" :src="mainImage" alt="Product Image" ref="mainImage" />
+                            <div class="zoom-lens" v-if="isZooming" :style="lensStyle" ref="lens"></div>
                         </div>
+                        <div class="zoom-result" v-show="isZooming" :style="resultStyle"></div>
                         <div class="product-detail-image-list">
                             <div v-for="(image, index) in productImages" :key="index" class="product-detail-image"
                                 @click="showMainImage(image)">
-                                <img :src="image" :alt="'Image ' + (index + 1)" loading="lazy" />
+                                <img :src="image" :alt="'Image ' + (index + 1)" />
                             </div>
                         </div>
                     </div>
@@ -76,7 +78,7 @@
                             </div>
                             <div class="confirm">
                                 <input class="inp-cbx" id="cbx" type="checkbox" v-model="agree"
-                                    @change="updateBidButtonStyle(agree)" />
+                                    @change="updateBidButtonStyle(agree)" :disabled="isAuctionEnded" />
                                 <label class="cbx" for="cbx">
                                     <span>이용약관을 확인하였으며 이에 동의합니다.</span>
                                 </label>
@@ -124,14 +126,15 @@
                                 </div>
                                 <div class="label">
                                     <div class="input-label">지정 금액 입찰</div>
-                                    <input id="input" type="text" v-model="specifiedBid" class="text-input" @input="updateTotalAmount">
+                                    <input id="input" type="text" v-model="specifiedBid" class="text-input"
+                                        @input="updateTotalAmount">
                                 </div>
                                 <div class="label">
                                     <div class="input-label">호가 단위 입찰</div>
                                     <div class="input">
                                         <div class="count">
-                                            <button :class="['btn-minus', { disabled: price <= priceUnit }]" @click="bidMinus"><i
-                                                    class="fas fa-minus"></i></button>
+                                            <button :class="['btn-minus', { disabled: price <= priceUnit }]"
+                                                @click="bidMinus"><i class="fas fa-minus"></i></button>
                                             <div class="price">{{ price }}</div>
                                             <button class="btn-plus" @click="bidPlus"><i
                                                     class="fas fa-plus"></i></button>
@@ -158,14 +161,15 @@
 
 <script>
 import axios from 'axios';
-import { mapState, mapActions } from 'vuex'
+
+import { mapState, mapActions } from 'vuex';
 
 export default {
     data() {
         return {
             getExistPId: false,
             quantity: 1,
-            agree: false, // 체크박스 상태 저장
+            agree: false,
             product: null,
             bidCheck: false,
             price: 0,
@@ -175,20 +179,37 @@ export default {
             minutes: '--',
             seconds: '--',
             timeDate: this.dateTime,
-            productImagesData: [], // Renamed to avoid conflict
-            // 추가 이미지 보여주는 변수
+            productImagesData: [],
             showMoreImages: false,
-            // 더보기 버튼 숨김 여부 변수
             hideMoreButton: false,
             mainImage: '',
             priceUnit: 0,
             bidButtonDisabled: false,
             interval: null,
+            zoomedImage: null,
+            isZoomed: false,
+            lensStyle: {},
+            isZooming: false, // Define isZooming here
+            resultStyle: {},
+            formError: null // 추가
         };
     },
-    // mounted() {
-    //     this.loadProductData();
-    // },
+
+    async mounted() {
+        await this.loadProductData();
+        const accessToken = sessionStorage.getItem('JWT_TOKEN');
+        const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
+
+        console.log('Access Token:', accessToken);
+        console.log('Access Token Expiration:', accessTokenExpiration);
+
+        if (new Date(accessTokenExpiration) <= new Date()) {
+            console.log('Access Token is expired. Need to refresh token.');
+            await this.refreshAccessToken();
+        }
+        await this.fetchProfile();
+    },
+
     beforeDestroy() {
         // 컴포넌트가 파괴되기 전에 타이머를 제거합니다.
         clearInterval(this.interval);
@@ -196,6 +217,7 @@ export default {
     props: ['dateTime'],
 
     computed: {
+        ...mapState(['user', 'serialNumber', 'isLoggedIn']), // Assuming user state is managed in Vuex
         productImages() {
             // product 객체가 null이 아닌 경우에만 이미지 속성을 배열로 반환합니다.
             if (this.product) {
@@ -212,24 +234,12 @@ export default {
         totalAmount() {
             return this.product.price + this.price + parseInt(this.specifiedBid);
         },
-        ...mapState(['serialNumber', 'isLoggedIn', 'formError']),
-    },
-    async mounted() {
-        const accessToken = sessionStorage.getItem('JWT_TOKEN');
-        const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
-
-        console.log('Access Token:', accessToken);
-        console.log('Access Token Expiration:', accessTokenExpiration);
-
-        if (new Date(accessTokenExpiration) <= new Date()) {
-            console.log('Access Token is expired. Need to refresh token.');
-            await this.refreshAccessToken();
+        isAuctionEnded() {
+            return this.days === ' -- ' && this.hours === ' -- ' && this.minutes === ' -- ' && this.seconds === ' -- ';
         }
-
-        await this.fetchProfile();
-        this.loadProductData();
     },
     methods: {
+        ...mapActions(['refreshAccessToken', 'fetchProfile']),
         async loadProductData() {
             const productId = this.$route.params.id;
             try {
@@ -248,6 +258,45 @@ export default {
         showMainImage(image) {
             this.mainImage = image;
         },
+        moveLens(event) {
+      this.isZooming = true;
+      const imageContainer = this.$refs.imageContainer;
+      const image = this.$refs.mainImage;
+      const lens = this.$refs.lens;
+
+      // Ensure refs are defined
+      if (!imageContainer || !image || !lens) {
+        return;
+      }
+
+      const rect = imageContainer.getBoundingClientRect();
+      let x = event.clientX - rect.left - lens.offsetWidth / 2;
+      let y = event.clientY - rect.top - lens.offsetHeight / 2;
+
+      // Ensure the lens doesn't go out of the image bounds
+      if (x > image.width - lens.offsetWidth) x = image.width - lens.offsetWidth;
+      if (x < 0) x = 0;
+      if (y > image.height - lens.offsetHeight) y = image.height - lens.offsetHeight;
+      if (y < 0) y = 0;
+
+      const bgPosX = (x / image.width) * 100;
+      const bgPosY = (y / image.height) * 100;
+      const zoomFactor = 2; // 확대 비율 설정, 기본값 2배
+
+      this.lensStyle = {
+        left: `${x}px`,
+        top: `${y}px`,
+      };
+
+      this.resultStyle = {
+        backgroundImage: `url(${this.mainImage})`,
+        backgroundSize: `${image.naturalWidth * zoomFactor}px ${image.naturalHeight * zoomFactor}px`,
+        backgroundPosition: `${bgPosX}% ${bgPosY}%`,
+      };
+    },
+    zoomOut() {
+      this.isZooming = false;
+    }, 
         updateProductImages() {
             if (this.product) {
                 this.productImagesData = [
@@ -266,6 +315,10 @@ export default {
             this.hideMoreButton = true;
         },
         bid() {
+            if (!this.isLoggedIn) {
+                this.redirectToLogin();
+                return;
+            }
             this.bidCheck = true;
         },
         bidCancel() {
@@ -333,7 +386,7 @@ export default {
             let days = Math.floor(timeLeft / 86400);
             let hours = Math.floor((timeLeft - days * 86400) / 3600);
             let minutes = Math.floor((timeLeft - days * 86400 - hours * 3600) / 60);
-            let seconds = Math.floor(timeLeft - days * 86400 - hours * 3600 - minutes * 60);
+            let seconds = Math.floor((timeLeft - days * 86400 - hours * 3600 - minutes * 60));
 
             if (hours < 10) { hours = '0' + hours; }
             if (minutes < 10) { minutes = '0' + minutes; }
@@ -366,7 +419,25 @@ export default {
             this.interval = setInterval(this.timing, 1000);
             console.log('Timer set.');
         },
-        ...mapActions(['refreshAccessToken', 'fetchProfile']),
+        toggleImageZoom(image) {
+            this.zoomedImage = image;
+        },
+        async updateAuctionResult() {
+            try {
+                const productId = this.product.productId;
+                await axios.post(`http://localhost:8080/updateAuctionResult/${productId}`);
+            } catch (error) {
+                console.error('Error updating auction result:', error);
+            }
+        },
+        zoomIn() {
+            this.isZoomed = true;
+        },
+    
+        redirectToLogin() {
+            alert('로그인이 필요합니다.');
+            this.$router.push({ path: '/login' });
+        },
     },
 };
 </script>
@@ -399,22 +470,25 @@ export default {
     align-items: center;
     margin-right: 20px;
     flex-basis: 40%; /* 왼쪽 이미지 영역 너비 */
+    position: relative; /* 추가 */
 }
 
 .product-main-image {
     width: 400px; /* 고정된 너비 */
-    height: 400px; /* 고정된 높이 */
-    overflow: hidden; /* 이미지가 영역을 벗어나면 숨김 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
+  height: 400px; /* 고정된 높이 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: white;
+  overflow: hidden;
+  position: relative; /* 추가: 확대 렌즈 위치를 위해 필요 */
 }
 
 .main-image {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* 이미지가 영역을 채우도록 */
+    object-fit: contain; /* 이미지가 영역을 채우도록 */
 }
 
 .product-detail-image-list {
@@ -717,5 +791,51 @@ export default {
     bottom: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.8);
+}
+
+.zoom-lens {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    width: 100px;
+    height: 100px;
+    background: rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+}
+
+.zoom-result {
+  position: absolute;
+  top: 0;
+  left: 410px; /* Adjust based on your layout */
+  width: 400px;
+  height: 400px;
+  background-repeat: no-repeat;
+  border: 1px solid #d4d4d4;
+}
+
+.product-detail-image-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.product-detail-image {
+  width: 80px;
+  height: 80px;
+  margin: 5px;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+.product-detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-details {
+  flex-basis: 55%;
+  text-align: left;
+  margin-bottom: 30px;
 }
 </style>

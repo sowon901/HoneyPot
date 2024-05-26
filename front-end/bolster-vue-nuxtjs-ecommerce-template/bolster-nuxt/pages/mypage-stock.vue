@@ -21,12 +21,12 @@
               <input id="priceUnit" type="number" v-model.number="product.priceUnit">
               <button type="button" @click="incrementPriceUnit">+</button>
             </div>
-            <div class="price-control">
+            <!-- <div class="price-control">
               <label for="buyNow">즉시 구매가:</label>
               <button type="button" @click="decrementBuyNow">-</button>
               <input id="buyNow" type="number" v-model.number="product.buyNowPrice">
               <button type="button" @click="incrementBuyNow">+</button>
-            </div>
+            </div> -->
             <div class="price-control">
               <label for="startingBid">경매 시작가:</label>
               <button type="button" @click="decrementStartingBid">-</button>
@@ -98,6 +98,7 @@ import { defineComponent } from '@nuxtjs/composition-api';
 import Sidebar from '../components/all-products/Sidebar';
 import Editor from '@tinymce/tinymce-vue';
 import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
 
 export default defineComponent({
   components: { 
@@ -166,10 +167,42 @@ export default defineComponent({
       }
     };
   },
+  async mounted() {
+    const accessToken = sessionStorage.getItem('JWT_TOKEN');
+    const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
+    const serialNumber = sessionStorage.getItem('serialNumber');
+
+    console.log('Access Token:', accessToken);
+    console.log('Access Token Expiration:', accessTokenExpiration);
+    console.log('Serial Number:', serialNumber);
+
+    if (new Date(accessTokenExpiration) <= new Date()) {
+      console.log('Access Token is expired. Need to refresh token.');
+      try {
+        await this.refreshAccessToken();
+      } catch (error) {
+        console.error('Failed to refresh access token:', error);
+        this.redirectToLogin();
+        return;
+      }
+    }
+    await this.fetchProfile();
+  },
+
+  computed: {
+    ...mapState(['user', 'serialNumber', 'isLoggedIn']),
+  },
   methods: {
+    ...mapActions(['refreshAccessToken', 'fetchProfile']),
+    redirectToLogin() {
+        alert('로그인이 필요합니다.');
+        this.$router.push({ path: '/login' });
+    },
+  
     submitForm() {
       console.log('submitForm called');
       console.log('Product description:', this.product.description);
+
       if (!this.product.name) {
         alert("Product name is required");
         console.log('Product name is required');
@@ -180,11 +213,11 @@ export default defineComponent({
         console.log('Price unit is required');
         return;
       }
-      if (!this.product.buyNowPrice) {
-        alert("Buy now price is required");
-        console.log('Buy now price is required');
-        return;
-      }
+      // if (!this.product.buyNowPrice) {
+      //   alert("Buy now price is required");
+      //   console.log('Buy now price is required');
+      //   return;
+      // }
       if (!this.product.startingBid) {
         alert("Starting bid is required");
         console.log('Starting bid is required');
@@ -199,7 +232,7 @@ export default defineComponent({
       const formData = new FormData();
       formData.append("productName", this.product.name);
       formData.append("priceUnit", this.product.priceUnit);
-      formData.append("buyNow", this.product.buyNowPrice);
+      formData.append("buyNow", 0);
       formData.append("startPrice", this.product.startingBid);
       formData.append("productInfo", this.product.description);
       formData.append("auctionDays", this.auctionDays);
@@ -212,13 +245,19 @@ export default defineComponent({
           console.log(`Image ${index + 1} added to formData:`, image);
         }
       });
+    formData.append("serialNumber", this.serialNumber);
 
       formData.forEach((value, key) => {
         console.log('FormData key-value pair:', key, value);
       });
 
       axios
-        .post('http://localhost:8080/mypage-stock', formData)
+        .post('http://localhost:8080/mypage-stock', formData, {
+          headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+        })
         .then((response) => {
           console.log("Product registered successfully:", response.data);
           alert("Product registered successfully");
