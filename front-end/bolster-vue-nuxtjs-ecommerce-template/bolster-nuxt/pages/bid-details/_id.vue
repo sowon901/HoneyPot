@@ -191,7 +191,8 @@ export default {
             lensStyle: {},
             isZooming: false, // Define isZooming here
             resultStyle: {},
-            formError: null // 추가
+            formError: null, // 추가
+            notifiedEndingSoon: false, // 경매 종료 1시간 전 알림 여부를 추적
         };
     },
 
@@ -259,44 +260,44 @@ export default {
             this.mainImage = image;
         },
         moveLens(event) {
-      this.isZooming = true;
-      const imageContainer = this.$refs.imageContainer;
-      const image = this.$refs.mainImage;
-      const lens = this.$refs.lens;
+            this.isZooming = true;
+            const imageContainer = this.$refs.imageContainer;
+            const image = this.$refs.mainImage;
+            const lens = this.$refs.lens;
 
-      // Ensure refs are defined
-      if (!imageContainer || !image || !lens) {
-        return;
-      }
+            // Ensure refs are defined
+            if (!imageContainer || !image || !lens) {
+                return;
+            }
 
-      const rect = imageContainer.getBoundingClientRect();
-      let x = event.clientX - rect.left - lens.offsetWidth / 2;
-      let y = event.clientY - rect.top - lens.offsetHeight / 2;
+            const rect = imageContainer.getBoundingClientRect();
+            let x = event.clientX - rect.left - lens.offsetWidth / 2;
+            let y = event.clientY - rect.top - lens.offsetHeight / 2;
 
-      // Ensure the lens doesn't go out of the image bounds
-      if (x > image.width - lens.offsetWidth) x = image.width - lens.offsetWidth;
-      if (x < 0) x = 0;
-      if (y > image.height - lens.offsetHeight) y = image.height - lens.offsetHeight;
-      if (y < 0) y = 0;
+            // Ensure the lens doesn't go out of the image bounds
+            if (x > image.width - lens.offsetWidth) x = image.width - lens.offsetWidth;
+            if (x < 0) x = 0;
+            if (y > image.height - lens.offsetHeight) y = image.height - lens.offsetHeight;
+            if (y < 0) y = 0;
 
-      const bgPosX = (x / image.width) * 100;
-      const bgPosY = (y / image.height) * 100;
-      const zoomFactor = 2; // 확대 비율 설정, 기본값 2배
+            const bgPosX = (x / image.width) * 100;
+            const bgPosY = (y / image.height) * 100;
+            const zoomFactor = 2; // 확대 비율 설정, 기본값 2배
 
-      this.lensStyle = {
-        left: `${x}px`,
-        top: `${y}px`,
-      };
+            this.lensStyle = {
+                left: `${x}px`,
+                top: `${y}px`,
+            };
 
-      this.resultStyle = {
-        backgroundImage: `url(${this.mainImage})`,
-        backgroundSize: `${image.naturalWidth * zoomFactor}px ${image.naturalHeight * zoomFactor}px`,
-        backgroundPosition: `${bgPosX}% ${bgPosY}%`,
-      };
-    },
-    zoomOut() {
-      this.isZooming = false;
-    }, 
+            this.resultStyle = {
+                backgroundImage: `url(${this.mainImage})`,
+                backgroundSize: `${image.naturalWidth * zoomFactor}px ${image.naturalHeight * zoomFactor}px`,
+                backgroundPosition: `${bgPosX}% ${bgPosY}%`,
+            };
+        },
+        zoomOut() {
+            this.isZooming = false;
+        },
         updateProductImages() {
             if (this.product) {
                 this.productImagesData = [
@@ -391,8 +392,8 @@ export default {
             if (hours < 10) { hours = '0' + hours; }
             if (minutes < 10) { minutes = '0' + minutes; }
             if (seconds < 10) { seconds = '0' + seconds; }
-            
-            if(timeLeft === 0) {
+
+            if (timeLeft === 0) {
                 this.insertResult();
             }
 
@@ -406,7 +407,7 @@ export default {
             } else {
                 this.bidButtonDisabled = false;
             }
-            
+
             this.days = days;
             this.hours = hours;
             this.minutes = minutes;
@@ -417,8 +418,8 @@ export default {
             const productId = this.product.productId;
 
             axios
-            .post(`http://localhost:8080/bid/result?productId=${productId}`)
-                    .then((response) => {
+                .post(`http://localhost:8080/bid/result?productId=${productId}`)
+                .then((response) => {
                     alert('경매가 종료되었습니다.');
                 })
                 .catch((error) => {
@@ -449,11 +450,68 @@ export default {
         zoomIn() {
             this.isZoomed = true;
         },
-    
+
         redirectToLogin() {
             alert('로그인이 필요합니다.');
             this.$router.push({ path: '/login' });
         },
+        async notifyAuctionEndingSoon() {
+            try {
+                const productId = this.product.productId;
+                await axios.post(`http://localhost:8080/notifyEndingSoon`, null, { params: { productId } });
+                console.log('Notified server of auction ending soon for product ID:', productId);
+            } catch (error) {
+                console.error('Error notifying server about auction ending soon:', error);
+            }
+        },
+        timing() {
+            if (!this.product) return;
+
+            let durationTime = this.product.timeLimit;
+            if (!durationTime) return;
+
+            let durationTimeParse = durationTime * 3600;
+            let registerTime = this.product.registrationDate;
+            let registerTimeParse = Date.parse(registerTime) / 1000;
+            let now = new Date();
+            let nowParse = Date.parse(now) / 1000;
+            let timeLeft = registerTimeParse + durationTimeParse - nowParse;
+
+            let days = Math.floor(timeLeft / 86400);
+            let hours = Math.floor((timeLeft - days * 86400) / 3600);
+            let minutes = Math.floor((timeLeft - days * 86400 - hours * 3600) / 60);
+            let seconds = Math.floor((timeLeft - days * 86400 - hours * 3600 - minutes * 60));
+
+            if (hours < 10) { hours = '0' + hours; }
+            if (minutes < 10) { minutes = '0' + minutes; }
+            if (seconds < 10) { seconds = '0' + seconds; }
+
+            if (timeLeft <= 3600 && !this.notifiedEndingSoon) {
+                this.notifyAuctionEndingSoon();
+                this.notifiedEndingSoon = true;
+            }
+
+            if (timeLeft === 0) {
+                this.insertResult();
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(this.interval);
+                days = ' -- ';
+                hours = ' -- ';
+                minutes = ' -- ';
+                seconds = ' -- ';
+                this.bidButtonDisabled = true;
+            } else {
+                this.bidButtonDisabled = false;
+            }
+
+            this.days = days;
+            this.hours = hours;
+            this.minutes = minutes;
+            this.seconds = seconds;
+        },
+
     },
 };
 </script>
@@ -462,9 +520,12 @@ export default {
 .wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center; /* 중앙 정렬 */
-    max-width: 1200px; /* 전체 컨테이너의 최대 너비 설정 */
-    margin: auto; /* 중앙 정렬 */
+    align-items: center;
+    /* 중앙 정렬 */
+    max-width: 1200px;
+    /* 전체 컨테이너의 최대 너비 설정 */
+    margin: auto;
+    /* 중앙 정렬 */
     padding: 20px;
     padding-top: 100px;
 }
@@ -485,60 +546,74 @@ export default {
     flex-direction: column;
     align-items: center;
     margin-right: 20px;
-    flex-basis: 40%; /* 왼쪽 이미지 영역 너비 */
-    position: relative; /* 추가 */
+    flex-basis: 40%;
+    /* 왼쪽 이미지 영역 너비 */
+    position: relative;
+    /* 추가 */
 }
 
 .product-main-image {
-    width: 400px; /* 고정된 너비 */
-  height: 400px; /* 고정된 높이 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-  background-color: white;
-  overflow: hidden;
-  position: relative; /* 추가: 확대 렌즈 위치를 위해 필요 */
+    width: 400px;
+    /* 고정된 너비 */
+    height: 400px;
+    /* 고정된 높이 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: white;
+    overflow: hidden;
+    position: relative;
+    /* 추가: 확대 렌즈 위치를 위해 필요 */
 }
 
 .main-image {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* 이미지가 영역을 채우도록 */
+    object-fit: contain;
+    /* 이미지가 영역을 채우도록 */
 }
 
 .product-detail-image-list {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap; /* 작은 화면에서 이미지가 줄 바꿈되도록 설정 */
+    flex-wrap: wrap;
+    /* 작은 화면에서 이미지가 줄 바꿈되도록 설정 */
     margin-top: 20px;
 }
 
 .product-detail-image {
-    width: 80px; /* 이미지 너비 조정 */
-    height: 80px; /* 이미지 높이 조정 */
+    width: 80px;
+    /* 이미지 너비 조정 */
+    height: 80px;
+    /* 이미지 높이 조정 */
     margin: 5px;
     object-fit: cover;
-    overflow: hidden; /* 이미지가 영역을 벗어나면 숨김 */
+    overflow: hidden;
+    /* 이미지가 영역을 벗어나면 숨김 */
 }
 
 .product-detail-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* 이미지가 영역을 채우도록 */
+    object-fit: cover;
+    /* 이미지가 영역을 채우도록 */
 }
 
 .product-details {
-    flex-basis: 55%; /* 오른쪽 상품 데이터 영역 너비 */
+    flex-basis: 55%;
+    /* 오른쪽 상품 데이터 영역 너비 */
     text-align: left;
     margin-bottom: 30px;
 }
 
 .timer {
     display: flex;
-    justify-content: flex-end; /* 우측 정렬 */
+    justify-content: flex-end;
+    /* 우측 정렬 */
     align-items: center;
-    font-size: 40px; /* 글씨 크기 증가 */
+    font-size: 40px;
+    /* 글씨 크기 증가 */
     margin-bottom: 20px;
 }
 
@@ -553,7 +628,8 @@ export default {
 
 .product-name {
     padding-bottom: 10px;
-    font-size: 35px; /* 글씨 크기 증가 */
+    font-size: 35px;
+    /* 글씨 크기 증가 */
 }
 
 .description td {
@@ -562,11 +638,13 @@ export default {
 }
 
 .left-column {
-    text-align: left; /* 좌측 정렬 */
+    text-align: left;
+    /* 좌측 정렬 */
 }
 
 .right-column {
-    text-align: right; /* 우측 정렬 */
+    text-align: right;
+    /* 우측 정렬 */
 }
 
 .description table {
@@ -575,30 +653,41 @@ export default {
 
 .caution {
     margin-top: 20px;
-    font-size: 20px; /* 글씨 크기 조정 */
+    font-size: 20px;
+    /* 글씨 크기 조정 */
 }
 
 .terms textarea {
     width: 100%;
-    height: 100px; /* 높이 증가 */
-    resize: none; /* 텍스트박스 크기 조정 불가 */
+    height: 100px;
+    /* 높이 증가 */
+    resize: none;
+    /* 텍스트박스 크기 조정 불가 */
     border: 1px solid #ccc;
     padding: 10px;
-    font-size: 12px; /* 글씨 크기 감소 */
-    color: gray; /* 글씨 색상 회색 */
+    font-size: 12px;
+    /* 글씨 크기 감소 */
+    color: gray;
+    /* 글씨 색상 회색 */
     background-color: #f9f9f9;
-    box-sizing: border-box; /* padding 포함 */
-    overflow-y: auto; /* 스크롤 추가 */
-    margin-bottom: 10px; /* 여백 제거 */
+    box-sizing: border-box;
+    /* padding 포함 */
+    overflow-y: auto;
+    /* 스크롤 추가 */
+    margin-bottom: 10px;
+    /* 여백 제거 */
 }
 
 .confirm {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    font-size: 14px; /* 글씨 크기 감소 */
-    color: gray; /* 글씨 색상 회색 */
-    margin: 0; /* 여백 제거 */
+    font-size: 14px;
+    /* 글씨 크기 감소 */
+    color: gray;
+    /* 글씨 색상 회색 */
+    margin: 0;
+    /* 여백 제거 */
 }
 
 .buttons {
@@ -608,18 +697,21 @@ export default {
 }
 
 .btn-bid {
-    background-color: #ccc; /* 기본 회색 */
+    background-color: #ccc;
+    /* 기본 회색 */
     width: 200px;
     height: 50px;
     color: white;
     font-size: 20px;
     border: #ccc solid 1px;
-    border-radius: 10px; /* radius 10으로 수정 */
+    border-radius: 10px;
+    /* radius 10으로 수정 */
     text-align: center;
 }
 
 .btn-bid.active {
-    background-color: #ffb400; /* 체크박스 체크 시 컬러 변경 */
+    background-color: #ffb400;
+    /* 체크박스 체크 시 컬러 변경 */
     border: #ffb400 solid 1px;
 }
 
@@ -655,22 +747,32 @@ export default {
     text-align: center;
 }
 
-.hr-effect:hover, .more-button:hover {
+.hr-effect:hover,
+.more-button:hover {
     color: #ffb400;
 }
 
 .bid-modal {
     position: fixed;
-    top: 50%; /* 화면 상단 기준으로 50% 위치에 배치 */
-    left: 50%; /* 화면 좌측 기준으로 50% 위치에 배치 */
-    transform: translate(-50%, -50%); /* 수평 및 수직으로 -50%씩 이동하여 중앙으로 정렬 */
-    width: 450px; /* 모달 너비 조정 */
-    height: auto; /* 모달 높이 자동 */
-    z-index: 1000; /* 다른 요소보다 위에 표시되도록 설정 */
+    top: 50%;
+    /* 화면 상단 기준으로 50% 위치에 배치 */
+    left: 50%;
+    /* 화면 좌측 기준으로 50% 위치에 배치 */
+    transform: translate(-50%, -50%);
+    /* 수평 및 수직으로 -50%씩 이동하여 중앙으로 정렬 */
+    width: 450px;
+    /* 모달 너비 조정 */
+    height: auto;
+    /* 모달 높이 자동 */
+    z-index: 1000;
+    /* 다른 요소보다 위에 표시되도록 설정 */
     background: #fff;
-    border-radius: 10px; /* 모달의 둥근 모서리 설정 */
-    padding: 20px; /* 모달 내부 여백 설정 */
-    box-sizing: border-box; /* padding이 박스 크기에 포함되도록 설정 */
+    border-radius: 10px;
+    /* 모달의 둥근 모서리 설정 */
+    padding: 20px;
+    /* 모달 내부 여백 설정 */
+    box-sizing: border-box;
+    /* padding이 박스 크기에 포함되도록 설정 */
 }
 
 .bid-modal-container {
@@ -788,7 +890,8 @@ export default {
 
 .hr-effect {
     border: 2px solid #ddd;
-    transition: border-color 0.5s ease; /* 테두리 색상 변화에 대한 전환 설정 */
+    transition: border-color 0.5s ease;
+    /* 테두리 색상 변화에 대한 전환 설정 */
 }
 
 .price {
@@ -819,39 +922,40 @@ export default {
 }
 
 .zoom-result {
-  position: absolute;
-  top: 0;
-  left: 410px; /* Adjust based on your layout */
-  width: 400px;
-  height: 400px;
-  background-repeat: no-repeat;
-  border: 1px solid #d4d4d4;
+    position: absolute;
+    top: 0;
+    left: 410px;
+    /* Adjust based on your layout */
+    width: 400px;
+    height: 400px;
+    background-repeat: no-repeat;
+    border: 1px solid #d4d4d4;
 }
 
 .product-detail-image-list {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
 }
 
 .product-detail-image {
-  width: 80px;
-  height: 80px;
-  margin: 5px;
-  object-fit: cover;
-  overflow: hidden;
+    width: 80px;
+    height: 80px;
+    margin: 5px;
+    object-fit: cover;
+    overflow: hidden;
 }
 
 .product-detail-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .product-details {
-  flex-basis: 55%;
-  text-align: left;
-  margin-bottom: 30px;
+    flex-basis: 55%;
+    text-align: left;
+    margin-bottom: 30px;
 }
 </style>

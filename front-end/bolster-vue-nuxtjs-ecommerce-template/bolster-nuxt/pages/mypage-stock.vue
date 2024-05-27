@@ -254,7 +254,7 @@ export default defineComponent({
       axios
         .post('http://localhost:8080/mypage-stock', formData, {
           headers: {
-                    'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`,
+                    // 'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`,
                     'Content-Type': 'multipart/form-data'
                 }
         })

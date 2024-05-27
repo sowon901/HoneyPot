@@ -17,9 +17,7 @@
                     <tbody v-if="products.length > 0">
                         <tr v-for="(product, i) in products" :key="i" style="text-align: center;">
                             <td class="product-information" style="text-align: left;">
-                                <nuxt-link
-                                    :to="`/bid-details?serialNumber=${product.serialNumber}&productId=${product.productId}`"
-                                    class="product-detail">
+                                <nuxt-link :to="`/bid-details/${product.productId}`" class="product-detail">
                                     <div style="display: flex;">
                                         <div class="image-container" :class="{ 'no-image': !product.image1 }"
                                             style="margin-right: 10px;">

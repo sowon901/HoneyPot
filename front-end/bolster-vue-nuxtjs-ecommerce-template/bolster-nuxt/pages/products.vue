@@ -193,30 +193,6 @@ export default {
 </script>
 
 <style scoped>
-/* .interests,
-.categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.interests button,
-.categories button {
-  border: none;
-  border-radius: 10px;
-  padding: 5px 10px;
-  cursor: pointer;
-  background-color: white;
-  color: black;
-}
-
-.interests .selected,
-.categories .selected {
-  background-color: #ffb400;
-  color: white;
-} */
 .interests,
 .categories {
   margin-top: 20px;
