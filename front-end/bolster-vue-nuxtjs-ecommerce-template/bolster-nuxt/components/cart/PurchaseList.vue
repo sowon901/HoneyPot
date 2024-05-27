@@ -46,11 +46,11 @@
                             </td>
 
                             <td class="delivery-status">
-                                {{ getDeliveryStatusInKorean(product.deliveryStatus) }}
+                                {{ product.deliveryStatus ? getDeliveryStatusInKorean(product.deliveryStatus) : '' }}
                             </td>
 
                             <td class="purchase-date">
-                                {{ formatDate(product.completeDate) }}
+                                {{ product.completeDate ? formatDate(product.completeDate) : '' }}
                             </td>
                         </tr>
                     </tbody>
