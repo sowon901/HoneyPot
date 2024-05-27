@@ -1,263 +1,433 @@
 <template>
-  <div>
-    <!-- Start Checkout Area -->
-    <div class="checkout-area ptb-60">
-      <div class="container">
-        <form @submit.prevent="onSubmit">
-          <div class="row">
-            <div class="col-lg-6 col-md-12">
-              <div class="billing-details">
-                <h3 class="title">배송지</h3>
-                <div class="row">
-                  <div class="col-lg-12 col-md-6">
-                    <div class="form-group">
-                      <label>받는사람 <span class="required">*</span></label>
-                      <input type="text" id="fullName" v-model="selectedAddress.recipientName" class="form-control"
-                        readonly />
-                    </div>
-                  </div>
-                  <div>
-                    <div class="find-address-button">
-                      <button type="button" @click="openModal">주소선택</button>
-                    </div>
-                  </div>
-                  <div class="col-lg-6 col-md-3">
-                    <div class="form-group">
-                      <label>주소 <span class="required">*</span></label>
-                      <input type="text" id="zipcode" v-model="selectedAddress.postCode" class="form-control"
-                        placeholder="우편번호" readonly />
-                    </div>
-                  </div>
-                  <div class="col-lg-12 col-md-6">
-                    <div class="form-group">
-                      <input type="text" id="address" v-model="selectedAddress.roadAddress" class="form-control"
-                        placeholder="기본주소" readonly />
-                    </div>
-                    <div class="form-group">
-                      <input type="text" id="addressDetail" v-model="selectedAddress.detailAddress" class="form-control"
-                        placeholder="나머지 주소" />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-6 col-md-6">
-                      <div class="form-group">
-                        <label>휴대전화 <span class="required">*</span></label>
-                        <input type="text" id="phone" class="form-control phone-input" v-model="selectedAddress.recipientPhone" />
-                      </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6">
-                      <div class="form-group">
-                        <label>이메일 <span class="required"></span></label>
-                        <input type="email" id="email" class="form-control" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-6 col-md-12">
-              <div class="order-details">
-                <h3 class="title">결제정보</h3>
-                <div class="order-table table-responsive">
-                  <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th scope="col">주문상품</th>
-                        <th scope="col">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td class="order-subtotal">
-                          <span>상품 이름</span>
-                        </td>
-                        <td>
-                          <span>{{ info.productName }}</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="order-subtotal">
-                          <span>상품 가격</span>
-                        </td>
-                        <td class="order-subtotal-price">
-                          <span class="order-subtotal-amount">{{ finalProductPrice }}원</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="order-shipping">
-                          <span>배송비</span>
-                        </td>
+  <div class="container">
+    <h1>결제</h1>
+    <div class="row">
+      주문상품
+      <hr>
+      <div class="product-container">
+        <div v-if="info.productName" class="product-item">
+          <div class="product-name">
+            <span>상품 이름:</span>
+            <span>{{ info.productName }}</span>
 
-                        <td class="shipping-price">
-                          <span>2500원</span>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td class="order-inspection">
-                          <span>검수비용</span>
-                        </td>
-
-                        <td class="insepction-fee">
-                          <span>3900원</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="total-price">
-                          <span>최종 결제 금액</span>
-                        </td>
-                        <td class="product-subtotal">
-                          <span class="subtotal-amount">{{ finalAmount }}원</span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <a href="javascript:void(0)" @click="add" class="btn btn-primary order-btn">결제 하기</a>
-              </div>
-            </div>
+            <!-- <span>상품 가격:</span>
+            <span>{{ info.pro }}</span> -->
           </div>
-        </form>
+          <!-- Add more product information here as needed -->
+        </div>
+        <div v-else>
+          <p>상품 정보를 불러오는 중입니다...</p>
+        </div>
       </div>
-    </div>
-    <!-- 모달 창 -->
-    <div v-if="showModal" class="modal" @click="closeModal">
-      <div class="modal-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <h2>주소 선택</h2>
-        <div v-for="address in info.address" :key="address.id" @click="selectAddress(address)"
-          class="address-item">
-          <div class="address-details">
-            <h6>{{ address.addressName }}</h6>
-            <p>{{ address.recipientName }} {{ address.recipientPhone }}
-              <br>{{ address.postCode }} {{ address.roadAddress }} {{ address.detailAddress }}
-            </p>
+
+
+      <div class="col-md-6">
+        <div class="imp-container">
+
+          <form @submit.prevent="handleSubmit">
+            <input type="hidden" v-model="form.pg" />
+            <input type="hidden" v-model="form.payMethod" />
+            <input type="hidden" v-model="form.escrow" />
+            <input v-if="vbankDueVisible" type="hidden" v-model="form.vbankDue" />
+            <input v-if="bizNumVisible" type="hidden" v-model="form.bizNum" />
+            <input v-if="quotaVisible" type="hidden" v-model="form.quota" />
+            <input type="hidden" v-model="form.merchantUid" />
+            <input type="hidden" v-model="form.name" />
+
+            <h3>배송지</h3>
+            <hr>
+            <div class="form-group">
+              <label style="width:40%;">결제금액</label>
+              <input type="number" v-model="form.amount" style="width:60%;" />
+            </div>
+            <div class="form-group">
+              <label style="width:40%;">이름</label>
+              <input type="text" v-model="form.buyerName" style="width:60%;" />
+            </div>
+            <div class="form-group">
+              <label style="width:40%;">연락처</label>
+              <input type="number" v-model="form.buyerPhone" style="width:60%;" />
+            </div>
+            <div class="form-group">
+              <label style="width:40%;">이메일</label>
+              <input type="email" v-model="form.buyerEmail" style="width:60%;" />
+            </div>
+
+            <div class="form-group">
+              <label style="width:40%;">주소</label>
+
+              <div>
+                <input type="text" v-model="form.buyerAddr" style="width:60%; margin-top: 30px" />
+              </div>
+
+              <div class="find-address-button"
+                style="text-align: center; justify-content: center; align-items: center; align-content: center;">
+                <button type="button" @click="openModal" style="height:80%;">주소선택</button>
+              </div>
+
+            </div>
+            <div class="form-group">
+              <label style="width:40%;">상세주소</label>
+              <input type="text" v-model="form.buyerAddrDetail" style="width:60%;" />
+            </div>
+            <div class="form-group">
+              <label style="width:40%;">우편번호</label>
+              <input type="number" v-model="form.buyerPostcode" style="width:60%;" />
+            </div>
+
+            <div class="button-container">
+              <button type="button" class="btn btn-primary" @click="handleGoBack">
+                뒤로가기
+              </button>
+              <button type="submit" class="btn btn-primary">
+                결제하기
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <h3 class="table-title" style="margin-top:55px;">결제 정보</h3>
+        <hr>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">주문상품</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="order-subtotal">
+                <span>상품 이름</span>
+              </td>
+              <td>
+                <span>{{ info.productName }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="order-subtotal">
+                <span>상품 가격</span>
+              </td>
+              <td class="order-subtotal-price">
+                <span class="order-subtotal-amount">{{ finalProductPrice }}원</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="order-shipping">
+                <span>배송비</span>
+              </td>
+              <td class="shipping-price">
+                <span>2500원</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="order-inspection">
+                <span>검수비용</span>
+              </td>
+              <td class="inspection-fee">
+                <span>3900원</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="total-price">
+                <span>최종 결제 금액</span>
+              </td>
+              <td class="product-subtotal">
+                <span class="subtotal-amount">{{ finalAmount }}원</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- <div class="button-container">
+          <button type="button" class="btn btn-primary" @click="handleGoBack">
+            뒤로가기
+          </button>
+          <button type="submit" class="btn btn-primary">
+            결제하기
+          </button>
+        </div> -->
+      </div>
+
+      <div v-if="showModal" class="modal" @click="closeModal">
+        <div class="modal-content">
+          <span class="close" @click="closeModal">&times;</span>
+          <h2>주소 선택</h2>
+          <div v-for="address in info.address" :key="address.id" @click="selectAddress(address)" class="address-item">
+            <div class="address-details">
+              <h6>{{ address.addressName }}</h6>
+              <p>{{ address.recipientName }} {{ address.recipientPhone }}
+                <br>{{ address.postCode }} {{ address.roadAddress }} {{ address.detailAddress }}
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- End Checkout Area -->
   </div>
+
 </template>
 
+
 <script>
-import axios from 'axios';
+import { PGS } from '../payment/constants';
+import Utils from '../payment/utils';
 
 export default {
   data() {
     return {
       info: {},
-      serialNumber: '',
-      productId: '',
-      showModal: false,
-      price: '',
       selectedAddress: {},
-    }
+      serialNumber: '',
+      productId: 'poca123',
+      showModal: false,
+      price: 200,
+      form: {
+        pg: 'html5_inicis',
+        payMethod: 'card',
+        escrow: true,
+        vbankDue: '',
+        bizNum: '',
+        quota: '0',
+        merchantUid: `mid_${new Date().getTime()}`,
+
+        // name: this.info.productName, // Initialize with product name
+        // amount: this.finalProductPrice, // Initialize with final product price
+        // buyerName: this.selectedAddress.recipientName, // Initialize with recipient name
+        // buyerPhone: this.selectedAddress.recipientPhone, // Initialize with recipient phone
+        // buyerEmail: 'example@example.com',
+        // buyerAddr: this.selectedAddress.roadAddress, // Initialize with road address
+        // buyerAddrDetail: this.selectedAddress.detailAddress, // Initialize with detail address
+        // buyerPostcode: this.selectedAddress.postCode, // Initialize with post code
+        name: 'Product Name Placeholder',
+        amount: 100, // Initialize with final product price
+        buyerName: '김태진', // Initialize with recipient name
+        buyerPhone: '01021228150', // Initialize with recipient phone
+        buyerEmail: 'example@example.com',
+        buyerAddr: '도곡로 112', // Initialize with road address
+        buyerPostcode: '07338', // Initialize with post code
+      },
+      pgs: PGS,
+      methods: Utils.getMethodsByPg(),
+      quotas: Utils.getQuotaByPg(),
+      vbankDueVisible: false,
+      bizNumVisible: false,
+      quotaVisible: true,
+    };
+  },
+  mounted() {
+    this.loadDependencies();
+    this.fetchInfo();
+    this.fetchSelectedAddress();
+  },
+  methods: {
+    fetchInfo() {
+      // 여기서 백에서 상품 정보 가지고 오기
+      setTimeout(() => {
+        this.info = {
+          productName: 'poca poca product',
+          amount: '100',
+        }
+      }, 1000);
+    },
+    fetchSelectedAddress() {
+      // Simulated asynchronous data fetching
+      setTimeout(() => {
+        // Update selectedAddress object with fetched data
+        this.selectedAddress = {
+          recipientName: 'John Doe', // Example value
+          recipientPhone: '123456789', // Example value
+          roadAddress: '123 Main St', // Example value
+          detailAddress: 'Apt 101', // Example value
+          postCode: '12345', // Example value
+          // Other properties...
+        };
+      }, 1000); // Adjust delay as needed
+    },
+    loadDependencies() {
+      const jQueryScript = document.createElement('script');
+      jQueryScript.src = 'https://code.jquery.com/jquery-3.6.0.min.js';
+      jQueryScript.onload = () => {
+        this.loadIMP();
+      };
+      document.body.appendChild(jQueryScript);
+    },
+    loadIMP() {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.iamport.kr/js/iamport.payment-1.1.5.js';
+      script.onload = () => {
+        this.checkIMP();
+      };
+      document.body.appendChild(script);
+    },
+    checkIMP() {
+      if (typeof window.IMP !== 'undefined') {
+        const { IMP } = window;
+        IMP.init(Utils.getUserCodeByPg('html5_inicis'));
+      } else {
+        setTimeout(this.checkIMP, 1000);
+      }
+    },
+    async sendPaymentDataToBackend(data) {
+      try {
+        const response = await fetch('http://localhost:8080/payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+        console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+        console.log(response);
+        // Check if the request was successful
+        if (response.ok) {
+          // Payment data sent successfully
+          console.log('Payment data sent successfully');
+
+          // Redirect or perform any other actions as needed
+        } else {
+          // Handle error responsel
+          console.error('Failed to send payment data');
+        }
+      } catch (error) {
+        // Handle fetch error
+        console.error('Error sending payment data:', error);
+      }
+    },
+    handleSubmit() {
+      const { IMP } = window;
+      IMP.init(Utils.getUserCodeByPg(this.form.pg));
+      const data = {
+        pg: this.form.pg,
+        pay_method: this.form.payMethod,
+        escrow: this.form.escrow,
+        merchant_uid: this.form.merchantUid,
+        name: this.form.name,
+        amount: this.form.amount,
+        buyer_name: this.form.buyerName,
+        buyer_tel: this.form.buyerPhone,
+        buyer_email: this.form.buyerEmail,
+        buyer_addr: this.form.buyerAddr,
+        buyer_postcode: this.form.buyerPostcode,
+        niceMobileV2: true,
+      };
+
+      if (this.form.payMethod === 'vbank') {
+        data.vbank_due = this.form.vbankDue;
+        if (this.form.pg === 'danal_tpay') {
+          data.biz_num = this.form.bizNum;
+        }
+      }
+      if (this.form.payMethod === 'card') {
+        data.display = {
+          card_quota: this.form.quota,
+        };
+      }
+
+      console.log("결제창 띄워라")
+      IMP.request_pay(data, (response) => {
+        console.log("결제 완료");
+        console.log(response);
+        // Check if payment is successful
+        if (response.success) {
+          console.log("결제 성공");
+          // Send payment data to backend
+          this.sendPaymentDataToBackend(data);
+        } else {
+          console.log("결제 실패");
+          // Handle payment failure
+        }
+      });
+    },
+    openModal() {
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+    },
+    selectAddress(address) {
+      this.form.buyerAddr = address.roadAddress;
+      this.form.buyerAddrDetail = address.detailAddress;
+      this.form.buyerPostcode = address.postCode;
+      this.form.buyerName = address.recipientName;
+      this.form.buyerPhone = address.recipientPhone;
+      this.showModal = false;
+    },
+    handleGoBack() {
+      this.$router.go(-1);
+    },
+    callback(response) {
+      console.log(response);
+      const query = {
+        ...response,
+        type: 'payment',
+      };
+      this.$router.push({ path: '/', query });
+    },
   },
   computed: {
     finalProductPrice() {
-      return this.price = this.info.startPrice + (this.info.bidCnt*this.info.priceUnit);
+      // Compute the final product price
+      return this.info && this.info.productName ? this.price : 0;
     },
     finalAmount() {
-      return this.price + 2500 + 3900; // 상품 가격 + 배송비 + 검수비용
+      // Compute the final amount including shipping and inspection fee
+      return this.finalProductPrice + 2500 + 3900;
     },
   },
-  methods: {
-    openModal(event) {
-      console.log("modal open");
-      this.showModal = true;
-    },
-    closeModal(event) {
-      if (event.target.classList.contains('modal') || event.target.classList.contains('close')) {
-        this.showModal = false;
-      }
-    },
-    selectAddress(address) {
-      this.selectedAddress = address;
-      this.showModal = false;
-    },
-    add() {
-      const cartData = {
-        details: this.personDetails,
-        items: this.cart,
-      }
-      const db = firebase.firestore()
-      const dbOrderRef = db.collection('orders')
-      dbOrderRef.add(cartData)
-      this.$toast.success(`Thanks for the order`, {
-        icon: 'fas fa-cart-plus',
-      })
-      this.$store.dispatch('cartEmpty')
-      this.$router.push('/')
-    },
-  },
-  mounted() {
-    this.serialNumber = this.$route.query.serialNumber;
-    this.productId = this.$route.query.productId;
-
-    console.log(this.serialNumber);
-    console.log(this.productId);
-    axios.get('http://localhost:8080/mypage/productDetails', {
-      params: {
-        serialNumber: this.serialNumber,
-        productId: this.productId
-      }
-    })
-      .then(response => {
-        // 응답 성공 처리
-        this.info = response.data;
-        console.log(response.data);
-      })
-      .catch(error => {
-        // 에러 처리
-        console.error("제품 정보 가져오기 실패:", error);
-      });
-  }
-}
+};
 </script>
 
+
 <style scoped>
-.billing-details .find-address-button {
-  margin-bottom: 10px;
-  margin-top: 2px;
+.row {
+  margin-top: 100px;
 }
 
-.billing-details .find-address-button button {
+.imp-container .find-address-button {
+  margin-bottom: 1em;
+  text-align: right;
+  margin-top: 20px;
+}
+
+.imp-container .find-address-button button {
   background-color: #FFB400;
   color: white;
   border: none;
   padding: 10px 20px;
   font-size: 14px;
   cursor: pointer;
-  margin-top: -10px;
+  border-radius: 15px;
 }
 
-.billing-details .find-address-button button:hover {
+.imp-container {
+  width: 100%;
+  /* Set the width to 100% to match the imp-container */
+}
+
+.form-group {
+  display: flex;
+}
+
+
+.imp-container .find-address-button button:hover {
   background-color: white;
   color: black;
   border: 1px solid black;
 }
 
-/* 모달 창 스타일 */
 .modal {
   display: block;
-  /* Hidden by default */
   position: fixed;
-  /* Stay in place */
   z-index: 9999;
-  /* Sit on top */
   left: 0;
   top: 0;
   width: 100%;
-  /* Full width */
   height: 100%;
-  /* Full height */
   overflow: auto;
-  /* Enable scroll if needed */
   background-color: rgb(0, 0, 0);
-  /* Fallback color */
   background-color: rgba(0, 0, 0, 0.4);
-  /* Black w/ opacity */
 }
 
 .modal-content {
@@ -291,5 +461,34 @@ export default {
 
 .address-item:hover {
   background-color: #f1f1f1;
+}
+
+.button-container {
+  text-align: right;
+  margin-top: 20px;
+  /* Adjust margin as needed */
+}
+
+.btn-primary {
+  background-color: #FFB400;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 15px;
+  margin-left: auto;
+  align-self: flex-end;
+}
+
+
+.table-title {}
+
+.label {
+  width: 40%;
+}
+
+.input {
+  width: 60%;
 }
 </style>
