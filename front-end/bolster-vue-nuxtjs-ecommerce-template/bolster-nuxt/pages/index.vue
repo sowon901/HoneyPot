@@ -2,15 +2,9 @@
   <div class="container">
       <div class="main-layout" style="text-align: center;">
           <Banner></Banner>
-          <!-- <Category></Category> -->
-
           <div class="products">
-
             <div class="user-idol">
-              <div class="section-title">
-                <span style="padding-right: 10px"><b>관심 상품 추천</b></span>
-              </div>
-              <Category></Category>
+              <Category :serialNumber= serialNumber></Category>
             </div>
 
             <div class="latest-products">
@@ -71,11 +65,11 @@ export default {
   },
   data() {
       return {
-          category: "latest"
+          category: "latest",
+          serialNumber: '',
       }
   },
   methods: {
-
         async refreshAccessToken() {
             const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
 
@@ -95,17 +89,6 @@ export default {
         },
   },
   async mounted() {
-    // 컴포넌트가 마운트된 후에 서버에서 제품 목록을 가져오는 HTTP GET 요청을 수행
-    // axios.get("http://localhost:8080/")
-    //   .then(response => {
-    //     console.log("success");
-    //     console.log(response.data);
-    //     this.products = response.data; // 받은 데이터를 컴포넌트의 products 데이터에 저장
-
-    //   })
-    //   .catch(error => {
-    //     console.error('Error fetching products:', error);
-    //   });
         // 페이지가 로드될 때 세션 스토리지에서 토큰 정보를 가져옵니다.
         const accessToken = sessionStorage.getItem('JWT_TOKEN');
         const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
@@ -122,9 +105,24 @@ export default {
             console.log('Access Token is expired. Need to refresh token.');
             await this.refreshAccessToken();
         }
+
+        try {
+            const response = await apiClient.get('/auth/user-info');
+            console.log('User info fetched success!', response.data);
+            this.serialNumber = response.data.data.serialNumber;
+            console.log(this.serialNumber);
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+            this.formError = 'Failed to fetch user information.';
+        }
+
+        if (!this.serialNumber) {
+            console.error('Serial number is not available.');
+            this.formError = 'Failed to fetch profile information.';
+            return;
+        }
     },
 }
-
 </script>
 
 <style scoped>
