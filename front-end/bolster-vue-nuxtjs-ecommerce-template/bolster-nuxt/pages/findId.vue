@@ -67,8 +67,7 @@
                             </p>
                         </div>
 
-<!--                        <button id="findId-btn" class="btn btn-primary" :disabled="!authCodeValid" @click.prevent="findId">아이디 찾기</button>-->
-                        <nuxt-link :to="{ path: '/foundId', query: { userId: userId } }" class="btn btn-primary" :disabled="!authCodeValid">아이디 찾기</nuxt-link>
+                        <button id="findId-btn" class="btn btn-primary" :disabled="!authCodeValid" @click.prevent="findId">아이디 찾기</button>
                     </form>
                 </div>
             </div>
@@ -155,10 +154,14 @@ export default {
             }
         },
         findId() {
+            console.log("findId method called");
             if (this.authCodeValid) {
+                console.log("authCodeValid is true");
                 this.$router.push({
                     path: '/foundId',
                     query: {userId: this.userId},
+                }).catch(err => {
+                    console.error("Router push error:", err);
                 });
             }
         },
