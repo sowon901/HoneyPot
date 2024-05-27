@@ -6,6 +6,8 @@
 
 <script>
 import honeyCheckoutItem from '../components/cart/honeyCheckoutItem';
+
+
 export default {
     components:
     {

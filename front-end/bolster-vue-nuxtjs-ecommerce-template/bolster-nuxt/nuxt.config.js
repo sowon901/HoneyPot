@@ -55,7 +55,8 @@ export default {
         { src: '~/plugins/vue-backtotop', ssr: false },
         { src: '~/plugins/vue-toastification', ssr: false },
         { src: '~/plugins/vueperslides', ssr: false },
-        { src: '~/plugins/TinyMCE.js', mode: 'client' }
+        { src: '~/plugins/TinyMCE.js', mode: 'client' },
+        { src: '~/plugins/antd-ui'}
         // { src: '~/plugins/firebase' },
     ],
     /*
