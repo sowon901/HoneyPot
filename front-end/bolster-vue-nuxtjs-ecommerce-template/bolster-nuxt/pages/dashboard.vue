@@ -1,3 +1,4 @@
+<!--
 <template>
     <div>
         <div class="container-fluid">
@@ -47,7 +48,7 @@
                         </div>
                     </div>
                     <div class="dashboard-content">
-                        <!-- 사이트 통계 -->
+                        &lt;!&ndash; 사이트 통계 &ndash;&gt;
                         <div class="card">
                             <div class="card-header">
                                 사이트 통계 (월 단위)
@@ -73,7 +74,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- 최근 거래 현황 -->
+                        &lt;!&ndash; 최근 거래 현황 &ndash;&gt;
                         <div class="card">
                             <div class="card-header">
                                 최근 거래 현황
@@ -112,21 +113,21 @@
                                 <transaction-list :transactions="recentTransactions"></transaction-list>
                             </div>
                         </div>
-                        <!-- 상품 분석 및 통계 -->
+                        &lt;!&ndash; 상품 분석 및 통계 &ndash;&gt;
                         <div class="card">
                             <div class="card-header">
                                 상품 분석 및 통계
                             </div>
                             <div class="card-body">
-                                <!-- 막대 그래프: 판매량 및 매출 -->
+                                &lt;!&ndash; 막대 그래프: 판매량 및 매출 &ndash;&gt;
                                 <div class="chart-container" style="margin-bottom: 20px;">
                                     <canvas ref="salesRevenueChart" v-if="chartData" width="400" height="400"></canvas>
                                 </div>
-                                <!-- 원형 그래프: 인기 상품 -->
+                                &lt;!&ndash; 원형 그래프: 인기 상품 &ndash;&gt;
                                 <div class="chart-container" style="margin-bottom: 20px;">
                                     <canvas ref="topProductsChart" v-if="chartData" width="400" height="400"></canvas>
                                 </div>
-                                <!-- 선 그래프: 시간에 따른 구매행태 -->
+                                &lt;!&ndash; 선 그래프: 시간에 따른 구매행태 &ndash;&gt;
                                 <div class="chart-container">
                                     <canvas ref="customerPurchaseTrendChart" v-if="chartData" width="400"
                                             height="400"></canvas>
@@ -135,7 +136,7 @@
                             </div>
                         </div>
 
-                        <!-- 사용자 관리 -->
+                        &lt;!&ndash; 사용자 관리 &ndash;&gt;
                         <div class="card">
                             <div class="card-header">
                                 사용자 관리
@@ -145,7 +146,7 @@
                             </div>
                         </div>
 
-                        <!-- 리뷰 및 평가 관리 -->
+                        &lt;!&ndash; 리뷰 및 평가 관리 &ndash;&gt;
                         <div class="card">
                             <div class="card-header">
                                 리뷰 및 평가 관리
@@ -155,7 +156,7 @@
                             </div>
                         </div>
 
-                        <!-- 고객 지원 및 문의 -->
+                        &lt;!&ndash; 고객 지원 및 문의 &ndash;&gt;
                         <div class="card">
                             <div class="card-header">
                                 고객 지원 및 문의
@@ -165,7 +166,7 @@
                             </div>
                         </div>
 
-                        <!-- 보안 및 로그 -->
+                        &lt;!&ndash; 보안 및 로그 &ndash;&gt;
                         <div class="card">
                             <div class="card-header">
                                 보안 및 로그
@@ -601,3 +602,4 @@ export default {
     height: 40vh;
 }
 </style>
+-->
