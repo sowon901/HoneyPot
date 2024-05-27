@@ -391,25 +391,41 @@ export default {
             if (hours < 10) { hours = '0' + hours; }
             if (minutes < 10) { minutes = '0' + minutes; }
             if (seconds < 10) { seconds = '0' + seconds; }
-            if (timeLeft < 0) {
+            
+            if(timeLeft === 0) {
+                this.insertResult();
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(this.interval);
                 days = ' -- ';
                 hours = ' -- ';
                 minutes = ' -- ';
                 seconds = ' -- ';
-            }
-
-            this.days = days;
-            this.hours = hours;
-            this.minutes = minutes;
-            this.seconds = seconds;
-
-            if (timeLeft <= 0) {
-                clearInterval(this.interval);
                 this.bidButtonDisabled = true;
             } else {
                 this.bidButtonDisabled = false;
             }
+            
+            this.days = days;
+            this.hours = hours;
+            this.minutes = minutes;
+            this.seconds = seconds;
         },
+
+        insertResult() {
+            const productId = this.product.productId;
+
+            axios
+            .post(`http://localhost:8080/bid/result?productId=${productId}`)
+                    .then((response) => {
+                    alert('경매가 종료되었습니다.');
+                })
+                .catch((error) => {
+                    console.error('경매 실패..', error);
+                });
+        },
+
         setTimer() {
             // 이미 설정된 타이머가 있다면 지웁니다.
             if (this.interval) {
