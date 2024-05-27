@@ -504,6 +504,7 @@ add(e) {
       console.log("data::: " + data);
       // Send payment data to backend
       this.sendPaymentDataToBackend(data);
+      this.handleGoBack();
     } else {
       console.log("결제 실패");
       // Handle payment failure
