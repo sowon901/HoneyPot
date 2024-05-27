@@ -62,7 +62,7 @@
                                     비밀번호 찾기
                                 </nuxt-link>
                                 <div class="separator">|</div>
-                                <nuxt-link to="/signup" class="honeypot-signup">
+                                <nuxt-link to="/signup-policy" class="honeypot-signup">
                                     회원가입
                                 </nuxt-link>
                             </div>

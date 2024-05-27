@@ -24,11 +24,17 @@
                     </div>
                     <hr class="section-divider"/>
                     <div class="interests">
+                        <label>아이돌 선택:</label>
                         <button v-for="(tag, index) in tags" :key="tag"
                                 :class="{ selected: isSelectedTag(index + 1) }"
                                 @click="toggleTag(index + 1)">
                             {{ tag }}
                         </button>
+                    </div>
+                    <hr class="section-divider"/>
+                    <div class="account">
+                        <label>계좌 입력:</label>
+                        <input v-model="userAccount" placeholder="은행과 계좌번호를 입력하세요." class="account-input"/>
                     </div>
                 </div>
             </div>
@@ -39,6 +45,7 @@
 <script>
 import Sidebar from '../components/all-products/Sidebar'
 import apiClient from '../api/apiClient';
+import { mapState, mapActions } from 'vuex';
 
 export default {
     components: {
@@ -52,13 +59,15 @@ export default {
             tags: ['AESPA', 'BLACKPINK', 'BOYNEXTDOOR', 'BTS', 'ENHYPEN', 'EXO', 'GIRLSRENERATION', 'ITZY', 'LESSERAFIM', 'NCT', 'NEWJEANS', 'NMIXX', 'FROMIS_9', 'RIIZE', 'STRAYKIDS', 'SEVENTEEN', 'SHINEE', 'SUPERJUNIOR', 'TXT', 'TWICE', 'WINNER', 'OTHERS'],
             selectedTags: [],
             profile: null,
-            serialNumber: null
+            serialNumber: null,
+            userAccount: ''
         }
     },
     async mounted() {
         const accessToken = sessionStorage.getItem('JWT_TOKEN');
         const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
 
+        await this.fetchProfile();
         console.log('Access Token:', accessToken);
         console.log('Access Token Expiration:', accessTokenExpiration);
 
@@ -67,7 +76,7 @@ export default {
             await this.refreshAccessToken();
         }
 
-        await this.fetchProfile();
+        
     },
     methods: {
         async refreshAccessToken() {
@@ -106,10 +115,11 @@ export default {
             try {
                 const response = await apiClient.get(`/mypage-profile/${this.serialNumber}`); // 백엔드 엔드포인트에 맞게 수정
                 console.log('Profile fetched successfully:', response.data);
-                const { profileImage, nickname, tag1, tag2, tag3 } = response.data;
+                const { profileImage, nickname, tag1, tag2, tag3, account } = response.data;
                 this.profileImage = profileImage;
                 this.nickname = nickname;
                 this.selectedTags = [tag1, tag2, tag3].map(Number).filter(tag => tag); // null 또는 빈 태그 제거
+                this.userAccount = account; // Add this line to fetch userAccount
             } catch (error) {
                 console.error('Error fetching profile:', error);
                 this.formError = 'Failed to fetch profile information.';
@@ -126,7 +136,8 @@ export default {
                 nickname: this.nickname,
                 tag1: this.selectedTags[0] || '',
                 tag2: this.selectedTags[1] || '',
-                tag3: this.selectedTags[2] || ''
+                tag3: this.selectedTags[2] || '',
+                userAccount: this.userAccount,
             };
             formData.append('userDTO', new Blob([JSON.stringify(userDTO)], {type: 'application/json'}));
             if (this.$refs.fileInput.files[0]) {
@@ -187,6 +198,7 @@ export default {
 .wrapper .content {
     display: flex;
     width: 100%;
+    padding-top: 100px;
 }
 
 .sidebar {
@@ -224,6 +236,13 @@ export default {
     border-radius: 10px;
     border: 1px solid #ccc;
     width: 200px;
+}
+.account-input {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    width: 500px;
 }
 
 .upload-button {

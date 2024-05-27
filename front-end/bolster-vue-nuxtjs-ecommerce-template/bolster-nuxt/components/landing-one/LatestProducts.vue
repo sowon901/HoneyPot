@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     fetchData() {
-        axios.get('http://localhost:8080/filterByLatest')
+        axios.get('http://localhost:8080/index/filterByLatest')
         .then(response => {
           this.products = response.data; 
           console.log("successMain", this.products);
