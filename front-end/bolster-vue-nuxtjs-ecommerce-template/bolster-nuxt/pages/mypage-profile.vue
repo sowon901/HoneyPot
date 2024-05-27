@@ -13,13 +13,11 @@
                     <hr class="section-divider"/>
                     <div class="profile-container">
                         <div class="profile-pic">
-                            <!-- 이미지 또는 기본 이미지를 v-show로 제어 -->
                             <img v-show="profileImage" :src="profileImage" alt="프로필 사진" class="image"/>
                             <div v-show="!profileImage" class="default-image"></div>
                             <button class="upload-button" @click.stop="triggerUpload">+</button>
                             <input type="file" ref="fileInput" @change="previewImage" style="display: none;"/>
                         </div>
-
                         <input v-model="nickname" placeholder="닉네임" class="nickname-input"/>
                     </div>
                     <hr class="section-divider"/>
@@ -45,7 +43,6 @@
 <script>
 import Sidebar from '../components/all-products/Sidebar'
 import apiClient from '../api/apiClient';
-import { mapState, mapActions } from 'vuex';
 
 export default {
     components: {
@@ -75,8 +72,6 @@ export default {
             console.log('Access Token is expired. Need to refresh token.');
             await this.refreshAccessToken();
         }
-
-        
     },
     methods: {
         async refreshAccessToken() {
@@ -95,68 +90,91 @@ export default {
                 this.formError = 'Failed to refresh access token. Please log in again.';
             }
         },
+        
         async fetchProfile() {
-            try {
-                const response = await apiClient.get('/auth/user-info');
-                console.log('User info fetched successfully:', response.data);
-                this.serialNumber = response.data.data.serialNumber;
-                console.log(this.serialNumber);
-            } catch (error) {
-                console.error('Error fetching user info:', error);
-                this.formError = 'Failed to fetch user information.';
-            }
+    try {
+        const response = await apiClient.get('/auth/user-info');
+        console.log('User info fetched successfully:', response.data);
+        this.serialNumber = response.data.data.serialNumber;
+        console.log(this.serialNumber);
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        this.formError = 'Failed to fetch user information.';
+    }
 
-            if (!this.serialNumber) {
-                console.error('Serial number is not available.');
-                this.formError = 'Failed to fetch profile information.';
-                return;
-            }
+    if (!this.serialNumber) {
+        console.error('Serial number is not available.');
+        this.formError = 'Failed to fetch profile information.';
+        return;
+    }
 
-            try {
-                const response = await apiClient.get(`/mypage-profile/${this.serialNumber}`); // 백엔드 엔드포인트에 맞게 수정
-                console.log('Profile fetched successfully:', response.data);
-                const { profileImage, nickname, tag1, tag2, tag3, account } = response.data;
-                this.profileImage = profileImage;
-                this.nickname = nickname;
-                this.selectedTags = [tag1, tag2, tag3].map(Number).filter(tag => tag); // null 또는 빈 태그 제거
-                this.userAccount = account; // Add this line to fetch userAccount
-            } catch (error) {
-                console.error('Error fetching profile:', error);
-                this.formError = 'Failed to fetch profile information.';
-            }
+    try {
+        const response = await apiClient.get(`/mypage/profile/${this.serialNumber}`);
+
+        console.log('Profile fetched successfully:', response.data);
+        const profileData = response.data;
+
+        // 응답 데이터 구조 확인 및 방어적 코드 작성
+        const user = profileData.user || {};
+        const userIdols = profileData.userIdols || [];
+
+        // 데이터를 컴포넌트의 상태로 설정
+        this.profileImage = user.profileImage || this.defaultImage;
+        this.nickname = user.nickname || '';
+        this.selectedTags = userIdols.map(userIdol => userIdol.idolId);
+        this.userAccount = user.userAccount || '';
+
+        // 데이터 바인딩 확인
+        console.log('Profile Image:', this.profileImage);
+        console.log('Nickname:', this.nickname);
+        console.log('User Account:', this.userAccount);
+
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        this.formError = 'Failed to fetch profile information.';
+    }
         },
         async saveProfile() {
-            if (!this.serialNumber) {
-                console.error('Serial number is not available.');
-                this.formError = 'Failed to save profile information.';
-                return;
-            }
-            const formData = new FormData();
-            const userDTO = {
-                nickname: this.nickname,
-                tag1: this.selectedTags[0] || '',
-                tag2: this.selectedTags[1] || '',
-                tag3: this.selectedTags[2] || '',
-                userAccount: this.userAccount,
-            };
-            formData.append('userDTO', new Blob([JSON.stringify(userDTO)], {type: 'application/json'}));
-            if (this.$refs.fileInput.files[0]) {
-                formData.append('profileImageFile', this.$refs.fileInput.files[0]);
-            }
+    if (!this.serialNumber) {
+        console.error('Serial number is not available.');
+        this.formError = 'Failed to save profile information.';
+        return;
+    }
 
-            try {
-                const response = await apiClient.post(`/mypage-profile/${this.serialNumber}`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                });
-                console.log("Profile updated successfully:", response.data);
-                alert("Profile updated successfully");
-            } catch (error) {
-                console.error("Failed to update profile:", error);
-                alert("Failed to update profile");
-            }
-        },
+    const formData = new FormData();
+    const userDTO = {
+        nickname: this.nickname,
+        userAccount: this.userAccount,
+        serialNumber: this.serialNumber
+    };
+    formData.append('userDTO', new Blob([JSON.stringify(userDTO)], { type: 'application/json' }));
+
+    if (this.$refs.fileInput.files[0]) {
+        formData.append('profileImageFile', this.$refs.fileInput.files[0]);
+    }
+
+    const userIdols = this.selectedTags.map(tagId => ({ idolId: tagId }));
+    formData.append('userIdols', new Blob([JSON.stringify(userIdols)], { type: 'application/json' }));
+
+    formData.append('serialNumber', this.serialNumber);
+
+    console.log("Form Data to be sent:");
+    for (const pair of formData.entries()) {
+        console.log(pair[0] + ':', pair[1]);
+    }
+
+    try {
+        const response = await apiClient.post(`/mypage/profile/${this.serialNumber}`, formData);
+        console.log("Profile updated successfully:", response.data);
+        alert("Profile updated successfully");
+    } catch (error) {
+        console.error("Failed to update profile:", error);
+        alert("Failed to update profile");
+    }
+},
+
+        
+
         toggleTag(tag) {
             const index = this.selectedTags.indexOf(tag);
             if (index >= 0) {
@@ -191,10 +209,7 @@ export default {
 }
 </script>
 
-
 <style scoped>
-
-
 .wrapper .content {
     display: flex;
     width: 100%;
@@ -317,6 +332,5 @@ export default {
 .section-divider {
     margin-top: 10px;
     border: 1px #ccc;
-
 }
 </style>
