@@ -114,20 +114,41 @@
                                 <p v-if="showLengthWarning" style="color: red;">글자수는 2자 이상 10자 이하여야 합니다.</p>
                             </div>
 
-                            <div class="form-group">
-                                <label>휴대전화번호<h4 style="color: orangered; display: inline;">*</h4></label>
-                                <div class="input-group">
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        placeholder="-을 제외한 숫자만 입력해주세요"
-                                        id="mobileNumber"
-                                        name="mobileNumber"
-                                        v-model="mobileNumber"
-                                    />
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>휴대전화번호<h4 style="color: orangered; display: inline;">*</h4></label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            placeholder="-을 제외한 숫자만 입력해주세요"
+                                            id="mobileNumber"
+                                            name="mobileNumber"
+                                            v-model="mobileNumber"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label style="visibility: hidden;">미사용 라벨</label>
+                                        <button type="button" id="findId-btn" class="btn btn-primary btn-block" @click="sendMMS">인증번호 받기</button>
+                                    </div>
                                 </div>
                             </div>
 
+                            <div class="form-group">
+                                <label>인증번호</label>
+                                <input
+                                    v-model="authCodeInput"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    name="authCode"
+                                />
+                                <p v-if="authCodeMessage" :style="{ color: authCodeValid ? 'green' : 'red' }">
+                                    {{ authCodeMessage }}
+                                </p>
+                            </div>
 
                             <div class="form-group">
                                 <label>Email<h4 style="color: orangered; display: inline;">*</h4></label>
@@ -211,7 +232,7 @@
                                 </div>
                             </div>
                             <br><br>
-                            <button type="submit" class="btn btn-primary">회원 정보 입력</button>
+                            <button type="submit" class="btn btn-primary" :disabled="!authCodeValid">회원 정보 입력</button>
                             <br>
                         </form>
                     </div>
@@ -350,11 +371,22 @@ export default {
         const passwordMatch = ref(false);
         const formError = ref(null);
 
+        const authCode = ref('');
+        const authCodeInput = ref('');
+        const authCodeValid = ref(false);
+        const authCodeMessage = ref('');
+
         const selectGender = (gender) => {
             selectedGender.value = gender;
         };
 
         const honeypotSignup = async () => {
+            if (!authCodeValid.value) {
+                formError.value = '휴대전화 인증을 완료해 주세요.';
+                alert(formError.value);
+                return;
+            }
+
             try {
                 const formData = new FormData();
                 if (profileImage.value) {
@@ -381,6 +413,39 @@ export default {
                 console.error('Error during sign up:', error.response?.data || error.message);
                 formError.value = '회원가입에 실패했습니다: ' + (error.response?.data || error.message);
                 alert(formError.value);
+            }
+        };
+
+        const sendMMS = async () => {
+            if (!name.value || !mobileNumber.value) {
+                formError.value = '이름과 휴대폰 번호를 입력해 주세요.';
+                return;
+            }
+
+            formError.value = null;
+
+            try {
+                const response = await axios.post('http://localhost:8080/mms/send-one', null, {
+                    params: {
+                        name: name.value,
+                        mobileNumber: mobileNumber.value,
+                    },
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                });
+
+                if (response.status === 200 && response.data.success) {
+                    alert('인증번호가 발송되었습니다.');
+                    authCode.value = response.data.data.authCode;
+                } else if (response.status === 404) {
+                    alert('해당되는 사용자가 없습니다.');
+                } else {
+                    alert('서버 오류가 발생했습니다. 나중에 다시 시도해 주세요.');
+                }
+            } catch (error) {
+                alert('서버 오류가 발생했습니다. 나중에 다시 시도해 주세요.');
+                console.error('Unexpected error:', error);
             }
         };
 
@@ -461,15 +526,6 @@ export default {
             passwordMatch.value = password.value === passwordCheck.value;
         };
 
-        const toBase64 = (file) => {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        };
-
         onMounted(() => {
             const script = document.createElement('script');
             script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
@@ -500,14 +556,30 @@ export default {
             passwordMatch,
             formError,
 
+            authCode,
+            authCodeInput,
+            authCodeValid,
+            authCodeMessage,
+
             selectGender,
             honeypotSignup,
+            sendMMS,
             execDaumPostcode,
             checkInputValidity,
             handleFileUpload,
             checkPassword,
-            toBase64
         };
+    },
+    watch: {
+        authCodeInput(val) {
+            if (val === this.authCode) {
+                this.authCodeValid = true;
+                this.authCodeMessage = '인증번호가 일치합니다.';
+            } else {
+                this.authCodeValid = false;
+                this.authCodeMessage = '인증번호가 다릅니다.';
+            }
+        },
     },
 };
 </script>
