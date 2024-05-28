@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div :class="['navbar-area', , { 'scrolled': isScrolled }]">
+        <div :class="['navbar-area', { 'scrolled': isScrolled }]">
             <div class="comero-nav">
                 <div class="container">
                     <nav class="navbar navbar-expand-md navbar-light">
@@ -13,7 +13,7 @@
                         <b-collapse class="collapse navbar-collapse" id="navbarSupportedContent" is-nav="is-nav">
                             <div class="search-bar">
                                 <input type="text" v-model="searchQuery" @keyup.enter="searchProducts"
-                                    placeholder="찾고 싶은 상품을 검색해보세요!" class="search-input">
+                                       placeholder="찾고 싶은 상품을 검색해보세요!" class="search-input">
                             </div>
                             <div class="others-option ml-auto">
                                 <div class="option-item">
@@ -21,11 +21,9 @@
                                 </div>
                                 <div class="option-item">
                                     <button class="text-button" @click="navigateTo('sell')">판매하기</button>
-                                    <!-- <nuxt-link to="/login">판매하기</nuxt-link> -->
                                 </div>
                                 <div class="option-item">
                                     <button class="text-button" @click="navigateTo('mypage')">마이페이지</button>
-                                    <!-- <nuxt-link to="/mypage-profile">마이페이지</nuxt-link> -->
                                 </div>
                                 <div class="option-item" v-if="!isLoggedIn">
                                     <nuxt-link to="/login">로그인</nuxt-link>
@@ -42,6 +40,7 @@
         </div>
     </div>
 </template>
+
 <script>
 export default {
     data() {
@@ -52,26 +51,29 @@ export default {
         }
     },
     mounted() {
-        const accessToken = sessionStorage.getItem('JWT_TOKEN');
-        const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
-
-        if (accessToken && new Date(accessTokenExpiration) > new Date()) {
-            this.isLoggedIn = true;
-        } else if (accessToken) {
-            this.refreshAccessToken().then(() => {
-                this.isLoggedIn = true;
-            }).catch(() => {
-                this.isLoggedIn = false;
-            });
-        } else {
-            this.isLoggedIn = false;
-        }
+        this.checkLoginStatus();
         window.addEventListener('scroll', this.handleScroll);
     },
     beforeDestroy() {
         window.removeEventListener('scroll', this.handleScroll);
     },
     methods: {
+        async checkLoginStatus() {
+            const accessToken = sessionStorage.getItem('JWT_TOKEN');
+            const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
+
+            if (accessToken && new Date(accessTokenExpiration) > new Date()) {
+                this.isLoggedIn = true;
+            } else if (accessToken) {
+                this.refreshAccessToken().then(() => {
+                    this.isLoggedIn = true;
+                }).catch(() => {
+                    this.logout();
+                });
+            } else {
+                this.isLoggedIn = false;
+            }
+        },
         async refreshAccessToken() {
             const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
 
@@ -86,9 +88,7 @@ export default {
                 console.log('Access Token refreshed successfully:', newAccessToken);
             } catch (error) {
                 console.error('Failed to refresh access token:', error);
-                sessionStorage.removeItem('JWT_TOKEN');
-                sessionStorage.removeItem('ACCESS_TOKEN_EXPIRATION');
-                sessionStorage.removeItem('REFRESH_TOKEN');
+                this.logout();
             }
         },
         logout() {
@@ -114,23 +114,21 @@ export default {
         searchProducts() {
             if (this.searchQuery.trim() !== '') {
                 this.$router.push({ path: '/products', query: { search: this.searchQuery } });
-                // this.$emit('products', this.searchQuery);
             }
         },
         handleScroll() {
-        this.isScrolled = window.scrollY > 50; // Adjust the value to your preference
-    },
+            this.isScrolled = window.scrollY > 50; // Adjust the value to your preference
+        },
     }
 }
 </script>
+
 <style scoped="scoped">
 .search-bar {
     border-radius: 50px;
     background-color: #fff;
-    /* 흰색 배경 */
     padding: 10px 20px;
     border: 1px solid #ccc;
-    /* 회색 테두리 */
     margin-top: 10px;
     flex-grow: 1;
     display: flex;
@@ -140,7 +138,6 @@ export default {
 
 .search-input {
     width: 300px;
-    /* 고정된 너비 */
     border: none;
     background: transparent;
     outline: none;
@@ -185,5 +182,4 @@ export default {
 /* hr.footer-line {
     margin-bottom: 0;
 } */
-
 </style>
