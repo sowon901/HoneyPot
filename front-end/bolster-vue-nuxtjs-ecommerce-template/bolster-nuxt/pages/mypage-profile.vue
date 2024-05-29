@@ -25,7 +25,7 @@
                     <hr class="section-divider" />
                     <div class="interests">
                         <label>아이돌 선택:</label>
-                        <button v-for="(tag, index) in tags" :key="tag" :class="{ selected: isSelectedTag(tag) }"
+                        <button v-for="(tag) in tags" :key="tag" :class="{ selected: isSelectedTag(tag) }"
                             @click="toggleTag(tag)">
                             {{ tag }}
                             </button>
