@@ -52,11 +52,13 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder="4자 이상 20자 이하, 영소문자, 숫자, 특수문자(_) 가능"
+                                    placeholder="4자 이상 15자 이하, 영소문자, 숫자, 특수문자(_) 가능"
                                     id="id"
                                     name="id"
                                     v-model="id"
+                                    @input="validateId"
                                 />
+                                <span v-if="!isIdValid" style="color: red;">ID는 4자 이상 20자 이하, 영소문자, 숫자, 특수문자(_)만 포함할 수 있습니다.</span>
                             </div>
 
                             <div class="form-group">
@@ -64,12 +66,13 @@
                                 <input
                                     type="password"
                                     class="form-control"
-                                    placeholder="8자 이상 16자 이하의 숫자 하나, 특수문자 하나 이상을 포함한 영문자)"
+                                    placeholder="8자 이상 30자 이하의 숫자 하나, 특수문자 하나 이상을 포함한 영문자)"
                                     id="password"
                                     name="password"
                                     v-model="password"
-                                    @input="checkPassword"
+                                    @input="validatePassword"
                                 />
+                                <span v-if="!isPasswordValid" style="color: red;">비밀번호는 8자 이상 30자 이하의 숫자 하나, 특수문자 하나 이상을 포함한 영문자여야 합니다.</span>
                             </div>
 
                             <div class="form-group">
@@ -376,11 +379,31 @@ export default {
         const authCodeValid = ref(false);
         const authCodeMessage = ref('');
 
+        const isSendingMMS = ref(false); // 중복 요청 방지용 플래그
+
+        const isIdValid = ref(true);
+        const isPasswordValid = ref(true);
+
         const selectGender = (gender) => {
             selectedGender.value = gender;
         };
 
         const honeypotSignup = async () => {
+            // Validate ID and Password
+            validateId();
+            validatePassword();
+            if (!isIdValid.value) {
+                alert('ID는 4자 이상 15자 이하, 영소문자, 숫자, 특수문자(_)만 포함할 수 있습니다.');
+                return;
+            }
+            if (!isPasswordValid.value) {
+                alert('비밀번호는 8자 이상 30자 이하의 숫자 하나, 특수문자 하나 이상을 포함한 영문자여야 합니다.');
+                return;
+            }
+            if (!passwordMatch.value) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
             if (!authCodeValid.value) {
                 formError.value = '휴대전화 인증을 완료해 주세요.';
                 alert(formError.value);
@@ -417,15 +440,17 @@ export default {
         };
 
         const sendMMS = async () => {
+            if (isSendingMMS.value) return;
             if (!name.value || !mobileNumber.value) {
                 formError.value = '이름과 휴대폰 번호를 입력해 주세요.';
                 return;
             }
 
             formError.value = null;
+            isSendingMMS.value = true;
 
             try {
-                const response = await axios.post('http://localhost:8080/mms/send-one', null, {
+                const response = await axios.post('http://localhost:8080/mms/send-one-signup', null, {
                     params: {
                         name: name.value,
                         mobileNumber: mobileNumber.value,
@@ -526,6 +551,16 @@ export default {
             passwordMatch.value = password.value === passwordCheck.value;
         };
 
+        const validateId = () => {
+            const idPattern = /^[a-z0-9_]{4,15}$/;
+            isIdValid.value = idPattern.test(id.value);
+        };
+
+        const validatePassword = () => {
+            const passwordPattern = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,30}$/;
+            isPasswordValid.value = passwordPattern.test(password.value);
+        };
+
         onMounted(() => {
             const script = document.createElement('script');
             script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
@@ -561,6 +596,9 @@ export default {
             authCodeValid,
             authCodeMessage,
 
+            isIdValid,
+            isPasswordValid,
+
             selectGender,
             honeypotSignup,
             sendMMS,
@@ -568,6 +606,8 @@ export default {
             checkInputValidity,
             handleFileUpload,
             checkPassword,
+            validateId,
+            validatePassword,
         };
     },
     watch: {
