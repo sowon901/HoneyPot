@@ -153,6 +153,7 @@ export default {
 }
 
 .checkout-link {
+    margin-top:15px;
     cursor: pointer;
 }
 
