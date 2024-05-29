@@ -1,6 +1,13 @@
+
 <template>
     <div class="container" v-if="product">
         <div class="wrapper">
+
+            <div class="auction-end" v-if="auctionEnded">
+            <div class = "text-decoration">
+                <p style="color: white; font-size: 80px;">경매가 종료되었습니다.</p>
+            </div>
+        </div>
             <div class="content">
                 <div class="bid-details-content">
                     <!-- 상품 메인 이미지 및 상세 이미지 -->
@@ -47,10 +54,6 @@
                                     <tr>
                                         <td class="left-column"><b>현재최고가</b></td>
                                         <td class="right-column">{{ product.price }}원</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="left-column"><b>즉시판매가</b></td>
-                                        <td class="right-column">{{ product.buyNow }}원</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -193,6 +196,10 @@ export default {
             resultStyle: {},
             formError: null, // 추가
             notifiedEndingSoon: false, // 경매 종료 1시간 전 알림 여부를 추적
+            auctionEnded: false,
+            auctionEndedAlertShown: false,
+
+
         };
     },
 
@@ -393,10 +400,6 @@ export default {
             if (minutes < 10) { minutes = '0' + minutes; }
             if (seconds < 10) { seconds = '0' + seconds; }
 
-            if (timeLeft === 0) {
-                this.insertResult();
-            }
-
             if (timeLeft <= 0) {
                 clearInterval(this.interval);
                 days = ' -- ';
@@ -414,18 +417,23 @@ export default {
             this.seconds = seconds;
         },
 
-        insertResult() {
-            const productId = this.product.productId;
-
-            axios
-                .post(`http://localhost:8080/bid/result?productId=${productId}`)
-                .then((response) => {
-                    alert('경매가 종료되었습니다.');
-                })
-                .catch((error) => {
-                    console.error('경매 실패..', error);
-                });
+        disableScroll() {
+            window.addEventListener('scroll', this.noScroll);
         },
+        disableScrollForTextArea() {
+            const textArea = document.querySelector('.caution textarea');
+            if (textArea) {
+                textArea.classList.add('noScroll');
+            }
+        },
+
+        showAuctionEndedAlert() {
+            alert("경매가 종료되었습니다.");
+        },
+        noScroll() {
+            window.scrollTo(0, 0);
+        },
+
 
         setTimer() {
             // 이미 설정된 타이머가 있다면 지웁니다.
@@ -434,8 +442,26 @@ export default {
             }
             // 매 초마다 timing 메서드를 호출합니다.
             this.interval = setInterval(this.timing, 1000);
-            console.log('Timer set.');
-        },
+
+            if (this.product) {
+            let durationTime = this.product.timeLimit;
+            let durationTimeParse = durationTime * 3600;
+            let registerTime = this.product.registrationDate;
+            let registerTimeParse = Date.parse(registerTime) / 1000;
+            let now = new Date();
+            let nowParse = Date.parse(now) / 1000;
+            let timeLeft = registerTimeParse + durationTimeParse - nowParse;
+
+            if (timeLeft <= 0) {
+                this.auctionEnded = true;
+                this.disableScroll();
+                this.disableScrollForTextArea();
+                this.showAuctionEndedAlert();
+                this.auctionEndedAlertShown = true; // alert가 표시되었음을 기록
+            }
+        }
+    },
+
         toggleImageZoom(image) {
             this.zoomedImage = image;
         },
@@ -456,13 +482,13 @@ export default {
             this.$router.push({ path: '/login' });
         },
         async notifyAuctionEndingSoon() {
-            try {
-                const productId = this.product.productId;
-                await axios.post(`http://localhost:8080/notifyEndingSoon`, null, { params: { productId } });
-                console.log('Notified server of auction ending soon for product ID:', productId);
-            } catch (error) {
-                console.error('Error notifying server about auction ending soon:', error);
-            }
+            // try {
+            //     const productId = this.product.productId;
+            //     await axios.post(`http://localhost:8080/notifyEndingSoon`, null, { params: { productId } });
+            //     console.log('Notified server of auction ending soon for product ID:', productId);
+            // } catch (error) {
+            //     console.error('Error notifying server about auction ending soon:', error);
+            // }
         },
         timing() {
             if (!this.product) return;
@@ -502,6 +528,10 @@ export default {
                 minutes = ' -- ';
                 seconds = ' -- ';
                 this.bidButtonDisabled = true;
+                if (!this.auctionEndedAlertShown) {
+                    this.showAuctionEndedAlert();
+                    this.auctionEndedAlertShown = true; // alert가 표시되었음을 기록
+                }
             } else {
                 this.bidButtonDisabled = false;
             }
@@ -512,6 +542,18 @@ export default {
             this.seconds = seconds;
         },
 
+        
+
+
+    watch: {
+            timing() {
+                if (this.timeLeft <=0) {
+                    console.log(timeLeft)
+                this.disableScroll();
+                this.disableScrollForTextArea();
+            }
+        } 
+        },
     },
 };
 </script>
@@ -957,5 +999,28 @@ export default {
     flex-basis: 55%;
     text-align: left;
     margin-bottom: 30px;
+}
+
+.auction-end {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(128, 128, 128, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-style: bold;
+    pointer-events: none; /* 모든 클릭 이벤트를 막습니다 */
+    /* padding-top: 100px; */
+    margin-top: 79px;
+}
+
+
+.text-decoration {
+    color: white;
+    font-size: 100px;
 }
 </style>
