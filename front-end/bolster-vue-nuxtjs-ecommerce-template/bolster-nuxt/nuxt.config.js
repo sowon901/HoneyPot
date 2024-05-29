@@ -96,7 +96,14 @@ export default {
     ** Globally configure <nuxt-link> default active class.
     */
     router: {
-        linkActiveClass: 'active'
+        linkActiveClass: 'active',
+        extendRoutes(routes, resolve) {
+            routes.push({
+                name: 'reset-password',
+                path: '/reset-password',
+                component: resolve(__dirname, 'pages/resetPassword.vue')
+            });
+        },
     },
     /*
     ** Build configuration
