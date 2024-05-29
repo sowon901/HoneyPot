@@ -38,8 +38,8 @@
                         placeholder="기본주소" readonly />
                     </div>
                     <div class="form-group">
-                      <input type="text" id="addressDetail" v-model="selectedAddress.detailAddress"
-                        class="form-control" placeholder="나머지 주소" />
+                      <input type="text" id="addressDetail" v-model="selectedAddress.detailAddress" class="form-control"
+                        placeholder="나머지 주소" />
                     </div>
                   </div>
 
@@ -140,8 +140,7 @@
         </div> -->
 
         <div class="address-info">
-          <div v-for="(address) in addresses" :key="address.id" @click="selectAddress(address)"
-            class="address-item">
+          <div v-for="(address) in addresses" :key="address.id" @click="selectAddress(address)" class="address-item">
             <div class="address-details">
               <h6>{{ address.addressName }}</h6>
               <p>{{ address.recipientName }} {{ address.recipientPhone }}
@@ -166,452 +165,416 @@ import axios from 'axios';
 
 
 export default {
-data() {
-return {
+  data() {
+    return {
 
-  productName: '',
-  price: 1,
+      productName: '',
+      price: 1,
 
-  selectedAddress: {},
-  addresses: [],
-  address: {
-    addressId: '',
-    addressName: '',
-    detailAddress: '',
-    postCode: '',
-    recipientName: '',
-    recipientPhone: '',
-    roadAddress: '',
-    serialNumber: ''
-  },
-  serialNumber: '',
-  productId: '',
-  productName: '',
-  showModal: false,
-  form: {
-    pg: 'html5_inicis',
-    payMethod: 'card',
-    escrow: true,
-    vbankDue: '',
-    bizNum: '',
-    quota: '0',
-    merchantUid: `mid_${new Date().getTime()}`,
-
-  },
-  pgs: PGS,
-  methods: Utils.getMethodsByPg(),
-  quotas: Utils.getQuotaByPg(),
-  vbankDueVisible: false,
-  bizNumVisible: false,
-  quotaVisible: true,
-  email: '',
-
-
-};
-},
-async mounted() {
-const accessToken = sessionStorage.getItem('JWT_TOKEN');
-const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
-
-await this.fetchProfile();
-console.log('Access Token:', accessToken);
-console.log('Access Token Expiration:', accessTokenExpiration);
-
-if (new Date(accessTokenExpiration) <= new Date()) {
-  console.log('Access Token is expired. Need to refresh token.');
-  await this.refreshAccessToken();
-}
-
-this.loadDependencies();
-this.fetchAddresses();
-this.fetchSelectedAddress();
-await this.loadProductData();
-
-},
-
-methods: {
-async refreshAccessToken() {
-  const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
-  try {
-    const response = await apiClient.post('/auth/refresh', { refreshToken });
-    const newAccessToken = response.data.accessToken;
-    const newAccessTokenExpiration = response.data.accessTokenExpiration;
-
-    sessionStorage.setItem('JWT_TOKEN', newAccessToken);
-    sessionStorage.setItem('ACCESS_TOKEN_EXPIRATION', newAccessTokenExpiration);
-
-    console.log('Access Token refreshed successfully:', newAccessToken);
-  } catch (error) {
-    console.error('Failed to refresh access token:', error);
-    this.formError = 'Failed to refresh access token. Please log in again.';
-  }
-},
-fetchAddresses() {
-  axios.get(`http://localhost:8080/mypage-address/${this.serialNumber}`)
-    .then(response => {
-      this.addresses = response.data;
-      console.log("주소 정보", this.addresses);
-    })
-    .catch(error => {
-      console.error('Error fetching addresses:', error);
-    });
-},
-async fetchProfile() {
-  try {
-    const response = await apiClient.get('/auth/user-info');
-    console.log('User info fetched successfully:', response.data);
-    this.serialNumber = response.data.data.serialNumber;
-    console.log(this.serialNumber);
-  } catch (error) {
-    console.error('Error fetching user info:', error);
-    this.formError = 'Failed to fetch user information.';
-  }
-
-  if (!this.serialNumber) {
-    console.error('Serial number is not available.');
-    this.formError = 'Failed to fetch profile information.';
-    return;
-  }
-
-  try {
-    const response = await apiClient.get(`/mypage-profile/${this.serialNumber}`); // 백엔드 엔드포인트에 맞게 수정
-    console.log('Profile fetched successfully:', response.data);
-    const { profileImage, nickname, tag1, tag2, tag3, account } = response.data;
-    this.profileImage = profileImage;
-    this.nickname = nickname;
-    this.selectedTags = [tag1, tag2, tag3].map(Number).filter(tag => tag); // null 또는 빈 태그 제거
-    this.userAccount = account; // Add this line to fetch userAccount
-  } catch (error) {
-    console.error('Error fetching profile:', error);
-    this.formError = 'Failed to fetch profile information.';
-  }
-},
-fetchSelectedAddress() {
-  // Simulated asynchronous data fetching
-  setTimeout(() => {
-    // Update selectedAddress object with fetched data
-    this.selectedAddress = {
-      recipientName: this.nickname, // Example value
-      recipientPhone: "", // Example value
-      roadAddress: "", // Example value
-      detailAddress: '', // Example value
-      postCode: "", // Example value
-      // Other properties...
-    };
-  }, 1000); // Adjust delay as needed
-},
-loadDependencies() {
-  const jQueryScript = document.createElement('script');
-  jQueryScript.src = 'https://code.jquery.com/jquery-3.6.0.min.js';
-  jQueryScript.onload = () => {
-    this.loadIMP();
-  };
-  document.body.appendChild(jQueryScript);
-},
-loadIMP() {
-  const script = document.createElement('script');
-  script.src = 'https://cdn.iamport.kr/js/iamport.payment-1.1.5.js';
-  script.onload = () => {
-    this.checkIMP();
-  };
-  document.body.appendChild(script);
-},
-checkIMP() {
-  if (typeof window.IMP !== 'undefined') {
-    const { IMP } = window;
-    IMP.init(Utils.getUserCodeByPg('html5_inicis'));
-  } else {
-    setTimeout(this.checkIMP, 1000);
-  }
-},
-async sendPaymentDataToBackend(data) {
-  try {
-    const response = await fetch('http://localhost:8080/payment', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+      selectedAddress: {},
+      addresses: [],
+      address: {
+        addressId: '',
+        addressName: '',
+        detailAddress: '',
+        postCode: '',
+        recipientName: '',
+        recipientPhone: '',
+        roadAddress: '',
+        serialNumber: ''
       },
-      body: JSON.stringify(data),
-    });
-    console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-    console.log(response);
-    // Check if the request was successful
-    if (response.ok) {
-      // Payment data sent successfully
-      console.log('Payment data sent successfully');
+      serialNumber: '',
+      productId: '',
+      productName: '',
+      showModal: false,
+      form: {
+        pg: 'html5_inicis',
+        payMethod: 'card',
+        escrow: true,
+        vbankDue: '',
+        bizNum: '',
+        quota: '0',
+        merchantUid: `mid_${new Date().getTime()}`,
 
-      // Redirect or perform any other actions as needed
-    } else {
-      // Handle error responsel
-      console.error('Failed to send payment data');
-    }
-  } catch (error) {
-    // Handle fetch error
-    console.error('Error sending payment data:', error);
-  }
-},
-async loadProductData() {
-
-  const productId = this.$route.query.productId;
-  console.log("상품 아이디 :  " + productId);
-  this.productId = productId;
-  try {
-    const response = await axios.get(`http://localhost:8080/bid-details/${productId}`);
-    console.log('Product data fetched:', response.data);
-
-    // {{ product.startPrice + (product.bidCnt * product.priceUnit) }}
-    this.price = response.data.startPrice + (response.data.bidCnt * response.data.priceUnit);
-    this.productName = response.data.productName;
+      },
+      pgs: PGS,
+      methods: Utils.getMethodsByPg(),
+      quotas: Utils.getQuotaByPg(),
+      vbankDueVisible: false,
+      bizNumVisible: false,
+      quotaVisible: true,
+      email: '',
 
 
-    console.log("상품이름이래 " + this.productName);
-    console.log("상품가격이래" + this.price);
-
-  } catch (error) {
-    console.error('Error fetching product data:', error);
-  }
-},
-//   console.log("onsubmit")
-//   const { IMP } = window;
-//   IMP.init(Utils.getUserCodeByPg(this.form.pg));
-//   const data = {
-//     pg: this.form.pg,
-//     pay_method: this.form.payMethod,
-//     escrow: this.form.escrow,
-//     merchant_uid: this.form.merchantUid,
-//     name: this.form.name,
-//     amount: this.price,
-//     buyer_name: this.form.buyerName,
-//     buyer_tel: this.form.buyerPhone,
-//     buyer_email: this.form.buyerEmail,
-//     buyer_addr: this.form.buyerAddr,
-//     buyer_postcode: this.form.buyerPostcode,
-//     niceMobileV2: true,
-//   };
-//   console.log("결제 데이터 입니다: " + data);
-//   console.log("결제 금액입니다" + data.amount);
-//   console.log("결제 금액입니다2" + this.price);
-
-
-//   if (this.form.payMethod === 'vbank') {
-//     data.vbank_due = this.form.vbankDue;
-//     if (this.form.pg === 'danal_tpay') {
-//       data.biz_num = this.form.bizNum;
-//     }
-//   }
-//   if (this.form.payMethod === 'card') {
-//     data.display = {
-//       card_quota: this.form.quota,
-//     };
-//   }
-
-//   console.log("결제창 띄워라")
-//   IMP.request_pay(data, (response) => {
-//     console.log("결제 완료");
-//     console.log(response);
-//     // Check if payment is successful
-//     if (response.success) {
-//       console.log("결제 성공");
-//       // Send payment data to backend
-//       this.sendPaymentDataToBackend(data);
-//     } else {
-//       console.log("[결제실패] : 결제 가격: " + data.amount);
-//       console.log("결제 실패");
-//       // Handle payment failure
-//     }
-//   });
-// },
-openModal(event) {
-  console.log("modal open");
-  console.log(event);
-  this.showModal = true;
-},
-closeModal(event) {
-  if (event.target.classList.contains('modal') || event.target.classList.contains('close')) {
-    this.showModal = false;
-  }
-},
-// selectAddress(address) {
-//   this.form.buyerAddr = address.roadAddress;
-//   this.form.buyerAddrDetail = address.detailAddress;
-//   this.form.buyerPostcode = address.postCode;
-//   this.form.buyerName = address.recipientName;
-//   this.form.buyerPhone = address.recipientPhone;
-//   this.showModal = false;
-// },
-selectAddress(address) {
-  this.selectedAddress = address;
-  this.showModal = false;
-},
-add(e) {
-  console.log("on add")
-  // const cartData = {
-  //   details: this.personDetails,
-  //   items: this.cart,
-  // }
-  // const db = firebase.firestore()
-  // const dbOrderRef = db.collection('orders')
-  // dbOrderRef.add(cartData)
-  // this.$toast.success(`Thanks for the order`, {
-  //   icon: 'fas fa-cart-plus',
-  // })
-  // this.$store.dispatch('cartEmpty')
-  const { IMP } = window;
-  IMP.init(Utils.getUserCodeByPg(this.form.pg));
-  const data = {
-    productId : this.productId,
-    success: false,
-    status: "",
-    pg: this.form.pg,
-    payMethod: "card",
-    escrow: this.form.escrow,
-    merchantUid: this.form.merchantUid,
-    name: this.productName,
-    amount: 100, // 여기 바꾸기 this.price + 2500 + 3900
-    serialNumber: this.serialNumber,
-    buyerName: this.nickname,
-    buyerPhone: this.selectAddress.recipientPhone,
-    buyerAddr: this.selectAddress.roadAddress,
-    buyerAddrDetail: this.selectAddress.detailAddress,
-    buyerPostcode: this.selectAddress.postCode,
-    dateAdded: new Date(),
-    niceMobileV2: true,
-    receiptUrl: '',
-  };
-
-  console.log("결제 데이터 결제금액 입니다: " + data.amount)
-  console.log("결제 상품 아이디" + data.productId)
-  if (this.form.payMethod === 'vbank') {
-    data.vbank_due = this.form.vbankDue;
-    if (this.form.pg === 'danal_tpay') {
-      data.biz_num = this.form.bizNum;
-    }
-  }
-  if (this.form.payMethod === 'card') {
-    data.display = {
-      card_quota: this.form.quota,
     };
-  }
+  },
+  async mounted() {
+    const accessToken = sessionStorage.getItem('JWT_TOKEN');
+    const accessTokenExpiration = sessionStorage.getItem('ACCESS_TOKEN_EXPIRATION');
 
-  console.log("결제창 띄워라")
-  IMP.request_pay(data, (response) => {
-    console.log("결제 완료");
-    console.log(response);
-    // Check if payment is successful
-    if (response.success) {
-      data.productId = this.productId
-      data.status = response.status;
-      data.receiptUrl = response.receipt_url;
-      data.success = true;
+    await this.fetchProfile();
+    console.log('Access Token:', accessToken);
+    console.log('Access Token Expiration:', accessTokenExpiration);
 
-      console.log("결제 성공");
-      console.log("data::: " + data);
-      // Send payment data to backend
-      this.sendPaymentDataToBackend(data);
-      this.handleGoBack();
-    } else {
-      console.log("결제 실패");
-      // Handle payment failure
+    if (new Date(accessTokenExpiration) <= new Date()) {
+      console.log('Access Token is expired. Need to refresh token.');
+      await this.refreshAccessToken();
     }
-  });
 
-},
-handleGoBack() {
-  this.$router.push('/');
-},
-callback(response) {
-  console.log(response);
-  const query = {
-    ...response,
-    type: 'payment',
-  };
-  this.$router.push({ path: '/', query });
-},
-},
-computed: {
+    this.loadDependencies();
+    this.fetchAddresses();
+    this.fetchSelectedAddress();
+    await this.loadProductData();
+
+  },
+
+  methods: {
+    async refreshAccessToken() {
+      const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
+      try {
+        const response = await apiClient.post('/auth/refresh', { refreshToken });
+        const newAccessToken = response.data.accessToken;
+        const newAccessTokenExpiration = response.data.accessTokenExpiration;
+
+        sessionStorage.setItem('JWT_TOKEN', newAccessToken);
+        sessionStorage.setItem('ACCESS_TOKEN_EXPIRATION', newAccessTokenExpiration);
+
+        console.log('Access Token refreshed successfully:', newAccessToken);
+      } catch (error) {
+        console.error('Failed to refresh access token:', error);
+        this.formError = 'Failed to refresh access token. Please log in again.';
+      }
+    },
+    fetchAddresses() {
+      axios.get(`http://localhost:8080/mypage-address/${this.serialNumber}`)
+        .then(response => {
+          this.addresses = response.data;
+          console.log("주소 정보", this.addresses);
+        })
+        .catch(error => {
+          console.error('Error fetching addresses:', error);
+        });
+    },
+    async fetchProfile() {
+      try {
+        const response = await apiClient.get('/auth/user-info');
+        console.log('User info fetched successfully:', response.data);
+        this.serialNumber = response.data.data.serialNumber;
+        console.log(this.serialNumber);
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+        this.formError = 'Failed to fetch user information.';
+      }
+
+      if (!this.serialNumber) {
+        console.error('Serial number is not available.');
+        this.formError = 'Failed to fetch profile information.';
+        return;
+      }
+
+      try {
+        const response = await apiClient.get(`/mypage-profile/${this.serialNumber}`); // 백엔드 엔드포인트에 맞게 수정
+        console.log('Profile fetched successfully:', response.data);
+        const { profileImage, nickname, tag1, tag2, tag3, account } = response.data;
+        this.profileImage = profileImage;
+        this.nickname = nickname;
+        this.selectedTags = [tag1, tag2, tag3].map(Number).filter(tag => tag); // null 또는 빈 태그 제거
+        this.userAccount = account; // Add this line to fetch userAccount
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        this.formError = 'Failed to fetch profile information.';
+      }
+    },
+    fetchSelectedAddress() {
+      // Simulated asynchronous data fetching
+      setTimeout(() => {
+        // Update selectedAddress object with fetched data
+        this.selectedAddress = {
+          recipientName: this.nickname, // Example value
+          recipientPhone: "", // Example value
+          roadAddress: "", // Example value
+          detailAddress: '', // Example value
+          postCode: "", // Example value
+          // Other properties...
+        };
+      }, 1000); // Adjust delay as needed
+    },
+    loadDependencies() {
+      const jQueryScript = document.createElement('script');
+      jQueryScript.src = 'https://code.jquery.com/jquery-3.6.0.min.js';
+      jQueryScript.onload = () => {
+        this.loadIMP();
+      };
+      document.body.appendChild(jQueryScript);
+    },
+    loadIMP() {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.iamport.kr/js/iamport.payment-1.1.5.js';
+      script.onload = () => {
+        this.checkIMP();
+      };
+      document.body.appendChild(script);
+    },
+    checkIMP() {
+      if (typeof window.IMP !== 'undefined') {
+        const { IMP } = window;
+        IMP.init(Utils.getUserCodeByPg('html5_inicis'));
+      } else {
+        setTimeout(this.checkIMP, 1000);
+      }
+    },
+    async sendPaymentDataToBackend(data) {
+      try {
+        const response = await fetch('http://localhost:8080/payment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+        console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+        console.log(response);
+        // Check if the request was successful
+        if (response.ok) {
+          // Payment data sent successfully
+          console.log('Payment data sent successfully');
+
+          // Redirect or perform any other actions as needed
+        } else {
+          // Handle error responsel
+          console.error('Failed to send payment data');
+        }
+      } catch (error) {
+        // Handle fetch error
+        console.error('Error sending payment data:', error);
+      }
+    },
+    async loadProductData() {
+
+      const productId = this.$route.query.productId;
+      console.log("상품 아이디 :  " + productId);
+      this.productId = productId;
+      try {
+        const response = await axios.get(`http://localhost:8080/bid-details/${productId}`);
+        console.log('Product data fetched:', response.data);
+
+        // {{ product.startPrice + (product.bidCnt * product.priceUnit) }}
+        this.price = response.data.startPrice + (response.data.bidCnt * response.data.priceUnit);
+        this.productName = response.data.productName;
 
 
-},
+        console.log("상품이름이래 " + this.productName);
+        console.log("상품가격이래" + this.price);
+
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+      }
+    },
+
+    openModal(event) {
+      console.log("modal open");
+      console.log(event);
+      this.showModal = true;
+    },
+    closeModal(event) {
+      if (event.target.classList.contains('modal') || event.target.classList.contains('close')) {
+        this.showModal = false;
+      }
+    },
+
+    selectAddress(address) {
+      this.selectedAddress = address;
+      this.showModal = false;
+    },
+    add(e) {
+      console.log("on add")
+
+      const { IMP } = window;
+      IMP.init(Utils.getUserCodeByPg(this.form.pg));
+      const data = {
+        productId: this.productId,
+        success: false,
+        status: "",
+        pg: this.form.pg,
+        payMethod: "card",
+        escrow: this.form.escrow,
+        merchantUid: this.form.merchantUid,
+        name: this.productName,
+        amount: 100, // 여기 바꾸기 this.price + 2500 + 3900
+        serialNumber: this.serialNumber,
+        buyer_name: this.nickname,
+        buyer_email: 'tjmax0930@gmail.com',
+        // buyerPhone: this.selectAddress.recipientPhone,
+        // buyerAddr: this.selectAddress.roadAddress,
+        // buyerAddrDetail: this.selectAddress.detailAddress,
+        // buyerPostcode: this.selectAddress.postCode,
+        dateAdded: new Date(),
+        niceMobileV2: true,
+        receiptUrl: '',
+      };
+
+      console.log("구매자 아이디:" + data.buyer_name);
+
+      console.log("결제 데이터 결제금액 입니다: " + data.amount)
+      console.log("결제 상품 아이디" + data.productId)
+      if (this.form.payMethod === 'vbank') {
+        data.vbank_due = this.form.vbankDue;
+        if (this.form.pg === 'danal_tpay') {
+          data.biz_num = this.form.bizNum;
+        }
+      }
+      if (this.form.payMethod === 'card') {
+        data.display = {
+          card_quota: this.form.quota,
+        };
+      }
+
+      console.log("결제창 띄워라")
+      IMP.request_pay(data, (response) => {
+        console.log("결제 완료");
+        console.log(response);
+        // Check if payment is successful
+        if (response.success) {
+          data.productId = this.productId
+          data.status = response.status;
+          data.receiptUrl = response.receipt_url;
+          data.success = true;
+
+          console.log("결제 성공");
+          console.log("구매자::: " + data.buyerName);
+          // Send payment data to backend
+          this.sendPaymentDataToBackend(data);
+          this.paymentDetails = response;
+          // console.log("receipt url:" + this.paymentDetails.receipt_url)
+          console.log("hihi: " + data.receiptUrl);
+          // this.handleGoBack();
+          this.redirectToReceipt(data.receiptUrl);
+        } else {
+          console.log("결제 실패");
+          // Handle payment failure
+        }
+      });
+
+    },
+    handleGoBack() {
+      this.$router.push('/');
+    },
+    redirectToReceipt(data) {
+      // Open a new window with a message
+      const popup = window.open('', 'popup');
+      popup.document.write(`
+    <html>
+      <head><title>Processing Payment</title></head>
+      <body>
+        <h1> 시스템 상에 등록중입니다 </h1>
+        <p> 20초만 기다려주세요 </p>
+      </body>
+    </html>
+  `);
+
+      // Wait for 10 seconds before redirecting to the receipt URL
+      setTimeout(() => {
+        popup.location.href = data;
+      }, 20000);
+
+      // Redirect the original page to the landing page after 10 seconds
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 20000);
+    },
+    callback(response) {
+      console.log(response);
+      const query = {
+        ...response,
+        type: 'payment',
+      };
+      this.$router.push({ path: '/', query });
+    },
+  },
+  computed: {
+
+
+  },
 };
 </script>
 
 
 <style scoped>
 .form-group {
-display: flex;
-justify-content: space-between
+  display: flex;
+  justify-content: space-between
 }
 
 
 
 .modal {
-display: block;
-position: fixed;
-z-index: 9999;
-left: 0;
-top: 0;
-width: 100%;
-height: 100%;
-overflow: auto;
-background-color: rgb(0, 0, 0);
-background-color: rgba(0, 0, 0, 0.4);
+  display: block;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
-background-color: #fefefe;
-margin: 15% auto;
-padding: 20px;
-border: 1px solid #888;
-width: 60%;
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%;
 }
 
 .close {
-color: #aaa;
-float: right;
-font-size: 28px;
-font-weight: bold;
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .close:hover,
 .close:focus {
-color: black;
-text-decoration: none;
-cursor: pointer;
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .address-item {
-padding: 10px;
-border: 1px solid #ccc;
-margin: 5px 0;
-cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin: 5px 0;
+  cursor: pointer;
 }
 
 .address-item:hover {
-background-color: #f1f1f1;
+  background-color: #f1f1f1;
 }
 
 .button-container {
-text-align: right;
-margin-top: 20px;
-/* Adjust margin as needed */
+  text-align: right;
+  margin-top: 20px;
+  /* Adjust margin as needed */
 }
 
 .btn-primary,
 .btn-primary-address {
-background-color: #FFB400;
-color: white;
-border: none;
-padding: 10px 20px;
-font-size: 14px;
-cursor: pointer;
-border-radius: 30px;
-margin-left: auto;
-align-self: flex-end;
+  background-color: #FFB400;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 30px;
+  margin-left: auto;
+  align-self: flex-end;
 }
 
 .find-address-button {
-margin-bottom: 10px;
-margin-top: 2px;
+  margin-bottom: 10px;
+  margin-top: 2px;
 }
 
 /* .billing-details button{
@@ -640,82 +603,82 @@ margin-top: 2px;
 
 
 .billing-details button:hover {
-background-color: white;
-color: black;
-border: 1px solid black;
+  background-color: white;
+  color: black;
+  border: 1px solid black;
 }
 
 
 
 /* 모달 창 스타일 */
 .modal {
-display: block;
-/* Hidden by default */
-position: fixed;
-/* Stay in place */
-z-index: 9999;
-/* Sit on top */
-left: 0;
-top: 0;
-width: 100%;
-/* Full width */
-height: 100%;
-/* Full height */
-overflow: auto;
-/* Enable scroll if needed */
-background-color: rgb(0, 0, 0);
-/* Fallback color */
-background-color: rgba(0, 0, 0, 0.4);
-/* Black w/ opacity */
+  display: block;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 9999;
+  /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
 }
 
 .modal-content {
-background-color: #fefefe;
-margin: 15% auto;
-padding: 20px;
-border: 1px solid #888;
-width: 60%;
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 60%;
 }
 
 .close {
-color: #aaa;
-float: right;
-font-size: 28px;
-font-weight: bold;
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .close:hover,
 .close:focus {
-color: black;
-text-decoration: none;
-cursor: pointer;
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .address-item {
-padding: 10px;
-border: 1px solid #ccc;
-margin: 5px 0;
-cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin: 5px 0;
+  cursor: pointer;
 }
 
 .address-item:hover {
-background-color: #f1f1f1;
+  background-color: #f1f1f1;
 }
 
 .address-info {
-font-size: 16px;
-color: #333;
+  font-size: 16px;
+  color: #333;
 }
 
 .address-item {
-margin-top: 10px;
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 10px;
-padding: 10px;
-background-color: white;
-border-radius: 5px;
-border: 1px solid #ddd;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid #ddd;
 }
 </style>
