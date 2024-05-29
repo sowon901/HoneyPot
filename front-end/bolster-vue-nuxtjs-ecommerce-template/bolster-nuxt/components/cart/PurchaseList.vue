@@ -57,7 +57,7 @@
                             </td>
 
                             <td class="delivery-status">
-                                {{ product.deliveryStatus ? getDeliveryStatusInKorean(product.deliveryStatus) : '' }}
+                                {{ product.deliveryStatus ? getDeliveryStatusInKorean(product.deliveryStatus) : '배송전' }}
                             </td>
 
                             <td class="purchase-date">
@@ -153,7 +153,7 @@ export default {
 }
 
 .checkout-link {
-    margin-top:15px;
+    margin-top:25px;
     cursor: pointer;
 }
 
@@ -189,7 +189,6 @@ export default {
 }
 
 .payment-status button {
-    margin-top: 15px;
     margin-left: 25px;
     margin-right: 25px;
     width: 60%;
