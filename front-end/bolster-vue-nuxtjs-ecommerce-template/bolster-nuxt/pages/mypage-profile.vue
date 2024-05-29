@@ -44,7 +44,6 @@
 <script>
 import Sidebar from '../components/all-products/Sidebar'
 import apiClient from '../api/apiClient';
-import { mapState, mapActions } from 'vuex';
 
 export default {
     components: {
@@ -135,6 +134,7 @@ export default {
                 nickname: this.nickname,
                 idolNames: this.selectedTags,
                 userAccount: this.userAccount,
+                serialNumber: this.serialNumber
             };
             formData.append('userDTO', new Blob([JSON.stringify(userDTO)], { type: 'application/json' }));
             if (this.$refs.fileInput.files[0]) {
