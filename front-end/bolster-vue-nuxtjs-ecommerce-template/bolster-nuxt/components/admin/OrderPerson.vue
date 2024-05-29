@@ -95,7 +95,7 @@ export default {
         },
         async approveItem(item) {
             try {
-                await axios.post('http://localhost:8080/admin/approve-product', {productId: item.productId}, {
+                await axios.post('http://localhost:8080/admin/approve-product', {productId: item.productId, serialNumber: "q4bk6qoc0hf7vfbn6vvog6u42b", storageStatus: "PROCESSING"}, {
                     headers: {
                         'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
                     }
@@ -108,7 +108,7 @@ export default {
         },
         async finalApproveItem(item) {
             try {
-                await axios.post('http://localhost:8080/admin/final-approve-product', {productId: item.productId}), {
+                await axios.post('http://localhost:8080/admin/final-approve-product', {productId: item.productId, serialNumber: item.serialNumber, storageStatus: "READY"}), {
                     headers: {
                         'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
                     }
@@ -125,6 +125,7 @@ export default {
                     productId: item.productId,
                     serialNumber: item.serialNumber,
                     declineReason: reason,
+                    storageStatus: "PROCESSING"
                 }, {
                     headers: {
                         'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
