@@ -517,7 +517,7 @@ add(e) {
 
 },
 handleGoBack() {
-  this.$router.go(-1);
+  this.$router.push('/');
 },
 callback(response) {
   console.log(response);
