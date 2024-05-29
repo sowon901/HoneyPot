@@ -3,38 +3,37 @@
         <div class="wrapper">
             <div class="content">
                 <div class="sidebar">
-                    <Sidebar/>
+                    <Sidebar />
                 </div>
                 <div class="user-info">
                     <div class="header">
                         <h4>프로필 관리</h4>
                         <button @click="saveProfile" class="save-button">저장</button>
                     </div>
-                    <hr class="section-divider"/>
+                    <hr class="section-divider" />
                     <div class="profile-container">
                         <div class="profile-pic">
                             <!-- 이미지 또는 기본 이미지를 v-show로 제어 -->
-                            <img v-show="profileImage" :src="profileImage" alt="프로필 사진" class="image"/>
+                            <img v-show="profileImage" :src="profileImage" alt="프로필 사진" class="image" />
                             <div v-show="!profileImage" class="default-image"></div>
                             <button class="upload-button" @click.stop="triggerUpload">+</button>
-                            <input type="file" ref="fileInput" @change="previewImage" style="display: none;"/>
+                            <input type="file" ref="fileInput" @change="previewImage" style="display: none;" />
                         </div>
 
-                        <input v-model="nickname" placeholder="닉네임" class="nickname-input"/>
+                        <input v-model="nickname" placeholder="닉네임" class="nickname-input" />
                     </div>
-                    <hr class="section-divider"/>
+                    <hr class="section-divider" />
                     <div class="interests">
                         <label>아이돌 선택:</label>
-                        <button v-for="(tag, index) in tags" :key="tag"
-                                :class="{ selected: isSelectedTag(index + 1) }"
-                                @click="toggleTag(index + 1)">
+                        <button v-for="(tag) in tags" :key="tag" :class="{ selected: isSelectedTag(tag) }"
+                            @click="toggleTag(tag)">
                             {{ tag }}
-                        </button>
+                            </button>
                     </div>
-                    <hr class="section-divider"/>
+                    <hr class="section-divider" />
                     <div class="account">
                         <label>계좌 입력:</label>
-                        <input v-model="userAccount" placeholder="은행과 계좌번호를 입력하세요." class="account-input"/>
+                        <input v-model="userAccount" placeholder="은행과 계좌번호를 입력하세요." class="account-input" />
                     </div>
                 </div>
             </div>
@@ -45,7 +44,6 @@
 <script>
 import Sidebar from '../components/all-products/Sidebar'
 import apiClient from '../api/apiClient';
-import { mapState, mapActions } from 'vuex';
 
 export default {
     components: {
@@ -60,7 +58,7 @@ export default {
             selectedTags: [],
             profile: null,
             serialNumber: null,
-            userAccount: ''
+            userAccount: null,
         }
     },
     async mounted() {
@@ -76,13 +74,13 @@ export default {
             await this.refreshAccessToken();
         }
 
-        
+
     },
     methods: {
         async refreshAccessToken() {
             const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
             try {
-                const response = await apiClient.post('/auth/refresh', {refreshToken});
+                const response = await apiClient.post('/auth/refresh', { refreshToken });
                 const newAccessToken = response.data.accessToken;
                 const newAccessTokenExpiration = response.data.accessTokenExpiration;
 
@@ -115,11 +113,11 @@ export default {
             try {
                 const response = await apiClient.get(`/mypage-profile/${this.serialNumber}`); // 백엔드 엔드포인트에 맞게 수정
                 console.log('Profile fetched successfully:', response.data);
-                const { profileImage, nickname, tag1, tag2, tag3, account } = response.data;
+                const { profileImage, nickname, idolNames, userAccount } = response.data;
                 this.profileImage = profileImage;
                 this.nickname = nickname;
-                this.selectedTags = [tag1, tag2, tag3].map(Number).filter(tag => tag); // null 또는 빈 태그 제거
-                this.userAccount = account; // Add this line to fetch userAccount
+                this.selectedTags = idolNames;
+                this.userAccount = userAccount;
             } catch (error) {
                 console.error('Error fetching profile:', error);
                 this.formError = 'Failed to fetch profile information.';
@@ -134,18 +132,17 @@ export default {
             const formData = new FormData();
             const userDTO = {
                 nickname: this.nickname,
-                tag1: this.selectedTags[0] || '',
-                tag2: this.selectedTags[1] || '',
-                tag3: this.selectedTags[2] || '',
+                idolNames: this.selectedTags,
                 userAccount: this.userAccount,
+                serialNumber: this.serialNumber
             };
-            formData.append('userDTO', new Blob([JSON.stringify(userDTO)], {type: 'application/json'}));
+            formData.append('userDTO', new Blob([JSON.stringify(userDTO)], { type: 'application/json' }));
             if (this.$refs.fileInput.files[0]) {
                 formData.append('profileImageFile', this.$refs.fileInput.files[0]);
             }
 
             try {
-                const response = await apiClient.post(`/mypage-profile/${this.serialNumber}`, formData, {
+                const response = await apiClient.put(`/mypage-profile/${this.serialNumber}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -172,6 +169,7 @@ export default {
         isSelectedTag(tag) {
             return this.selectedTags.includes(tag);
         },
+
         triggerUpload() {
             this.$refs.fileInput.click();
         },
@@ -193,8 +191,6 @@ export default {
 
 
 <style scoped>
-
-
 .wrapper .content {
     display: flex;
     width: 100%;
@@ -237,6 +233,7 @@ export default {
     border: 1px solid #ccc;
     width: 200px;
 }
+
 .account-input {
     margin-left: 10px;
     padding: 5px 10px;

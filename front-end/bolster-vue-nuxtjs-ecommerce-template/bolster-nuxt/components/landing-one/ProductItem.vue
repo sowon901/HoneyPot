@@ -26,7 +26,7 @@
                     </div>
                     <div style="display: flex; color: gray; justify-content: space-between;">
                         <div style="margin-right: auto;" v-if="showBuyNow">
-                            또는 즉시 구매
+                            <!-- 또는 즉시 구매 -->
                         </div>
                         <div style="margin-left: auto;">
                             {{ remainingTime }}
