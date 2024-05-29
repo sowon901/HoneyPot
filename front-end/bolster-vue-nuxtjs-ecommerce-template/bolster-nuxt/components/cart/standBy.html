@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Payment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+        p {
+            color: #666;
+            font-size: 18px;
+        }
+        .countdown {
+            color: #f44336;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>시스템 상에 등록 중입니다</h1>
+        <p>잠시만 기다려주세요</p>
+        <div class="countdown" id="countdown">20초 후에 이동됩니다</div>
+    </div>
+
+    <script>
+        // Countdown function
+        function startCountdown() {
+            let secondsLeft = 20;
+            const countdownElement = document.getElementById('countdown');
+            const countdownInterval = setInterval(() => {
+                if (secondsLeft > 0) {
+                    countdownElement.textContent = `${secondsLeft}초 후에 이동됩니다`;
+                    secondsLeft--;
+                } else {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        }
+
+        // Start countdown when the page loads
+        window.onload = startCountdown;
+    </script>
+</body>
+</html>
