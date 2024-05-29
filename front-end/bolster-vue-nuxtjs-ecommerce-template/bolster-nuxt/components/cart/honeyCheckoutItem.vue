@@ -354,6 +354,7 @@ async loadProductData() {
 
   const productId = this.$route.query.productId;
   console.log("상품 아이디 :  " + productId);
+  this.productId = productId;
   try {
     const response = await axios.get(`http://localhost:8080/bid-details/${productId}`);
     console.log('Product data fetched:', response.data);
@@ -458,6 +459,7 @@ add(e) {
   const { IMP } = window;
   IMP.init(Utils.getUserCodeByPg(this.form.pg));
   const data = {
+    productId : this.productId,
     success: false,
     status: "",
     pg: this.form.pg,
@@ -478,6 +480,7 @@ add(e) {
   };
 
   console.log("결제 데이터 결제금액 입니다: " + data.amount)
+  console.log("결제 상품 아이디" + data.productId)
   if (this.form.payMethod === 'vbank') {
     data.vbank_due = this.form.vbankDue;
     if (this.form.pg === 'danal_tpay') {
@@ -496,6 +499,7 @@ add(e) {
     console.log(response);
     // Check if payment is successful
     if (response.success) {
+      data.productId = this.productId
       data.status = response.status;
       data.receiptUrl = response.receipt_url;
       data.success = true;
