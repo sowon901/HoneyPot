@@ -142,4 +142,4 @@ export default {
 .card {
     margin-bottom: 20px;
 }
-</style>
+</style> 
