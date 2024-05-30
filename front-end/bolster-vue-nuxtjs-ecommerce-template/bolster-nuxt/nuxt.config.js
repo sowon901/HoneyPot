@@ -10,14 +10,14 @@ export default {
         htmlAttrs: {
             lang: 'en',
         },
-        title: 'Bolster - eCommerce Nuxt.js/Vue.js Template',
+        title: '꿀단지',
         meta: [
             { charset: 'utf-8' },
             { name: 'viewport', content: 'width=device-width, initial-scale=1' },
             { hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
         ],
         link: [
-            { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
+            { rel: 'icon', type: 'image/x-icon', href: '/favicon-honeyPot.png' },
             {
                 rel: 'stylesheet',
                 href: 'https://fonts.googleapis.com/css?family=Archivo:400,400i,500,500i,600,600i,700,700i&display=swap'
