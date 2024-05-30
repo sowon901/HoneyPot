@@ -123,7 +123,8 @@ export default {
                 'PENDING': '입고 중',
                 'PROCESSING': '검수 중',
                 'SELLING': '판매 중',
-                'SOLD': '판매 종료'
+                'SOLD': '판매 종료',
+                'FAIL': '판매 종료'
             };
             return statusMap[status] || '';
         }
