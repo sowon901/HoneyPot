@@ -134,19 +134,27 @@ export default defineComponent({
           { value: 'First.Name', title: 'First Name' },
           { value: 'Email', title: 'Email' },
         ],
-        images_upload_handler(blobInfo, success, failure) {
-          console.log('images_upload_handler called');
-          const file = new File([blobInfo.blob()], blobInfo.filename());
-          const fileName = blobInfo.filename();
-          console.log('File:', file);
-          console.log('FileName:', fileName);
+        images_upload_handler: async (blobInfo, success, failure) => {
+    const formData = new FormData();
+    formData.append('file', blobInfo.blob(), blobInfo.filename());
 
-          if (fileName.includes('blobid')) {
-            success(URL.createObjectURL(file));
-          } else {
-            success(URL.createObjectURL(file));
-          }
+    try {
+      const response = await axios.post('http://localhost:8080/upload-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
         },
+      });
+
+      if (response.status === 200) {
+        success(response.data.url);
+      } else {
+        failure('Image upload failed');
+      }
+    } catch (error) {
+      console.error('Image upload error:', error);
+      failure('Image upload error: ' + error.message);
+    }
+  },
         content_style: 'img { max-width: 100%; height: auto; }',
         height: 500,
         width: '100%',
