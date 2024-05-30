@@ -7,35 +7,50 @@
             :paginationEnabled = true
             :perPage="1"
             :autoplay = true
-            :autoplayTimeout = 3000
+            :autoplayTimeout = 2000
             :navigationEnabled = "true"
             :loop = true
             navigationNextLabel="<i class='fas fa-arrow-right'></i>"
             navigationPrevLabel="<i class='fas fa-arrow-left'></i>"
         >
-        <slide v-for="(slide, index) in slides" :key="index">
-                    <div class="main-banner" :style="{ backgroundImage: 'url(' + slide.image + ')' }">
-                    </div>
-        </slide>
-
-
-            <!-- <slide>
+            <slide>
                 <div class="main-banner item-bg1">
-                    
+                    <div class="d-table">
+                        <div class="d-table-cell">
+                            <div class="container">
+                                <div class="main-banner-content">
+                                  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </slide>
 
             <slide>
                 <div class="main-banner item-bg2">
+                    <div class="d-table">
+                        <div class="d-table-cell">
+                            <div class="container">
+                                <div class="main-banner-content">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </slide>
-
             <slide>
                 <div class="main-banner item-bg3">
-                    
+                    <div class="d-table">
+                        <div class="d-table-cell">
+                            <div class="container">
+                                <div class="main-banner-content">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </slide> -->
-
+            </slide>
     </carousel>
 </div>
 </template>
@@ -43,33 +58,19 @@
 <script>
 export default {
     name: 'Banner',
-    data(){
-        return{
-            slides: [
-                {
-                    id: 1,
-                    image: require('../../assets/img/banner-image/m02.jpeg')
-                },
-                {
-                    id: 2,
-                    image: require('../../assets/img/banner-image/m03.jpeg')
-                },
-                {
-                    id: 3,
-                    image: require('../../assets/img/banner-image/m01.jpeg')
-                }
-            ]
-        }
-    }
 }
 </script>
 <style scoped>
 
 .home-slides {
-    width: 100%;
+    width: 1300px;
 }
 
-.main-banner {
+.main-banners {
+    background-position: left;
+    height: 100%;
+    padding-top: 110px;
+    padding-bottom: 110px;
     height: 520px;
 }
 
