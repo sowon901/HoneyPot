@@ -24,8 +24,8 @@
                   <br>{{ address.roadAddress }}, {{ address.detailAddress }} [{{ address.postCode }}]</p>
                 </div>
                 <div class="button-group">
-                  <button @click="openEditModal(address)" class="edit-button">수정</button> 
-                  
+                  <button @click="openEditModal(address)" class="edit-button">수정</button>
+
                   <button @click="deleteAddress(index)" class="delete-button">삭제</button>
                 </div>
               </div>
@@ -147,7 +147,11 @@ export default {
     return valid;
     },
     fetchAddresses() {
-      axios.get(`http://localhost:8080/mypage-address/${this.serialNumber}`)
+      axios.get(`http://localhost:8080/mypage-address/${this.serialNumber}`, {
+          headers: {
+              'Authorization': `Bearer ${accessToken}`
+          }
+      })
         .then(response => {
           this.addresses = response.data;
         })
@@ -171,7 +175,11 @@ export default {
     },
     deleteAddress(index) {
       const addressId = this.addresses[index].addressId;
-      axios.delete(`http://localhost:8080/mypage-address/${addressId}`)
+      axios.delete(`http://localhost:8080/mypage-address/${addressId}`, {
+          headers: {
+              'Authorization': `Bearer ${accessToken}`
+          }
+      })
         .then(() => {
           this.addresses.splice(index, 1);
         })
@@ -198,8 +206,16 @@ export default {
       }
     const addressData = { ...this.address, serialNumber: this.serialNumber }; // 유저의 시리얼 넘버 (로그인된 유저의 시리얼 넘버로 대체)
     const request = this.isEdit
-      ? axios.put(`http://localhost:8080/mypage-address/${this.address.addressId}`, addressData)
-      : axios.post('http://localhost:8080/mypage-address', addressData);
+      ? axios.put(`http://localhost:8080/mypage-address/${this.address.addressId}`, addressData, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+      : axios.post('http://localhost:8080/mypage-address', addressData, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
 
       request.then(() => {
         this.fetchAddresses();
@@ -208,7 +224,7 @@ export default {
         console.error('Error submitting form:', error);
       });
     },
-    
+
     updateAddress() {
       // 주소 업데이트 로직
     },
@@ -248,7 +264,7 @@ export default {
 .address-container {
   flex: 3;
   padding: 5px;
-  
+
 }
 
 .address-header {
@@ -258,7 +274,7 @@ export default {
 }
 
 .address-info {
-  font-size: 16px; 
+  font-size: 16px;
   color: #333;
 }
 
@@ -306,10 +322,10 @@ export default {
 
 
 /* .address-item button {
-  background-color: #ffb400; 
-  color: white; 
-  border: none; 
-  border-radius: 10px; 
+  background-color: #ffb400;
+  color: white;
+  border: none;
+  border-radius: 10px;
   margin: 5px;
   padding: 5px 10px;
 } */

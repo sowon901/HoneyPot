@@ -113,8 +113,6 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // vue-router에서 useRouter 가져오기
-import { useStore } from 'vuex'; // vuex에서 useStore 가져오기
 import TopHeader from '../layouts/TopHeader';
 import Menubar from '../layouts/Menubar';
 import axios from 'axios';
@@ -169,7 +167,6 @@ export default {
                 });
                 console.log('서버 응답:', response.data);
                 if (response.data.success) {
-                    // Save the token and user data in the store
                     authUser.value = response.data.data.user;
 
                     const accessToken = response.data.data.accessToken;
@@ -178,21 +175,21 @@ export default {
                     const refreshTokenExpiration = response.data.data.refreshTokenExpiration;
                     const redirectUrl = response.data.data.redirectUrl;
 
-                    // 세션 스토리지에 저장
                     sessionStorage.setItem('JWT_TOKEN', accessToken);
                     sessionStorage.setItem('REFRESH_TOKEN', refreshToken);
                     sessionStorage.setItem('ACCESS_TOKEN_EXPIRATION', accessTokenExpiration);
                     sessionStorage.setItem('REFRESH_TOKEN_EXPIRATION', refreshTokenExpiration);
 
+                    await fetchProtectedData();
+
                     if (redirectUrl) {
-                        // Redirect to the specified URL
                         console.log('Redirecting to:', redirectUrl);
                         window.location.href = redirectUrl;
                     } else {
-                        // If no redirect URL is provided, redirect to the home page
                         console.log('Redirecting to home page');
                         window.location.href = '/';
                     }
+
                 } else {
                     formError.value = response.data.message;
                 }
@@ -201,6 +198,27 @@ export default {
                 formError.value = '로그인 실패. 다시 시도해 주세요.';
             }
         };
+
+        const fetchProtectedData = async () => {
+            const token = sessionStorage.getItem('JWT_TOKEN');
+            if (token) {
+                try {
+                    const response = await fetch('http://localhost:8080/api/protected', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    const data = await response.json();
+                    console.log('Protected Data:', data);
+                } catch (error) {
+                    console.error('Error fetching protected data:', error);
+                }
+            } else {
+                console.error('No token found in session storage');
+            }
+        };
+
 
         const kakaoLogin = () => {
             window.Kakao.Auth.login({
@@ -241,6 +259,8 @@ export default {
                                     sessionStorage.setItem('ACCESS_TOKEN_EXPIRATION', accessTokenExpiration);
                                     sessionStorage.setItem('REFRESH_TOKEN_EXPIRATION', refreshTokenExpiration);
 
+                                    await fetchProtectedData();
+
                                     if (redirectUrl) {
                                         console.log('Redirecting to:', redirectUrl);
                                         window.location.href = redirectUrl;
@@ -248,6 +268,8 @@ export default {
                                         console.log('Redirecting to home page');
                                         window.location.href = '/';
                                     }
+
+                                    fetchProtectedData();
                                 } else {
                                     formError.value = response.data.message;
                                 }
@@ -275,6 +297,7 @@ export default {
             authUser,
             serviceLogin,
             kakaoLogin,
+            fetchProtectedData,
         };
     },
 };

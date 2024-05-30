@@ -50,45 +50,15 @@
                             </button>
                         </div>
                     </div>
-<!--                    <b-collapse :id="`collapse-${data.id}`">-->
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>시리얼 넘버</th>
-                                    <th>회원 아이디</th>
-                                    <th>연령대</th>
-                                    <th>주소</th>
-                                    <th>가입일</th>
-                                    <th>상태</th>
-                                    <th>
-                                        <div class="recent-orders-box" style="display: none;">
-                                            <div class="title" style="display: none;">
-                                    <ul style="display: none;">
-                                        <li><a href="#">수정</a></li>
-                                        <li><a href="#">정지</a></li>
-                                    </ul>
-                                            </div>
-                                        </div>
-                                    </th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-<!--                                <UserDetails v-for="(item, j) in data.items" :key="j" :item="item"></UserDetails>-->
-                                </tbody>
-                            </table>
-                        </div>
-<!--                    </b-collapse>-->
+                    <UserList :users="users" />
                     <Loader v-if="loading" />
                     <div v-if="ordersData.length > 0">
-<!--                        <OrderPerson v-for="(data, i) in ordersData" :key="i" :data="data" />-->
                     </div>
-                    <div v-else>
+<!--                    <div v-else>
                         <h3>
                             <i>There are no orders right now!!</i>
                         </h3>
-                    </div>
+                    </div>-->
                 </main>
             </div>
         </div>
@@ -98,48 +68,44 @@
 <script>
 import Loader from '../components/common/Loader'
 import UserList from '../components/admin/UserList'
-import OrderItem from '../components/admin/OrderItem.vue'
 import Sidebar from '../components/admin/Sidebar'
-import firebase from '../plugins/firebase'
-import UserDetails from "~/components/admin/UserDetails.vue";
+
 export default {
     layout: 'admin',
     components: {
         UserList,
-        UserDetails,
         Loader,
         Sidebar
     },
     data() {
         return {
             loading: true,
-            ordersData: []
+            ordersData: [],
+            users: []  // Add users array
         }
     },
     mounted() {
-        const db = firebase.firestore()
-        const dbOrderRef = db.collection('orders')
-        let orderArray = []
-        dbOrderRef
-            .get()
-            .then(res => {
-                res.forEach(doc => {
-                    let orderObj = doc.data()
-                    orderObj.id = doc.id
-                    orderArray.push(orderObj)
-                })
-                this.ordersData = orderArray
-                this.loading = false
+        // Fetch user data from Spring Boot endpoint
+        fetch('http://localhost:8080/admin/get-users') // Include the full URL with port if necessary
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
             })
-            .catch(err => {
-                console.log('error', err)
+            .then(data => {
+                this.users = data;
+                this.loading = false;
             })
+            .catch(error => {
+                console.error('Error fetching users:', error);
+                this.loading = false;
+            });
 
         this.loadScript("https://code.jquery.com/jquery-3.3.1.slim.min.js", () => {
             this.loadScript("https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js", () => {
                 this.loadScript("https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js", () => {
                     console.log("All scripts loaded");
-                    // 모든 스크립트가 로드된 후 필요한 작업 수행
                 });
             });
         });
@@ -151,190 +117,12 @@ export default {
                 if (callback) callback();
             };
             script.src = src;
-            document.head.appendChild(script); // or 'document.body' depending on your needs
+            document.head.appendChild(script);
         }
     },
 }
 </script>
 
 <style lang="scss">
-.preloader-loading {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    background-color: rgba(0, 0, 0, 0.66);
-    z-index: 999;
-
-    .loader {
-        position: absolute;
-        top: 50%;
-        transform: translateX(-50%) translateY(-50%);
-        left: 50%;
-        color: #fff;
-    }
-}
-.recent-orders-box {
-    margin-top: 30px;
-
-    .title {
-        position: relative;
-
-        h3 {
-            margin-bottom: 15px;
-            font: {
-                size: 20px;
-                weight: 600;
-            }
-        }
-        ul {
-            padding-left: 0;
-            margin-bottom: 0;
-            list-style-type: none;
-            position: absolute;
-            right: 0;
-            top: -10px;
-
-            li {
-                display: inline-block;
-                margin-left: 5px;
-
-                a,
-                button {
-                    display: block;
-                    background-color: #f2f2f2;
-                    color: #000000;
-                    padding: 5px 15px;
-                    border: none;
-                    transition: 0.5s;
-
-                    &:hover {
-                        background-color: #000000;
-                        color: #fff;
-                    }
-                }
-                &:nth-child(2) {
-                    a,
-                    button {
-                        &:hover {
-                            background-color: red;
-                            color: #fff;
-                        }
-                    }
-                }
-                &:nth-child(3) {
-                    a,
-                    button {
-                        &:hover {
-                            background-color: green;
-                            color: #fff;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    table {
-        margin-bottom: 0;
-
-        thead {
-            th {
-                text-align: left;
-                white-space: nowrap;
-                padding: 15px 15px 15px 0;
-                border-bottom: 1px solid #f6f6f7;
-                border-color: #f6f6f7;
-                font-size: 15px;
-            }
-        }
-        tbody {
-            tr {
-                td {
-                    padding: 15px;
-                    vertical-align: middle;
-                    white-space: nowrap;
-                    border-bottom: 1px solid #f6f6f7;
-                    border-top: none;
-                    font-size: 14.4px;
-
-                    &:first-child {
-                        padding-left: 0;
-                    }
-                    &.name {
-                        font-weight: 700;
-                    }
-                    img {
-                        width: 50px;
-                        margin-right: 5px;
-                    }
-                }
-            }
-        }
-    }
-}
-.sidebar {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 100; /* Behind the navbar */
-    padding: 48px 0 0; /* Height of navbar */
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
-}
-
-.sidebar-sticky {
-    position: relative;
-    top: 0;
-    height: calc(100vh - 48px);
-    padding-top: 0.5rem;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-}
-
-@supports ((position: -webkit-sticky) or (position: sticky)) {
-    .sidebar-sticky {
-        position: -webkit-sticky;
-        position: sticky;
-    }
-}
-
-.sidebar .nav-link {
-    font-weight: 500;
-    color: #333;
-}
-
-.sidebar .nav-link .feather {
-    margin-right: 4px;
-    color: #999;
-}
-
-.sidebar .nav-link.active {
-    color: #007bff;
-}
-
-.sidebar .nav-link:hover .feather,
-.sidebar .nav-link.active .feather {
-    color: inherit;
-}
-
-.sidebar-heading {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-}
-
-/*
- * Content
- */
-
-[role='main'] {
-    padding-top: 133px; /* Space for fixed navbar */
-}
-
-@media (min-width: 768px) {
-    [role='main'] {
-        padding-top: 48px; /* Space for fixed navbar */
-    }
-}
+/* Add your styles here */
 </style>
