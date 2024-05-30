@@ -7,7 +7,7 @@
             :paginationEnabled = true
             :perPage="1"
             :autoplay = true
-            :autoplayTimeout = 2000
+            :autoplayTimeout = 3000
             :navigationEnabled = "true"
             :loop = true
             navigationNextLabel="<i class='fas fa-arrow-right'></i>"
