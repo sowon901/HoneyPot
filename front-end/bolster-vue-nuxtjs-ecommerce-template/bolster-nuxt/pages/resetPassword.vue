@@ -27,7 +27,7 @@
                                 v-model="newPassword"
                                 type="password"
                                 class="form-control"
-                                placeholder="8자 이상 16자 이하의 숫자 하나, 특수문자 하나 이상을 포함한 영문자"
+                                placeholder="8자 이상 30자 이하의 숫자 하나, 특수문자 하나 이상을 포함한 영문자"
                                 name="new_password"
                                 @input="checkPassword"
                             />
