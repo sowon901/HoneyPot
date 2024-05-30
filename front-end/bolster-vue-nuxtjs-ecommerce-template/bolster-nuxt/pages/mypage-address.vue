@@ -148,9 +148,9 @@ export default {
     },
     fetchAddresses() {
       axios.get(`http://localhost:8080/mypage-address/${this.serialNumber}`, {
-          headers: {
-              'Authorization': `Bearer ${accessToken}`
-          }
+          // headers: {
+          //     'Authorization': `Bearer ${accessToken}`
+          // }
       })
         .then(response => {
           this.addresses = response.data;
