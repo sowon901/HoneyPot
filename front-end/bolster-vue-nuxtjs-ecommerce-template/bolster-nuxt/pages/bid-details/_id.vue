@@ -110,11 +110,6 @@
                     </div>
                 </div>
 
-                <div style="text-align: center;" v-if="!hideMoreButton">
-                    <hr class="hr-effect" />
-                    <button class="more-button" @click="more">더보기 +</button>
-                </div>
-
                 <div class="modal-background" v-if="bidCheck">
                     <div class="bid-modal">
                         <div class="bid-modal-container">
@@ -546,18 +541,7 @@ export default {
             this.seconds = seconds;
         },
 
-        
-
-
-    watch: {
-            timing() {
-                if (this.timeLeft <=0) {
-                    console.log(timeLeft)
-                this.disableScroll();
-                this.disableScrollForTextArea();
-            }
-        } 
-        },
+    
     },
 };
 </script>
