@@ -14,9 +14,9 @@
                     <div class="product-layout" ref="imageContainer" @mousemove="moveLens" @mouseleave="zoomOut">
                         <div class="product-main-image">
                             <img class="main-image" :src="mainImage" alt="Product Image" ref="mainImage" />
-                            <div class="zoom-lens" v-if="isZooming" :style="lensStyle" ref="lens"></div>
+                            <div class="zoom-lens" v-if="isZooming && !auctionEnded" :style="lensStyle" ref="lens"></div>
                         </div>
-                        <div class="zoom-result" v-show="isZooming" :style="resultStyle"></div>
+                        <div class="zoom-result" v-show="isZooming" :style="resultStyle" v-if="!auctionEnded"></div>
                         <div class="product-detail-image-list">
                             <div v-for="(image, index) in productImages" :key="index" class="product-detail-image"
                                 @click="showMainImage(image)">
@@ -221,6 +221,7 @@ export default {
     beforeDestroy() {
         // 컴포넌트가 파괴되기 전에 타이머를 제거합니다.
         clearInterval(this.interval);
+        this.enableScroll();
     },
     props: ['dateTime'],
 
@@ -429,6 +430,9 @@ export default {
 
         showAuctionEndedAlert() {
             alert("경매가 종료되었습니다.");
+        },
+        enableScroll() {
+            window.removeEventListener('scroll', this.noScroll);
         },
         noScroll() {
             window.scrollTo(0, 0);
