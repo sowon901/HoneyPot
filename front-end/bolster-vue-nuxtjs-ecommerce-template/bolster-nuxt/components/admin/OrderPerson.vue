@@ -52,6 +52,7 @@
                             @approve="approveItem"
                             @decline="declineItem"
                             @finalApprove="finalApproveItem"
+                            @confirmDecline="confirmDecline"
                         />
                         </tbody>
                     </table>
