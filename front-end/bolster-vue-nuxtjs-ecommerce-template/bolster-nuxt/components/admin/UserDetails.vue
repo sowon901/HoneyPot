@@ -45,7 +45,8 @@ export default {
                     state: newState
                 }, {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
                     }
                 });
                 if (response.status === 200) {

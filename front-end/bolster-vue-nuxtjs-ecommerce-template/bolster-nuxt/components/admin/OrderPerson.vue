@@ -80,7 +80,11 @@ export default {
     methods: {
         async fetchData() {
             try {
-                const response = await axios.get('http://localhost:8080/admin/pending-processing-products');
+                const response = await axios.get('http://localhost:8080/admin/pending-processing-products', {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
+                    }
+                });
                 this.productData = response.data.map(item => ({
                     ...item,
                     images: [item.image1, item.image2, item.image3, item.image4, item.image5].filter(Boolean),
