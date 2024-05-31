@@ -136,7 +136,7 @@ export default {
           this.products.sort((a, b) => b.view - a.view);
           break;
         case '3': // 마감 임박순
-          this.products.sort((a, b) => new Date(a.timeLimit) - new Date(b.timeLimit));
+          this.products.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
           break;
         default:
           // 기본적으로는 최신순으로 정렬합니다.
@@ -170,6 +170,7 @@ export default {
       axios.get("http://localhost:8080/products")
         .then(response => {
           this.products = response.data;
+          console.log(this.products);
         })
         .catch(error => {
           console.error('Error fetching products:', error);

@@ -35,7 +35,7 @@
                                 {{ formatDateTime(product.deadline) }}
                             </td>
                             <td>
-                                {{ product.currentPrice }}
+                                {{ product.price }}
                             </td>
                             <!-- <td>
                                 {{ product.currentPrice }}

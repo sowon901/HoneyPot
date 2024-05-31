@@ -55,7 +55,7 @@ export default {
         },
         remainingTime() {
             const currentTime = new Date();
-            const timeLimit = new Date(this.product.timeLimit);
+            const timeLimit = new Date(this.product.deadline);
             if (currentTime > timeLimit) {
                 return "종료됨";
             } else {
@@ -88,7 +88,7 @@ export default {
     position: relative;
     width: 100%;
     padding-top: 123.08%;
-    background-color: white;
+    background-color: #f5f5f5;
 }
 
 .product-image img {
