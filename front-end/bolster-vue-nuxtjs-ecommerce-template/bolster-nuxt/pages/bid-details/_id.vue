@@ -194,7 +194,6 @@ export default {
             auctionEnded: false,
             auctionEndedAlertShown: false,
 
-
         };
     },
 
@@ -211,6 +210,7 @@ export default {
             await this.refreshAccessToken();
         }
         await this.fetchProfile();
+        this.timing();
     },
 
     beforeDestroy() {
