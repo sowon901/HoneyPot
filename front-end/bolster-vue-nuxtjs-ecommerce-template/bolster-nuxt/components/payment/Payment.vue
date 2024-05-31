@@ -153,7 +153,7 @@ export default {
             };
           }
           console.log("결제창 띄워라 오버")
-          
+
           IMP.request_pay(data, this.callback);
           this.sendPaymentDataToBackend(data);
         }
@@ -162,7 +162,7 @@ export default {
     },
     async sendPaymentDataToBackend(data) {
       try {
-        const response = await fetch('http://10.0.11.7:8080/payment', {
+        const response = await fetch('http://localhost:8080/payment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -175,7 +175,7 @@ export default {
         if (response.ok) {
           // Payment data sent successfully
           console.log('Payment data sent successfully');
-          
+
           // Redirect or perform any other actions as needed
         } else {
           // Handle error responsel
