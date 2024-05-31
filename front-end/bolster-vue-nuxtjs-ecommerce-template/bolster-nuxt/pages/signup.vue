@@ -450,7 +450,7 @@ export default {
             isSendingMMS.value = true;
 
             try {
-                const response = await axios.post('http://localhost:8080/mms/send-one-signup', null, {
+                const response = await axios.post('http://10.0.11.7:8080/mms/send-one-signup', null, {
                     params: {
                         name: name.value,
                         mobileNumber: mobileNumber.value,
