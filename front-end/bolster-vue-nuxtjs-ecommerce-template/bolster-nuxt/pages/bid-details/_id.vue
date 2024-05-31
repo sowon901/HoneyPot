@@ -483,7 +483,7 @@ export default {
         async notifyAuctionEndingSoon() {
             // try {
             //     const productId = this.product.productId;
-            //     await axios.post(`http://localhost:8080/notifyEndingSoon`, null, { params: { productId } });
+            //     await axios.post(`http://10.0.11.7:8080/notifyEndingSoon`, null, { params: { productId } });
             //     console.log('Notified server of auction ending soon for product ID:', productId);
             // } catch (error) {
             //     console.error('Error notifying server about auction ending soon:', error);

@@ -113,7 +113,7 @@ export default {
             }
         },
         confirmBid(product) {
-            axios.post(`http://localhost:8080/shopping/${product.productId}`)
+            axios.post(`http://10.0.11.7:8080/shopping/${product.productId}`)
                 .then(response => {
                     console.log("결제 완료 값: " + response.data);
                     this.products.paymentStatus = response.data.paymentStatus;
@@ -124,7 +124,7 @@ export default {
 
         },
         fetchOrderConfirmation(product) {
-            axios.get(`http://localhost:8080/shopping/${product.productId}`)
+            axios.get(`http://10.0.11.7:8080/shopping/${product.productId}`)
                 .then(response => {
                     console.log("구매확정 값 : " + response.data);
                     // product.orderConfirm = response.data;

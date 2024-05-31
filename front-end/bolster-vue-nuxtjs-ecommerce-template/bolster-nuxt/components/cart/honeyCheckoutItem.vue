@@ -247,7 +247,7 @@ export default {
       }
     },
     fetchAddresses() {
-      axios.get(`http://localhost:8080/mypage-address/${this.serialNumber}`)
+      axios.get(`http://10.0.11.7:8080/mypage-address/${this.serialNumber}`)
         .then(response => {
           this.addresses = response.data;
           console.log("주소 정보", this.addresses);
@@ -326,7 +326,7 @@ export default {
     },
     async sendPaymentDataToBackend(data) {
       try {
-        const response = await fetch('http://localhost:8080/payment', {
+        const response = await fetch('http://10.0.11.7:8080/payment', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -356,7 +356,7 @@ export default {
       console.log("상품 아이디 :  " + productId);
       this.productId = productId;
       try {
-        const response = await axios.get(`http://localhost:8080/bid-details/${productId}`);
+        const response = await axios.get(`http://10.0.11.7:8080/bid-details/${productId}`);
         console.log('Product data fetched:', response.data);
 
         // {{ product.startPrice + (product.bidCnt * product.priceUnit) }}
