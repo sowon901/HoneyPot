@@ -109,9 +109,9 @@ export default {
                     currentPassword: this.currentPassword,
                     newPassword: this.newPassword
                 }, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
+                    // headers: {
+                    //     'Authorization': `Bearer ${accessToken}`
+                    // }
                 });
                 alert("비밀번호 변경이 완료되었습니다.");
             } catch (error) {

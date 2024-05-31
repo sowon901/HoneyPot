@@ -176,9 +176,9 @@ export default {
     deleteAddress(index) {
       const addressId = this.addresses[index].addressId;
       axios.delete(`http://localhost:8080/mypage-address/${addressId}`, {
-          headers: {
-              'Authorization': `Bearer ${accessToken}`
-          }
+          // headers: {
+          //     'Authorization': `Bearer ${accessToken}`
+          // }
       })
         .then(() => {
           this.addresses.splice(index, 1);
@@ -207,14 +207,14 @@ export default {
     const addressData = { ...this.address, serialNumber: this.serialNumber }; // 유저의 시리얼 넘버 (로그인된 유저의 시리얼 넘버로 대체)
     const request = this.isEdit
       ? axios.put(`http://localhost:8080/mypage-address/${this.address.addressId}`, addressData, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
+            // headers: {
+            //     'Authorization': `Bearer ${accessToken}`
+            // }
         })
       : axios.post('http://localhost:8080/mypage-address', addressData, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
+            // headers: {
+            //     'Authorization': `Bearer ${accessToken}`
+            // }
         });
 
       request.then(() => {
