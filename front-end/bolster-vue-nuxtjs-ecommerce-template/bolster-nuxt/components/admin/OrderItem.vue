@@ -94,6 +94,7 @@ export default {
                 '.join(\', \');' +
                 'const textareaValue = document.getElementById(\'declineReason\').value;' +
                 'const reason = selectedReasons ? selectedReasons + \', \' + textareaValue : textareaValue;' +
+                'try {' +
                 'await fetch("http://localhost:8080/admin/decline-product", {' +
                 'method: "POST",' +
                 'headers: {' +
@@ -104,6 +105,10 @@ export default {
                 '});' +
                 'window.opener.confirmDecline(reason);' +
                 'window.close();' +
+                '} catch (error) {' +
+                'console.error("Error:", error);' +
+                'window.close();' +
+                '}' +
                 '}' +
                 '<\/script>' +
                 '</body>' +
