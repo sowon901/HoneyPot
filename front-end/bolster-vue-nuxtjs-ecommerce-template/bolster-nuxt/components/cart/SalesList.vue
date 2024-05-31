@@ -20,8 +20,8 @@
                             <td class="product-infomation" style="text-align: left;">
                                 <nuxt-link :to="`/bid-details/${product.productId}`" class="product-detail">
                                     <div style="display: flex; align-items: center;">
-                                        <div class="image-container" :class="{ 'no-image': !product.image1 }"  style="margin-right: 10px;">
-                                            <img v-if="product.image1" :src="product.image1" />
+                                        <div class="image-container" style="margin-right: 10px;">
+                                            <img :src="product.image1" />
                                         </div>
                                         <div style="text-align: center;">
                                             <h6>
@@ -160,11 +160,14 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0; /* 컨테이너가 줄어들지 않도록 설정 */
+    background-color: #f5f5f5; 
 }
 
 .image-container img {
     max-width: 100%;
     max-height: 100%;
+    object-fit: cover;
 }
 
 .image-container.no-image {
