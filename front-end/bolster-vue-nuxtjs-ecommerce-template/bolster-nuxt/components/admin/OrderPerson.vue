@@ -131,7 +131,7 @@ export default {
                     serialNumber: item.serialNumber,
                     productName: item.productName,
                     declineReason: reason,
-                    storageStatus: "PROCESSING"
+                    storageStatus: "DECLINED"
                 }, {
                     headers: {
                         'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
