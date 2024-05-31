@@ -22,7 +22,7 @@
                                 <th>Escrow</th>
                                 <th>Product Name</th>
                                 <th>Amount</th>
-                                <th>Buyer Name</th>
+<!--                                <th>Buyer Name</th>-->
                                 <th>Date Added</th>
                                 <th>Status</th>
                                 <th>Success</th>
@@ -39,7 +39,7 @@
                                 <td>{{ payment.escrow }}</td>
                                 <td>{{ payment.name }}</td>
                                 <td>{{ payment.amount }}</td>
-                                <td>{{ payment.buyerName }}</td>
+<!--                                <td>{{ payment.buyerName }}</td>-->
                                 <td>{{ payment.dateAdded }}</td>
                                 <td>{{ payment.status }}</td>
                                 <td>{{ payment.success }}</td>
