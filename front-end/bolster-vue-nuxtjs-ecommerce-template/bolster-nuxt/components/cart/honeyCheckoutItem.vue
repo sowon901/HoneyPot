@@ -225,6 +225,7 @@ export default {
     this.fetchAddresses();
     this.fetchSelectedAddress();
     await this.loadProductData();
+    // this.redirectToReceipt("https://iniweb.inicis.com/DefaultWebApp/mall/cr/cm/mCmReceipt_head.jsp?noTid=StdpayCARDINIpayTest20240529165001893180&noMethod=1");
 
   },
 
@@ -359,7 +360,7 @@ export default {
         console.log('Product data fetched:', response.data);
 
         // {{ product.startPrice + (product.bidCnt * product.priceUnit) }}
-        this.price = response.data.startPrice + (response.data.bidCnt * response.data.priceUnit);
+        this.price = response.data.price;
         this.productName = response.data.productName;
 
 
@@ -463,11 +464,29 @@ export default {
       // Open a new window with a message
       const popup = window.open('', 'popup');
       popup.document.write(`
-    <html>
-      <head><title>Processing Payment</title></head>
+      <html>
+      <head>
+        <title>Processing Payment</title>
+        <style>
+          body {
+            color: white;
+            text-align: center;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-image: url('/../../assets/img/banner-image/m02.jpeg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+          }
+        </style>
+      </head>
       <body>
-        <h1> 시스템 상에 등록중입니다 </h1>
-        <p> 20초만 기다려주세요 </p>
+        <h1>시스템 상에 등록중입니다</h1>
+        <p>20초만 기다려주세요</p>
       </body>
     </html>
   `);
