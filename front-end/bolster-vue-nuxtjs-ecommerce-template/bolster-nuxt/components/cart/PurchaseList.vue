@@ -87,7 +87,7 @@ export default {
     },
     mounted() {
         if (this.serialNumber) {
-            axios.get(`http://localhost:8080/mypage/purchaseList/${this.serialNumber}`)
+            axios.get(`http://10.0.11.7:8080/mypage/purchaseList/${this.serialNumber}`)
                 .then(response => {
                     console.log("Full response data:", response.data);
                     // 서버에서 받아온 상품 데이터를 products 배열에 할당

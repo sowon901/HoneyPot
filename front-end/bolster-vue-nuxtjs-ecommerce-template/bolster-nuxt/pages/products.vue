@@ -179,7 +179,7 @@ export default {
       }
     },
     fetchProducts() {
-      axios.get("http://localhost:8080/products")
+      axios.get("http://10.0.11.7:8080/products")
         .then(response => {
           this.products = response.data;
           this.selectedSorting = '1'; // 기본적으로 최신순으로 설정

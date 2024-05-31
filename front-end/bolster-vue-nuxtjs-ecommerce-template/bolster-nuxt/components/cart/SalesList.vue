@@ -86,7 +86,7 @@ export default {
 
     mounted() {
         const token = sessionStorage.getItem('JWT_TOKEN');
-        axios.get(`http://localhost:8080/mypage/salesList/${this.serialNumber}`, {
+        axios.get(`http://10.0.11.7:8080/mypage/salesList/${this.serialNumber}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -103,7 +103,7 @@ export default {
     },
     methods: {
         startSale(productId) {
-            axios.put(`http://localhost:8080/mypage/product/${productId}/start-sale`)
+            axios.put(`http://10.0.11.7:8080/mypage/product/${productId}/start-sale`)
                 .then(response => {
                     // 판매 시작 요청이 성공적으로 처리된 경우
                     console.log('Sale started successfully:', response.data);
