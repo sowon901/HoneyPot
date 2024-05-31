@@ -83,13 +83,6 @@ export default {
     },
     // 선택된 태그로 필터링된 상품 목록을 반환하는 computed 속성
     filteredProducts() {
-      // 선택된 태그가 없을 때는 모든 상품을 반환합니다.
-      // if (this.selectedTags.length === 0) {
-      //   return this.products;
-      // } else {
-      //   // 선택된 태그로 필터링된 상품 목록을 반환합니다.
-      //   return this.products.filter(product => this.selectedTags.includes(product.idolName));
-      // }
       let filtered = this.products;
 
       if (this.selectedTags.length > 0) {
@@ -128,6 +121,9 @@ export default {
       this.currentPage = pageNumber;
     },
     sortProducts() {
+      // 현재 시간
+      const now = new Date();
+
       switch (this.selectedSorting) {
         case '1': // 최신순
           this.products.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
@@ -142,6 +138,22 @@ export default {
           // 기본적으로는 최신순으로 정렬합니다.
           this.products.sort((a, b) => new Date(b.registrationDate) - new Date(a.registrationDate));
       }
+
+      // 경매 종료된 상품을 맨 뒤로 이동
+      this.products.sort((a, b) => {
+        const aDeadline = new Date(a.deadline);
+        const bDeadline = new Date(b.deadline);
+        const aIsExpired = aDeadline < now;
+        const bIsExpired = bDeadline < now;
+
+        if (aIsExpired && !bIsExpired) {
+          return 1;
+        } else if (!aIsExpired && bIsExpired) {
+          return -1;
+        } else {
+          return 0;
+        }
+      });
     },
     toggleTag(tag) {
       const index = this.selectedTags.indexOf(tag);
@@ -170,6 +182,7 @@ export default {
       axios.get("http://localhost:8080/products")
         .then(response => {
           this.products = response.data;
+          this.sortProducts(); // 상품을 받아온 후 정렬을 수행
           console.log(this.products);
         })
         .catch(error => {
