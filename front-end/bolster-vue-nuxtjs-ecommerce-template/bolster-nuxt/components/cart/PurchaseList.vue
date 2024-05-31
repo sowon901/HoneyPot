@@ -29,7 +29,7 @@
                                             </h6>
                                             판매자: {{ product.nickName }}
                                             <br>
-                                            결제금액: {{ product.startPrice + (product.bidCnt * product.priceUnit) }}
+                                            결제금액: {{ product.price }}
                                         </div>
                                     </div>
                                 </nuxt-link>
@@ -90,10 +90,11 @@ export default {
         if (this.serialNumber) {
             axios.get(`http://localhost:8080/mypage/purchaseList/${this.serialNumber}`)
                 .then(response => {
+                    console.log("Full response data:", response.data);
                     // 서버에서 받아온 상품 데이터를 products 배열에 할당
-                    console.log("product list: " + response.data.productId);
                     this.products = response.data;
                     this.products.forEach(product => {
+                        console.log("Individual product data:", product);
                         this.fetchOrderConfirmation(product);
                     });
                 })
