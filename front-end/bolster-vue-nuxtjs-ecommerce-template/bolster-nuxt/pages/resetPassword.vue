@@ -96,7 +96,8 @@ export default {
 
                 if (response.status === 200) {
                     alert("비밀번호가 변경되었습니다.");
-                    this.$router.push("/");
+                    console.log('Redirecting to home page');
+                    window.location.href = 'http://localhost:3000/';
                 } else {
                     this.formError = "비밀번호 변경 중 오류가 발생했습니다. 다시 시도해 주세요.";
                 }
