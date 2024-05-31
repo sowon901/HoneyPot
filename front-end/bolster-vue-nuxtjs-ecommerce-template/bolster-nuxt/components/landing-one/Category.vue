@@ -12,23 +12,22 @@
 
           <div class="row">
               <div class="col-md-3" v-for="(product, index) in filteredProducts.slice(0,4)" :key="index">
-                  <ProductItem :product="product"></ProductItem>
+                  <ProductItem v-if="!loading" :product="product"></ProductItem>
+                  <div v-else class="spinner"></div> <!-- 로딩 중일 때 스피너 표시 -->
               </div>
           </div>
       </div>
       <!-- End Trending Products Area -->
-      <QuckView />
+      <QuickView />
   </div>
 </template>
 
 <script>
-import QuckView from '../modals/QuckView'
 import ProductItem from './ProductItemMain'
 import axios from 'axios';
 
 export default {
   components: {
-      QuckView,
       ProductItem,
   },
   props: {
@@ -42,6 +41,7 @@ export default {
           selectedIdol: null,
           idols: [],
           products: [],
+          loading: false, // 로딩 상태 추가
       };
   },
   methods: {
@@ -53,7 +53,7 @@ export default {
           this.fetchProductData(idol);
       },
       fetchIdolData() {
-          axios.get(`http://localhost:8080/index/filterCategoryIdolName/${this.serialNumber}`)
+          axios.get(`http://10.0.11.7:8080/index/filterCategoryIdolName/${this.serialNumber}`)
           .then(response => {
               this.idols = response.data; 
               if (this.idols.length > 0) {
@@ -66,12 +66,15 @@ export default {
           });
       },
       fetchProductData(idolName) {
-          axios.get(`http://localhost:8080/index/filterByCategory/${idolName}`)
+          this.loading = true; // 데이터 로딩 시작
+          axios.get(`http://10.0.11.7:8080/index/filterByCategory/${idolName}`)
           .then(response => {
               this.products = response.data; 
+              this.loading = false; // 데이터 로딩 완료
               console.log("successMain", this.products);
           })
           .catch(error => {
+              this.loading = false; // 에러 발생 시 로딩 완료 상태로 변경
               console.error('Error fetching data:', error);
           });
       },
@@ -82,8 +85,7 @@ export default {
           return this.products.filter(product => product.idolName === this.selectedIdol);
       },
   },
-
-watch: {
+  watch: {
     serialNumber(newVal, oldVal) {
       // serialNumber props 값이 변경될 때마다 호출되는 함수
       this.fetchIdolData();
@@ -148,5 +150,22 @@ watch: {
     color: #ffb400;
 }
 
+.row {
+  height: 400px;
+}
 
+.spinner {
+  border: 8px solid #ffb400; /* Light grey */
+  border-top: 8px solid #ffb400; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+  margin: auto; /* Center the spinner */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>

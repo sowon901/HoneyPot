@@ -1,4 +1,4 @@
-wdq<template>
+<template>
   <div class="container">
       <div class="main-layout" style="text-align: center;">
           <Banner></Banner>
