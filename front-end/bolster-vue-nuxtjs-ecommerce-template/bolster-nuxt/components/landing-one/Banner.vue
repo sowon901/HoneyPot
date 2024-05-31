@@ -2,7 +2,8 @@
     <!-- Start Main Banner Area -->
     <!-- 배너 입찰 많은 순으로 -->
 
-    <div class="home-slides owl-carousel owl-theme">
+    <div class="home-slides owl-carousel owl-theme" style = " border-radius: 50px; 
+    overflow: hidden;">
         <carousel
             :paginationEnabled = true
             :perPage="1"
@@ -70,14 +71,9 @@ export default {
     width: 1300px;
 }
 
-.main-banners {
-    background-position: left;
-    height: 100%;
-    padding-top: 110px;
-    padding-bottom: 110px;
-    height: 520px;
-    cursor: pointer;
+.main-banner{
+    border-radius: 50px; 
+    overflow: hidden; 
 }
-
 
 </style>

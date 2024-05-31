@@ -76,7 +76,7 @@ export default {
       const endIndex = Math.min(startIndex + this.itemsPerPage, this.totalProducts);
       // return this.products.slice(startIndex, endIndex);
       // 필터링된 상품 목록의 일부만 가져오도록 수정합니다.
-      return this.filteredProducts.slice(this.startIndex - 1, this.endIndex);
+      return this.filteredProducts.slice(this.startIndex, this.endIndex);
     },
     totalPages() {
       return Math.ceil(this.totalProducts / this.itemsPerPage);
@@ -182,6 +182,7 @@ export default {
       axios.get("http://localhost:8080/products")
         .then(response => {
           this.products = response.data;
+          this.selectedSorting = '1'; // 기본적으로 최신순으로 설정
           this.sortProducts(); // 상품을 받아온 후 정렬을 수행
           console.log(this.products);
         })
@@ -191,6 +192,7 @@ export default {
     },
     updateSearchQuery(newQuery) {
       this.searchQuery = newQuery;
+      this.sortProducts(); // 검색어 변경 후 정렬
     }
   },
   mounted() {
