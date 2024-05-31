@@ -101,7 +101,7 @@ export default {
                 '"Content-Type": "application/json",' +
                 '"Authorization": "Bearer " + sessionStorage.getItem(\'JWT_TOKEN\'),' +
                 '},' +
-                'body: JSON.stringify({ productId: window.item.productId, serialNumber: window.item.serialNumber, declineReason: reason })' +
+                'body: JSON.stringify({ productId: window.item.productId, productName: window.item.productName, serialNumber: window.item.serialNumber, declineReason: reason })' +
                 '});' +
                 'window.opener.confirmDecline(reason);' +
                 'window.close();' +
