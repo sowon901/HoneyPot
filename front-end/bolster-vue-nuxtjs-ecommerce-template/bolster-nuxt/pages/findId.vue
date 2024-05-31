@@ -129,7 +129,7 @@ export default {
             this.formError = null;
 
             try {
-                const response = await axios.post('http://localhost:8080/mms/send-one', null, {
+                const response = await axios.post('http://10.0.11.7:8080/mms/send-one', null, {
                     params: {
                         name: this.name,
                         mobileNumber: this.mobileNumber,

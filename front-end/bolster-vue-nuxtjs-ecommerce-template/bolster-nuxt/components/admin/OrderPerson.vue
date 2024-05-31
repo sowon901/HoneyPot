@@ -80,7 +80,7 @@ export default {
     methods: {
         async fetchData() {
             try {
-                const response = await axios.get('http://localhost:8080/admin/pending-processing-products', {
+                const response = await axios.get('http://10.0.11.7:8080/admin/pending-processing-products', {
                     headers: {
                         'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
                     }
@@ -100,7 +100,7 @@ export default {
         },
         async approveItem(item) {
             try {
-                await axios.post('http://localhost:8080/admin/approve-product', {productId: item.productId, productName: item.productName, serialNumber: item.serialNumber, storageStatus: "PROCESSING"}, {
+                await axios.post('http://10.0.11.7:8080/admin/approve-product', {productId: item.productId, productName: item.productName, serialNumber: item.serialNumber, storageStatus: "PROCESSING"}, {
                     headers: {
                         'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
                     }
@@ -113,7 +113,7 @@ export default {
         },
         async finalApproveItem(item) {
             try {
-                await axios.post('http://localhost:8080/admin/final-approve-product', {productId: item.productId, serialNumber: item.serialNumber, productName: item.productName, storageStatus: "READY"}), {
+                await axios.post('http://10.0.11.7:8080/admin/final-approve-product', {productId: item.productId, serialNumber: item.serialNumber, productName: item.productName, storageStatus: "READY"}), {
                     headers: {
                         'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
                     }
@@ -126,7 +126,7 @@ export default {
         },
         async declineItem(item, reason) {
             try {
-                await axios.post('http://localhost:8080/admin/decline-product', {
+                await axios.post('http://10.0.11.7:8080/admin/decline-product', {
                     productId: item.productId,
                     serialNumber: item.serialNumber,
                     productName: item.productName,

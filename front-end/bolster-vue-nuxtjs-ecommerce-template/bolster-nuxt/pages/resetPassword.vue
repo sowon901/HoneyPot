@@ -90,14 +90,14 @@ export default {
 
             try {
                 const token = this.$route.query.token;
-                const response = await axios.post('http://localhost:8080/auth/reset-password?token=' + token, {
+                const response = await axios.post('http://10.0.11.7:8080/auth/reset-password?token=' + token, {
                     newPassword: this.newPassword
                 });
 
                 if (response.status === 200) {
                     alert("비밀번호가 변경되었습니다.");
                     console.log('Redirecting to home page');
-                    window.location.href = 'http://localhost:3000/';
+                    window.location.href = 'http://223.130.153.93:3000/';
                 } else {
                     this.formError = "비밀번호 변경 중 오류가 발생했습니다. 다시 시도해 주세요.";
                 }

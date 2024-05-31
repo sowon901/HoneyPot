@@ -80,7 +80,7 @@ export default {
     methods: {
         async fetchPayments() {
             try {
-                const response = await axios.get('http://localhost:8080/payment/admin/payments/list');
+                const response = await axios.get('http://10.0.11.7:8080/payment/admin/payments/list');
                 this.payments = response.data;
             } catch (error) {
                 console.error('There was an error fetching the payments!', error);

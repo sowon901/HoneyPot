@@ -95,7 +95,7 @@ export default {
     methods: {
         async fetchData() {
             try {
-                const response = await axios.get('http://localhost:8080/admin/dashboard-stats');
+                const response = await axios.get('http://10.0.11.7:8080/admin/dashboard-stats');
                 const data = response.data;
                 this.todayVisitors = data.todayVisitors;
                 this.todayRegistrations = data.todayRegistrations;
@@ -142,4 +142,4 @@ export default {
 .card {
     margin-bottom: 20px;
 }
-</style> 
+</style>
