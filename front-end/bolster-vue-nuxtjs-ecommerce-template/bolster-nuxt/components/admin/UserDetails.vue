@@ -40,7 +40,7 @@ export default {
     methods: {
         async updateUserState(newState) {
             try {
-                const response = await axios.post('http://localhost:8080/admin/user-state', {
+                const response = await axios.post('http://10.0.11.7:8080/admin/user-state', {
                     userId: this.user.userId,
                     state: newState
                 }, {

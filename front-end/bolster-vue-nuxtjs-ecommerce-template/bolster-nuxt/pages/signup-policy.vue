@@ -644,7 +644,7 @@ export default {
     },
     methods: {
         handleAgree() {
-            window.location.href = 'http://localhost:3000/signup';
+            window.location.href = 'http://223.130.153.93:3000/signup';
         },
     },
 };

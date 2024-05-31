@@ -120,7 +120,7 @@ export default {
             }
 
             try {
-                const response = await axios.post('http://localhost:8080/forgot-password', {
+                const response = await axios.post('http://10.0.11.7:8080/forgot-password', {
                     userId: this.userId,
                     mobileNumber: this.mobileNumber,
                     email: this.email,

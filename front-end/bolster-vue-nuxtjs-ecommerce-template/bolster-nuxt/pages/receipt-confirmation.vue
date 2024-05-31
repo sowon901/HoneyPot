@@ -85,7 +85,7 @@ export default {
     methods: {
         async fetchData() {
             try {
-                const response = await axios.get('http://localhost:8080/admin/pending-processing-products', {
+                const response = await axios.get('http://10.0.11.7:8080/admin/pending-processing-products', {
                     headers: {
                         'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`
                     }

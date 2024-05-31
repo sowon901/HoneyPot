@@ -128,8 +128,8 @@ export default {
         const formUsername = ref('');
         const formPassword = ref('');
         const formError = ref(null);
-        const kakaologinBackUrl = 'http://localhost:8080/api/oauth2/kakaologin';
-        const serviceloginBackUrl = 'http://localhost:8080/auth/login';
+        const kakaologinBackUrl = 'http://10.0.11.7:8080/api/oauth2/kakaologin';
+        const serviceloginBackUrl = 'http://10.0.11.7:8080/auth/login';
         const authUser = ref(null);
         // const router = useRouter();
         // const store = useStore();
@@ -203,7 +203,7 @@ export default {
             const token = sessionStorage.getItem('JWT_TOKEN');
             if (token) {
                 try {
-                    const response = await fetch('http://localhost:8080/api/protected', {
+                    const response = await fetch('http://10.0.11.7:8080/api/protected', {
                         method: 'GET',
                         headers: {
                             'Authorization': `Bearer ${token}`

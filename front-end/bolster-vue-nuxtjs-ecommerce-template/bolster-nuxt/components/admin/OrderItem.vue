@@ -95,7 +95,7 @@ export default {
                 'const textareaValue = document.getElementById(\'declineReason\').value;' +
                 'const reason = selectedReasons ? selectedReasons + \', \' + textareaValue : textareaValue;' +
                 'try {' +
-                'await fetch("http://localhost:8080/admin/decline-product", {' +
+                'await fetch("http://10.0.11.7:8080/admin/decline-product", {' +
                 'method: "POST",' +
                 'headers: {' +
                 '"Content-Type": "application/json",' +

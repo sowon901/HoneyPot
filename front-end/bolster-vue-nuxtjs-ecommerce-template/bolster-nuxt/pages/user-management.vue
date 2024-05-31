@@ -86,7 +86,7 @@ export default {
     },
     mounted() {
         // Fetch user data from Spring Boot endpoint
-        fetch('http://localhost:8080/admin/get-users') // Include the full URL with port if necessary
+        fetch('http://10.0.11.7:8080/admin/get-users') // Include the full URL with port if necessary
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

@@ -427,11 +427,11 @@ export default {
                 formData.append('birthdate', birthdate.value);
                 formData.append('selectedGender', selectedGender.value);
 
-                const response = await axios.post('http://localhost:8080/auth/signup', formData);
+                const response = await axios.post('http://10.0.11.7:8080/auth/signup', formData);
                 console.log('Signup response:', response);
                 const serialNumber = response.data;
                 console.log("시리얼 넘버 :" + response.data);
-                window.location.href = `http://localhost:3000/favorites?serialNumber=${serialNumber}`;
+                window.location.href = `http://223.130.153.93:3000/favorites?serialNumber=${serialNumber}`;
             } catch (error) {
                 console.error('Error during sign up:', error.response?.data || error.message);
                 formError.value = '회원가입에 실패했습니다: ' + (error.response?.data || error.message);
