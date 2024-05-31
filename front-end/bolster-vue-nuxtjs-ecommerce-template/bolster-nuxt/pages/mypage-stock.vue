@@ -139,7 +139,7 @@ export default defineComponent({
     formData.append('file', blobInfo.blob(), blobInfo.filename());
 
     try {
-      const response = await axios.post('http://localhost:8080/upload-image', formData, {
+      const response = await axios.post('http://10.0.11.7:8080/upload-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -260,7 +260,7 @@ export default defineComponent({
       });
 
       axios
-        .post('http://localhost:8080/mypage-stock', formData, {
+        .post('http://10.0.11.7:8080/mypage-stock', formData, {
           headers: {
                     // 'Authorization': `Bearer ${sessionStorage.getItem('JWT_TOKEN')}`,
                     'Content-Type': 'multipart/form-data'

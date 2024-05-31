@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Axios 인스턴스 생성
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8080', // 백엔드 서버 주소
+    baseURL: 'http://10.0.11.7:8080', // 백엔드 서버 주소
     headers: {
         'Content-Type': 'application/json',
     },
@@ -33,7 +33,7 @@ apiClient.interceptors.response.use(
             originalRequest._retry = true;
             try {
                 const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
-                const response = await axios.post('http://localhost:8080/auth/refresh', { refreshToken });
+                const response = await axios.post('http://10.0.11.7:8080/auth/refresh', { refreshToken });
                 const newAccessToken = response.data.accessToken;
                 const newAccessTokenExpiration = response.data.accessTokenExpiration;
 

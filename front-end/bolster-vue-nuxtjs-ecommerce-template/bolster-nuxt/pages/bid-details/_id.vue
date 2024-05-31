@@ -247,7 +247,7 @@ export default {
         async loadProductData() {
             const productId = this.$route.params.id;
             try {
-                const response = await axios.get(`http://localhost:8080/bid-details/${productId}`);
+                const response = await axios.get(`http://10.0.11.7:8080/bid-details/${productId}`);
                 console.log('Product data fetched:', response.data);
                 this.product = response.data;
                 this.updateProductImages();
@@ -358,7 +358,7 @@ export default {
                 bidAmount: this.totalAmount,
             };
             axios
-                .post('http://localhost:8080/bids/place', null, { params: bidData })
+                .post('http://10.0.11.7:8080/bids/place', null, { params: bidData })
                 .then((response) => {
                     console.log('입찰 성공:', response.data);
                     alert('입찰에 성공하였습니다.');
@@ -467,7 +467,7 @@ export default {
         async updateAuctionResult() {
             try {
                 const productId = this.product.productId;
-                await axios.post(`http://localhost:8080/updateAuctionResult/${productId}`);
+                await axios.post(`http://10.0.11.7:8080/updateAuctionResult/${productId}`);
             } catch (error) {
                 console.error('Error updating auction result:', error);
             }
