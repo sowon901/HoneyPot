@@ -2,7 +2,8 @@
     <!-- Start Main Banner Area -->
     <!-- 배너 입찰 많은 순으로 -->
 
-    <div class="home-slides owl-carousel owl-theme">
+    <div class="home-slides owl-carousel owl-theme" style = " border-radius: 50px; 
+    overflow: hidden;">
         <carousel
             :paginationEnabled = true
             :perPage="1"
@@ -19,7 +20,6 @@
                         <div class="d-table-cell">
                             <div class="container">
                                 <div class="main-banner-content">
-                                  
                                 </div>
                             </div>
                         </div>
@@ -28,7 +28,7 @@
             </slide>
 
             <slide>
-                <div class="main-banner item-bg2">
+                <div class="main-banner item-bg2" @click="navigateToProducts" style=" cursor: pointer;">
                     <div class="d-table">
                         <div class="d-table-cell">
                             <div class="container">
@@ -58,6 +58,11 @@
 <script>
 export default {
     name: 'Banner',
+    methods: {
+    navigateToProducts() {
+      this.$router.push({ path: '/products', query: { sort: '2' } });
+    }
+  }
 }
 </script>
 <style scoped>
@@ -66,13 +71,9 @@ export default {
     width: 1300px;
 }
 
-.main-banners {
-    background-position: left;
-    height: 100%;
-    padding-top: 110px;
-    padding-bottom: 110px;
-    height: 520px;
+.main-banner{
+    border-radius: 50px; 
+    overflow: hidden; 
 }
-
 
 </style>
