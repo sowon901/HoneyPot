@@ -1,4 +1,4 @@
-<template>
+wdq<template>
   <div class="container">
       <div class="main-layout" style="text-align: center;">
           <Banner></Banner>
@@ -10,7 +10,7 @@
             <div class="latest-products">
               <div class="section-title-filter">
                 <button class="category">
-                  <nuxt-link to="/products" class="category-link">
+                  <nuxt-link :to="{ path: '/products', query: { sort: '1' } }" class="category-link">                    
                     <span style="padding-right: 10px">최신 등록 상품</span>
                     <i class='fa fa-arrow-right'></i>
                   </nuxt-link>
@@ -22,7 +22,7 @@
             <div class="best-sellers">
               <div class="section-title-filter">
                 <button class="category">
-                  <nuxt-link to="/products" class="category-link">
+                  <nuxt-link :to="{ path: '/products', query: { sort: '2' } }" class="category-link">                    
                     <span style="padding-right: 10px">인기 상품</span>
                     <i class='fas fa-arrow-right'></i>
                   </nuxt-link>
@@ -34,7 +34,7 @@
             <div class = "deadline">
               <div class="section-title-filter">
                 <button class="category">
-                  <nuxt-link to="/products" class="category-link">
+                  <nuxt-link :to="{ path: '/products', query: { sort: '3' } }" class="category-link">                    
                     <span style="padding-right: 10px">마감 임박 상품</span>
                     <i class='fas fa-arrow-right'></i>
                   </nuxt-link>

@@ -19,7 +19,6 @@
                         <div class="d-table-cell">
                             <div class="container">
                                 <div class="main-banner-content">
-                                  
                                 </div>
                             </div>
                         </div>
@@ -28,7 +27,7 @@
             </slide>
 
             <slide>
-                <div class="main-banner item-bg2">
+                <div class="main-banner item-bg2" @click="navigateToProducts" style=" cursor: pointer;">
                     <div class="d-table">
                         <div class="d-table-cell">
                             <div class="container">
@@ -58,6 +57,11 @@
 <script>
 export default {
     name: 'Banner',
+    methods: {
+    navigateToProducts() {
+      this.$router.push({ path: '/products', query: { sort: '2' } });
+    }
+  }
 }
 </script>
 <style scoped>
@@ -72,6 +76,7 @@ export default {
     padding-top: 110px;
     padding-bottom: 110px;
     height: 520px;
+    cursor: pointer;
 }
 
 

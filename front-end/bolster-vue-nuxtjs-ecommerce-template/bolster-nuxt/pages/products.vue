@@ -107,7 +107,7 @@ export default {
     return {
       currentPage: 1,
       itemsPerPage: 40,
-      selectedSorting: '1',
+      selectedSorting: this.$route.query.sort || '1',
       tags: ['AESPA', 'BLACKPINK', 'BOYNEXTDOOR', 'BTS', 'ENHYPEN', 'EXO', 'GIRLSRENERATION', 'ITZY', 'LESSERAFIM', 'NCT', 'NEWJEANS', 'NMIXX', 'FROMIS_9', 'RIIZE', 'STRAYKIDS', 'SEVENTEEN', 'SHINEE', 'SUPERJUNIOR', 'TXT', 'TWICE', 'WINNER'],
       selectedTags: [],
       categories: ["Photo", "Official Fanlight", "Fashion", "Acc", "Stationery", "DVD", "Music", "Living"],
@@ -201,6 +201,10 @@ export default {
     '$route.query.search'(newSearchQuery) {
       this.searchQuery = newSearchQuery || '';
       this.fetchProducts();
+    },
+    '$route.query.sort'(newSort) {
+        this.selectedSorting = newSort || '1';
+        this.sortPorudcts();
     }
   }
 };
