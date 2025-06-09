@@ -4,7 +4,7 @@
 Vue.js를 기반으로 사용자 친화적인 UI와 다양한 기능을 제공합니다.
 
 - 🔗 [백엔드 저장소 보기](https://github.com/sowon901/HoneyPotSystem-back)
-- 📝 [기획서 및 팀 노션](https://www.notion.so/Bee-d03cbe54805d45b7ae64c7f1cea6310e)
+- 📝 [노션 페이지 보기](https://www.notion.so/Bee-d03cbe54805d45b7ae64c7f1cea6310e)
 
 ---
 
